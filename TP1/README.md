@@ -1,12 +1,4 @@
-# tp0
-
-
-
-
-
-
-
-
+# TP1
 
 To package run:
 
@@ -14,7 +6,6 @@ To package run:
 
 
 Once packaged both client and api project contain a tar.gz with each application and on the root a package a script to run the main classes exists.
-
 
 To run the test
 
