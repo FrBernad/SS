@@ -82,7 +82,6 @@ public class Simulator {
         return new BaseArguments(staticFile, dynamicFile, outNeighborsFile, outTimeFile, isPeriodic, radius, M);
     }
 
-    //FIXME:!!!
     private static void printClientUsage() {
         System.out.println("Invalid simulator invocation.\n" +
             "Usage: ./simulator -DstaticFile='path/to/static/file' -DdynamicFile='path/to/dynamic/file' " +

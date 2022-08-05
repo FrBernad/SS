@@ -3,8 +3,10 @@ package ar.edu.itba.ss.simulator.utils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 import static java.lang.Double.*;
 import static java.lang.Integer.*;
@@ -18,24 +20,28 @@ public class ParseUtils {
         //Skip first line
         dynamicScanner.nextLine();
 
-        final int N = parseInt(staticScanner.nextLine());
-        final int L = parseInt(staticScanner.nextLine());
+        final int N = parseInt(staticScanner.nextLine().trim());
+        final int L = parseInt(staticScanner.nextLine().trim());
 
         final List<Particle> particles = new ArrayList<>();
 
         while (staticScanner.hasNextLine() && dynamicScanner.hasNextLine()) {
-            final String[] staticArray = staticScanner.nextLine().split(" ");
-            final String[] dynamicArray = dynamicScanner.nextLine().split(" ");
+            final List<String> staticArray = Arrays.stream(staticScanner.nextLine().split(" ")).filter(str -> !str.equals("")).collect(Collectors.toList());
+            final List<String> dynamicArray = Arrays.stream(dynamicScanner.nextLine().split(" ")).filter(str -> !str.equals("")).collect(Collectors.toList());
 
             particles.add(
                 new Particle(particles.size() + 1,
-                    parseDouble(dynamicArray[DynamicFields.X.getValue()]),
-                    parseDouble(dynamicArray[DynamicFields.Y.getValue()]),
-                    parseDouble(staticArray[StaticFields.RADIUS.getValue()]),
-                    parseDouble(staticArray[StaticFields.PROPERTY.getValue()]))
+                    parseDouble(dynamicArray.get(DynamicFields.X.getValue())),
+                    parseDouble(dynamicArray.get(DynamicFields.Y.getValue())),
+                    parseDouble(staticArray.get(StaticFields.RADIUS.getValue())),
+                    parseDouble(staticArray.get(StaticFields.PROPERTY.getValue()))
+                )
             );
 
         }
+
+        staticScanner.close();
+        dynamicScanner.close();
 
         return new ParticlesParserResult(N, L, particles);
     }
