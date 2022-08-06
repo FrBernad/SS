@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static ar.edu.itba.ss.simulator.utils.Particle.*;
+import static ar.edu.itba.ss.simulator.utils.Particle.Position;
 
 public class CellIndexMethod {
 
@@ -24,7 +24,37 @@ public class CellIndexMethod {
         executionTimestamps.setAlgorithmStart(LocalDateTime.now());
 
         final Grid grid = new Grid(L, M, particles);
-
+//
+//        List<List<Grid.Cell>> matrix = grid.getGrid();
+//        boolean success = true;
+//
+//        int i = 0;
+//        int j = 0;
+//        for (List<Grid.Cell> rows : matrix) {
+//            j = 0;
+//            for (Grid.Cell cell : rows) {
+//
+//                System.out.printf(
+//                        "-----------------------------\n" +
+//                                "Cell [ %d : %d ]\n" +
+//                                "%f<X<%f\n" +
+//                                "%f<Y< %f\n", i, j, cell.leftBoundary, cell.rightBoundary, cell.topBoundary, cell.bottomBoundary);
+//                j++;
+//                for (Particle p : cell.getParticles()) {
+//                    Position position = particles.get(p);
+//                    boolean condition = (
+//                            position.getX() >= cell.leftBoundary && position.getX() < cell.rightBoundary) &&
+//                            (position.getY() >= cell.bottomBoundary && position.getY() < cell.topBoundary);
+//                    if (!condition) {
+//                        success = false;
+//                    }
+//                    System.out.printf("Particle: %d X: %f ---- Y: %f (%s)\n", p.getId(), position.getX(), position.getY(), condition);
+//                }
+//            }
+//            i++;
+//        }
+//        System.out.println("Success in all cells: " + success);
+//
 
         executionTimestamps.setAlgorithmEnd(LocalDateTime.now());
         return new CellIndexMethodResults(executionTimestamps);
