@@ -9,17 +9,18 @@ public class BaseArguments {
     private final File outNeighborsFile;
     private final File outTimeFile;
     private final Boolean isPeriodic;
-
+    private final String delimiter;
     private final double R;
 
     private final int M;
 
-    public BaseArguments(File staticFile, File dynamicFile, File outNeighborsFile, File outTimeFile, Boolean isPeriodic, double r, int m) {
+    public BaseArguments(File staticFile, File dynamicFile, File outNeighborsFile, File outTimeFile, Boolean isPeriodic, String delimiter, double r, int m) {
         this.staticFile = staticFile;
         this.dynamicFile = dynamicFile;
         this.outNeighborsFile = outNeighborsFile;
         this.outTimeFile = outTimeFile;
         this.isPeriodic = isPeriodic;
+        this.delimiter = delimiter;
         this.R = r;
         this.M = m;
     }
@@ -42,6 +43,10 @@ public class BaseArguments {
 
     public Boolean getPeriodic() {
         return isPeriodic;
+    }
+
+    public String getDelimiter() {
+        return delimiter;
     }
 
     public double getR() {

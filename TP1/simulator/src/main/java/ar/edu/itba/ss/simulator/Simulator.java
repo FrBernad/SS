@@ -2,7 +2,8 @@ package ar.edu.itba.ss.simulator;
 
 import ar.edu.itba.ss.simulator.methods.CellIndexMethod;
 import ar.edu.itba.ss.simulator.methods.CellIndexMethod.CellIndexMethodResults;
-import ar.edu.itba.ss.simulator.utils.*;
+import ar.edu.itba.ss.simulator.utils.ActionLogger;
+import ar.edu.itba.ss.simulator.utils.BaseArguments;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +15,7 @@ import java.util.Properties;
 
 import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrDefault;
 import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrFail;
-import static ar.edu.itba.ss.simulator.utils.ParseUtils.*;
+import static ar.edu.itba.ss.simulator.utils.ParseUtils.ParticlesParserResult;
 import static ar.edu.itba.ss.simulator.utils.ParseUtils.parseParticlesList;
 
 public class Simulator {
@@ -26,12 +27,15 @@ public class Simulator {
     private static final String PERIODIC_CONDITION_P = "periodic";
     private static final String RADIUS_P = "radius";
     private static final String M_P = "M";
+    private static final String DELIMITER_P = "delimiter";
+
+    private static final String DEFAULT_DELIMITER = " ";
 
 
     public static void main(String[] args) throws IOException {
         LOGGER.info("Simulator Starting ...");
 
-        BaseArguments baseArguments;
+        final BaseArguments baseArguments;
 
         final Properties properties = System.getProperties();
 
@@ -42,14 +46,14 @@ public class Simulator {
             return;
         }
 
-        final ParticlesParserResult particlesParserResult = parseParticlesList(baseArguments.getStaticFile(), baseArguments.getDynamicFile());
+        final ParticlesParserResult particlesParserResult = parseParticlesList(baseArguments.getStaticFile(), baseArguments.getDynamicFile(), DEFAULT_DELIMITER);
         CellIndexMethodResults methodResults = CellIndexMethod.calculateNeighbors(
-            particlesParserResult.getParticles(),
-            particlesParserResult.getN(),
-            particlesParserResult.getL(),
-            baseArguments.getM(),
-            baseArguments.getR(),
-            baseArguments.getPeriodic()
+                particlesParserResult.getParticles(),
+                particlesParserResult.getN(),
+                particlesParserResult.getL(),
+                baseArguments.getM(),
+                baseArguments.getR(),
+                baseArguments.getPeriodic()
         );
 
         try (PrintWriter pw = new PrintWriter(baseArguments.getOutNeighborsFile())) {
@@ -68,10 +72,12 @@ public class Simulator {
 
         final String outNeighborsFilePath = getPropertyOrFail(properties, DYNAMIC_FILE_PATH_P);
         final String outTimeFilePath = getPropertyOrFail(properties, DYNAMIC_FILE_PATH_P);
+        final String delimiter = getPropertyOrDefault(properties, DELIMITER_P, DEFAULT_DELIMITER);
 
         final Boolean isPeriodic = Boolean.valueOf(getPropertyOrDefault(properties, PERIODIC_CONDITION_P, "false"));
         final double radius = Double.parseDouble(getPropertyOrFail(properties, RADIUS_P));
         final int M = Integer.parseInt(getPropertyOrFail(properties, M_P));
+
 
         final File staticFile = Paths.get(staticFilePath).toFile();
         final File dynamicFile = Paths.get(dynamicFilePath).toFile();
@@ -79,12 +85,12 @@ public class Simulator {
         final File outNeighborsFile = new File(outNeighborsFilePath);
         final File outTimeFile = new File(outTimeFilePath);
 
-        return new BaseArguments(staticFile, dynamicFile, outNeighborsFile, outTimeFile, isPeriodic, radius, M);
+        return new BaseArguments(staticFile, dynamicFile, outNeighborsFile, outTimeFile, isPeriodic, delimiter, radius, M);
     }
 
     private static void printClientUsage() {
         System.out.println("Invalid simulator invocation.\n" +
-            "Usage: ./simulator -DstaticFile='path/to/static/file' -DdynamicFile='path/to/dynamic/file' " +
-            "-Dperiodic -Dradius=radius -DM=M");
+                "Usage: ./simulator -DstaticFile='path/to/static/file' -DdynamicFile='path/to/dynamic/file' " +
+                "-Dperiodic -Dradius=radius -DM=M");
     }
 }
