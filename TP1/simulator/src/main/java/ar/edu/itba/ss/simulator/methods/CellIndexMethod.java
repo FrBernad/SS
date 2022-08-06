@@ -3,6 +3,7 @@ package ar.edu.itba.ss.simulator.methods;
 import ar.edu.itba.ss.simulator.utils.ExecutionTimestamps;
 import ar.edu.itba.ss.simulator.utils.Particle;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -19,37 +20,67 @@ public class CellIndexMethod {
                                                             final double R,
                                                             final Boolean periodic) {
 
+        final ExecutionTimestamps executionTimestamps = new ExecutionTimestamps();
+        executionTimestamps.setAlgorithmStart(LocalDateTime.now());
 
-        return new CellIndexMethodResults(new ExecutionTimestamps());
+        final Grid grid = new Grid(L, M, particles);
+
+
+        executionTimestamps.setAlgorithmEnd(LocalDateTime.now());
+        return new CellIndexMethodResults(executionTimestamps);
     }
 
     private static class Grid {
-        private final int L;
+        private final List<List<Cell>> grid;
+
         private final int M;
+        private final int L;
 
-        private final ArrayList<ArrayList<Cell>> grid;
 
-        public Grid(int L, int M, List<Particle> particles) {
-            this.L = L;
+        public Grid(int L, int M, Map<Particle, Position> particles) {
             this.M = M;
+            this.L = L;
+
             this.grid = new ArrayList<>();
+            double increment = L / (double) M;
+            double leftBoundary;
+            double rightBoundary;
+            double bottomBoundary = 0;
+            double topBoundary = increment;
 
             for (int i = 0; i < M; i++) {
+                leftBoundary = 0;
+                rightBoundary = leftBoundary + increment;
+                this.grid.add(i, new ArrayList<>());
                 for (int j = 0; j < M; j++) {
-
+                    this.grid.get(i).add(j, new Cell(leftBoundary, rightBoundary, topBoundary, bottomBoundary));
+                    leftBoundary += increment;
+                    rightBoundary += increment;
                 }
+                topBoundary += increment;
+                bottomBoundary += increment;
             }
+
+            for (Map.Entry<Particle, Position> entry : particles.entrySet()) {
+                final int x_index = (int) Math.floor(entry.getValue().getX() / increment);
+                final int y_index = (int) Math.floor(entry.getValue().getY() / increment);
+                this.grid.get(y_index).get(x_index).addParticle(entry.getKey());
+            }
+
+        }
+
+        public List<List<Cell>> getGrid() {
+            return grid;
         }
 
         private static class Cell {
-            private final List<Particle> particles;
+            private final List<Particle> particles = new ArrayList<>();
             private final double leftBoundary;
             private final double rightBoundary;
             private final double topBoundary;
             private final double bottomBoundary;
 
-            public Cell(List<Particle> particles, double leftBoundary, double rightBoundary, double topBoundary, double bottomBoundary) {
-                this.particles = particles;
+            public Cell(double leftBoundary, double rightBoundary, double topBoundary, double bottomBoundary) {
                 this.leftBoundary = leftBoundary;
                 this.rightBoundary = rightBoundary;
                 this.topBoundary = topBoundary;
@@ -60,9 +91,9 @@ public class CellIndexMethod {
                 return particles;
             }
 
-//            public boolean containsParticle(final Particle particle){
-//                return true;
-//            }
+            public void addParticle(final Particle particle) {
+                this.particles.add(particle);
+            }
 
         }
 
