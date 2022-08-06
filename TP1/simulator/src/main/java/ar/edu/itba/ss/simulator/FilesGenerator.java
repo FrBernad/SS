@@ -5,8 +5,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Properties;
+import java.util.Random;
 
+import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrDefault;
 import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrFail;
 import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
@@ -22,9 +26,10 @@ public class FilesGenerator {
     private static final String PROPERTY_P = "property";
     private static final String DELIMITER_P = "delimiter";
     private static final String TIMES_P = "times";
+    private static final String DEFAULT_DELIMITER = " ";
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         LOGGER.info("Files Generator Starting ...");
 
         FileGeneratorArguments fileArguments;
@@ -38,19 +43,41 @@ public class FilesGenerator {
             return;
         }
 
+        try (PrintWriter pw = new PrintWriter(fileArguments.getStaticFile())) {
+            pw.println(fileArguments.getN());
+            pw.println(fileArguments.getL());
+            for (int i = 0; i < fileArguments.getN(); i++) {
+                pw.printf("%f %f\n", fileArguments.getR(), fileArguments.getProperty());
+            }
+        }
+
+        try (PrintWriter pw = new PrintWriter(fileArguments.getDynamicFile())) {
+            final Random random = new Random();
+            for (int i = 0; i < fileArguments.getTimes(); i++) {
+                pw.println(i);
+                for (int j = 0; j < fileArguments.getN(); j++) {
+                    double x = random.nextDouble() * (fileArguments.getL());
+                    double y = random.nextDouble() * (fileArguments.getL());
+                    pw.printf("%f %f\n", x, y);
+                }
+
+            }
+        }
+
+
     }
 
     private static FileGeneratorArguments getAndParseBaseArguments(final Properties properties) throws IllegalArgumentException {
         final String staticFilePath = getPropertyOrFail(properties, STATIC_FILE_PATH_P);
         final String dynamicFilePath = getPropertyOrFail(properties, DYNAMIC_FILE_PATH_P);
 
-        final String delimiter = getPropertyOrFail(properties, DELIMITER_P);
-        final double L = parseDouble(getPropertyOrFail(properties, L_P));
+        final String delimiter = getPropertyOrDefault(properties, DELIMITER_P, DEFAULT_DELIMITER);
+        final double L = parseDouble(getPropertyOrDefault(properties, L_P, "100"));
         final double R = parseDouble(getPropertyOrFail(properties, RADIUS_P));
         final double P = parseDouble(getPropertyOrFail(properties, PROPERTY_P));
 
-        final int N = parseInt(getPropertyOrFail(properties, N_P));
-        final int times = parseInt(getPropertyOrFail(properties, TIMES_P));
+        final int N = parseInt(getPropertyOrDefault(properties, N_P, "100"));
+        final int times = parseInt(getPropertyOrDefault(properties, TIMES_P, "1"));
 
         final File staticFile = new File(staticFilePath);
         final File dynamicFile = new File(dynamicFilePath);
