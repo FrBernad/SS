@@ -23,6 +23,8 @@ public class Simulator {
 
     private static final String STATIC_FILE_PATH_P = "staticFile";
     private static final String DYNAMIC_FILE_PATH_P = "dynamicFile";
+    private static final String NEIGHBORS_OUT_PATH_P = "neighborsFile";
+    private static final String TIME_OUT_PATH_P = "timeFile";
 
     private static final String PERIODIC_CONDITION_P = "periodic";
     private static final String RADIUS_P = "radius";
@@ -46,14 +48,17 @@ public class Simulator {
             return;
         }
 
-        final ParticlesParserResult particlesParserResult = parseParticlesList(baseArguments.getStaticFile(), baseArguments.getDynamicFile(), DEFAULT_DELIMITER);
+        final ParticlesParserResult particlesParserResult = parseParticlesList(baseArguments.getStaticFile(),
+            baseArguments.getDynamicFile(),
+            DEFAULT_DELIMITER);
+
         CellIndexMethodResults methodResults = CellIndexMethod.calculateNeighbors(
-                particlesParserResult.getParticles(),
-                particlesParserResult.getN(),
-                particlesParserResult.getL(),
-                baseArguments.getM(),
-                baseArguments.getR(),
-                baseArguments.getPeriodic()
+            particlesParserResult.getParticlesPerTime().get(0),
+            particlesParserResult.getN(),
+            particlesParserResult.getL(),
+            baseArguments.getM(),
+            baseArguments.getR(),
+            baseArguments.getPeriodic()
         );
 
         try (PrintWriter pw = new PrintWriter(baseArguments.getOutNeighborsFile())) {
@@ -70,14 +75,13 @@ public class Simulator {
         final String staticFilePath = getPropertyOrFail(properties, STATIC_FILE_PATH_P);
         final String dynamicFilePath = getPropertyOrFail(properties, DYNAMIC_FILE_PATH_P);
 
-        final String outNeighborsFilePath = getPropertyOrFail(properties, DYNAMIC_FILE_PATH_P);
-        final String outTimeFilePath = getPropertyOrFail(properties, DYNAMIC_FILE_PATH_P);
+        final String outNeighborsFilePath = getPropertyOrFail(properties, NEIGHBORS_OUT_PATH_P);
+        final String outTimeFilePath = getPropertyOrFail(properties, TIME_OUT_PATH_P);
         final String delimiter = getPropertyOrDefault(properties, DELIMITER_P, DEFAULT_DELIMITER);
 
         final Boolean isPeriodic = Boolean.valueOf(getPropertyOrDefault(properties, PERIODIC_CONDITION_P, "false"));
         final double radius = Double.parseDouble(getPropertyOrFail(properties, RADIUS_P));
         final int M = Integer.parseInt(getPropertyOrFail(properties, M_P));
-
 
         final File staticFile = Paths.get(staticFilePath).toFile();
         final File dynamicFile = Paths.get(dynamicFilePath).toFile();
@@ -90,7 +94,7 @@ public class Simulator {
 
     private static void printClientUsage() {
         System.out.println("Invalid simulator invocation.\n" +
-                "Usage: ./simulator -DstaticFile='path/to/static/file' -DdynamicFile='path/to/dynamic/file' " +
-                "-Dperiodic -Dradius=radius -DM=M");
+            "Usage: ./simulator -DstaticFile='path/to/static/file' -DdynamicFile='path/to/dynamic/file' " +
+            "[-Dperiodic] -Dradius=radius -DM=M");
     }
 }

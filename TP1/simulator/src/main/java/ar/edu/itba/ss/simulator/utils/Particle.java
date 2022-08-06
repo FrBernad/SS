@@ -1,11 +1,10 @@
 package ar.edu.itba.ss.simulator.utils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
 public class Particle {
+
     private final int id;
-    private final List<Position> positions;
     private final double radius;
     private final double property;
 
@@ -13,7 +12,6 @@ public class Particle {
         this.id = id;
         this.radius = radius;
         this.property = property;
-        this.positions = new ArrayList<>();
     }
 
     public int getId() {
@@ -28,11 +26,20 @@ public class Particle {
         return property;
     }
 
-    public List<Position> getPositions() {
-        return positions;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Particle particle = (Particle) o;
+        return id == particle.id;
     }
 
-    public static class Position {
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    public static class Position{
         private final double x;
         private final double y;
 
@@ -48,6 +55,5 @@ public class Particle {
         public double getY() {
             return y;
         }
-
     }
 }
