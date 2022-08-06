@@ -16,6 +16,8 @@ public class CellIndexMethod {
                                                             final double R,
                                                             final Boolean periodic) {
 
+
+
         return new CellIndexMethodResults(new ExecutionTimestamps());
     }
 
