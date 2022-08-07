@@ -50,10 +50,15 @@ public class Simulator {
             return;
         }
 
-
         final ParticlesParserResult particlesParserResult = parseParticlesList(baseArguments.getStaticFile(),
             baseArguments.getDynamicFile(),
             DEFAULT_DELIMITER);
+
+        if (particlesParserResult.getL() / (double) baseArguments.getM() <= baseArguments.getR()) {
+//            #FIXME: NO HAY Q TENER EN CUENTA Ro TAMBN?
+            System.out.printf("Invalid value M=%d given R=%f --- (L/M>R)\n", baseArguments.getM(), baseArguments.getR());
+            return;
+        }
 
         CellIndexMethodResults methodResults = CellIndexMethod.calculateNeighbors(
             particlesParserResult.getParticlesPerTime().get(0),
@@ -82,7 +87,7 @@ public class Simulator {
         final String outTimeFilePath = getPropertyOrFail(properties, TIME_OUT_PATH_P);
         final String delimiter = getPropertyOrDefault(properties, DELIMITER_P, DEFAULT_DELIMITER);
 
-        final Boolean isPeriodic = Boolean.valueOf(getPropertyOrDefault(properties, PERIODIC_CONDITION_P, "false"));
+        final Boolean isPeriodic = getPropertyOrDefault(properties, PERIODIC_CONDITION_P, "false").equals("");
         final double radius = Double.parseDouble(getPropertyOrFail(properties, RADIUS_P));
         final int M = Integer.parseInt(getPropertyOrFail(properties, M_P));
 

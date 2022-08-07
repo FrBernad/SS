@@ -20,70 +20,48 @@ public class CellIndexMethod {
                                                             final double R,
                                                             final Boolean periodic) {
 
+        Grid grid = new Grid(L, M, particles, periodic);
+
         final ExecutionTimestamps executionTimestamps = new ExecutionTimestamps();
         executionTimestamps.setAlgorithmStart(LocalDateTime.now());
 
-        final Grid grid = new Grid(L, M, particles);
-//
-//        List<List<Grid.Cell>> matrix = grid.getGrid();
-//        boolean success = true;
-//
-//        int i = 0;
-//        int j = 0;
-//        for (List<Grid.Cell> rows : matrix) {
-//            j = 0;
-//            for (Grid.Cell cell : rows) {
-//
-//                System.out.printf(
-//                        "-----------------------------\n" +
-//                                "Cell [ %d : %d ]\n" +
-//                                "%f<X<%f\n" +
-//                                "%f<Y< %f\n", i, j, cell.leftBoundary, cell.rightBoundary, cell.topBoundary, cell.bottomBoundary);
-//                j++;
-//                for (Particle p : cell.getParticles()) {
-//                    Position position = particles.get(p);
-//                    boolean condition = (
-//                            position.getX() >= cell.leftBoundary && position.getX() < cell.rightBoundary) &&
-//                            (position.getY() >= cell.bottomBoundary && position.getY() < cell.topBoundary);
-//                    if (!condition) {
-//                        success = false;
-//                    }
-//                    System.out.printf("Particle: %d X: %f ---- Y: %f (%s)\n", p.getId(), position.getX(), position.getY(), condition);
-//                }
-//            }
-//            i++;
-//        }
-//        System.out.println("Success in all cells: " + success);
-//
 
         executionTimestamps.setAlgorithmEnd(LocalDateTime.now());
         return new CellIndexMethodResults(executionTimestamps);
     }
 
-    private static class Grid {
+    public static class Grid {
         private final List<List<Cell>> grid;
 
         private final int M;
         private final int L;
+        private final boolean periodic;
 
 
-        public Grid(int L, int M, Map<Particle, Position> particles) {
+        public Grid(int L, int M, Map<Particle, Position> particles, Boolean periodic) {
             this.M = M;
             this.L = L;
+            this.periodic = periodic;
 
             this.grid = new ArrayList<>();
             double increment = L / (double) M;
+            buildGrid(increment);
+            fillGrid(particles, increment);
+            setCellNeighbors();
+        }
+
+        private void buildGrid(final double increment) {
             double leftBoundary;
             double rightBoundary;
             double bottomBoundary = 0;
             double topBoundary = increment;
 
-            for (int i = 0; i < M; i++) {
+            for (int y = 0; y < M; y++) {
                 leftBoundary = 0;
                 rightBoundary = leftBoundary + increment;
-                this.grid.add(i, new ArrayList<>());
-                for (int j = 0; j < M; j++) {
-                    this.grid.get(i).add(j, new Cell(leftBoundary, rightBoundary, topBoundary, bottomBoundary));
+                this.grid.add(y, new ArrayList<>());
+                for (int x = 0; x < M; x++) {
+                    this.grid.get(y).add(x, new Cell(x, y, leftBoundary, rightBoundary, topBoundary, bottomBoundary));
                     leftBoundary += increment;
                     rightBoundary += increment;
                 }
@@ -91,26 +69,83 @@ public class CellIndexMethod {
                 bottomBoundary += increment;
             }
 
+        }
+
+
+        private void fillGrid(Map<Particle, Position> particles, final double increment) {
             for (Map.Entry<Particle, Position> entry : particles.entrySet()) {
                 final int x_index = (int) Math.floor(entry.getValue().getX() / increment);
                 final int y_index = (int) Math.floor(entry.getValue().getY() / increment);
                 this.grid.get(y_index).get(x_index).addParticle(entry.getKey());
             }
+        }
 
+        private void setCellNeighbors() {
+            for (int y = 0; y < M; y++) {
+                for (int x = 0; x < M; x++) {
+
+                    final Cell currentCell = this.grid.get(y).get(x);
+
+                    Cell topCell;
+                    Cell rightCell;
+                    Cell topRightCell;
+                    Cell bottomRightCell;
+
+                    topCell = this.grid.get((y + 1) % M).get(x);
+                    topRightCell = this.grid.get((y + 1) % M).get((x + 1) % M);
+                    bottomRightCell = this.grid.get((y - 1) < 0 ? M - 1 : y - 1).get((x + 1) % M);
+                    rightCell = this.grid.get(y).get((x + 1) % M);
+
+                    if (!this.periodic) {
+                        if (y + 1 >= M) {
+                            topCell = null;
+                            topRightCell = null;
+                        }
+                        if (y - 1 < 0) {
+                            bottomRightCell = null;
+                        }
+                        if (x + 1 >= M) {
+                            topRightCell = null;
+                            rightCell = null;
+                            bottomRightCell = null;
+                        }
+                    } else {
+                        if (y == this.M - 1 && x == this.M - 1) {
+                            //Esquina arriba a la derecha
+                            topRightCell = this.grid.get(0).get(0);
+                        } else if (y == 0 && x == this.M - 1) {
+                            //Esquina abajo a la derecha
+                            bottomRightCell = this.grid.get(M - 1).get(0);
+                        }
+                    }
+                    currentCell.setNeighbors(topCell, topRightCell, rightCell, bottomRightCell);
+                }
+            }
         }
 
         public List<List<Cell>> getGrid() {
             return grid;
         }
 
-        private static class Cell {
+        public static class Cell {
             private final List<Particle> particles = new ArrayList<>();
+            private final int x;
+
+            private final int y;
             private final double leftBoundary;
             private final double rightBoundary;
             private final double topBoundary;
             private final double bottomBoundary;
 
-            public Cell(double leftBoundary, double rightBoundary, double topBoundary, double bottomBoundary) {
+            private Cell topCell;
+            private Cell topRightCell;
+            private Cell rightCell;
+            private Cell bottomRightCell;
+
+
+            public Cell(int x, int y, double leftBoundary, double rightBoundary, double topBoundary, double bottomBoundary) {
+                this.x = x;
+                this.y = y;
                 this.leftBoundary = leftBoundary;
                 this.rightBoundary = rightBoundary;
                 this.topBoundary = topBoundary;
@@ -125,7 +160,55 @@ public class CellIndexMethod {
                 this.particles.add(particle);
             }
 
+            public double getLeftBoundary() {
+                return leftBoundary;
+            }
+
+            public double getRightBoundary() {
+                return rightBoundary;
+            }
+
+            public double getTopBoundary() {
+                return topBoundary;
+            }
+
+            public double getBottomBoundary() {
+                return bottomBoundary;
+            }
+
+            public int getX() {
+                return x;
+            }
+
+            public int getY() {
+                return y;
+            }
+
+            public Cell getTopCell() {
+                return topCell;
+            }
+
+            public Cell getTopRightCell() {
+                return topRightCell;
+            }
+
+            public Cell getRightCell() {
+                return rightCell;
+            }
+
+            public Cell getBottomRightCell() {
+                return bottomRightCell;
+            }
+
+            public void setNeighbors(Cell topCell, Cell topRightCell, Cell rightCell, Cell bottomRightCell) {
+                this.topCell = topCell;
+                this.topRightCell = topRightCell;
+                this.rightCell = rightCell;
+                this.bottomRightCell = bottomRightCell;
+            }
+
         }
+
 
     }
 
