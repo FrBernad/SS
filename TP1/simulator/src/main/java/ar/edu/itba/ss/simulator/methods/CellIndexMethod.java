@@ -12,7 +12,6 @@ import static ar.edu.itba.ss.simulator.utils.Particle.Position;
 
 public class CellIndexMethod {
 
-
     public static CellIndexMethodResults calculateNeighbors(final Map<Particle, Position> particles,
                                                             final int N,
                                                             final int L,

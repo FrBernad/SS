@@ -1,6 +1,7 @@
 package ar.edu.itba.ss.methods;
 
 import ar.edu.itba.ss.simulator.utils.Particle;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -21,14 +22,23 @@ public class CellIndexMethodTest {
     private static final String dynamicFilePath = "/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP1/assets/Dynamic100.txt";
     private static final String staticFilePath = "/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP1/assets/Static100.txt";
 
-    @Test
-    public void testParticleInCell() throws IOException {
+    private ParticlesParserResult particlesParserResult;
 
-        final ParticlesParserResult particlesParserResult = parseParticlesList(Paths.get(staticFilePath).toFile(),
+    private Map<Particle, Particle.Position> particles;
+
+    @Before
+    public void initParticles() throws IOException {
+        particlesParserResult = parseParticlesList(
+            Paths.get(staticFilePath).toFile(),
             Paths.get(dynamicFilePath).toFile(),
-            " ");
+            " "
+        );
 
-        final Map<Particle, Particle.Position> particles = particlesParserResult.getParticlesPerTime().get(0);
+        particles = particlesParserResult.getParticlesPerTime().get(0);
+    }
+
+    @Test
+    public void testParticleInCell() {
         final int M = 10;
         final int L = particlesParserResult.getL();
 
@@ -56,6 +66,102 @@ public class CellIndexMethodTest {
                 }
             }
             i++;
+        }
+    }
+
+    @Test
+    public void testCellNeighborsPeriodic() {
+        final int M = 5;
+        final int L = particlesParserResult.getL();
+
+        final Grid grid = new Grid(L, M, particles, true);
+
+        List<List<Cell>> matrix = grid.getGrid();
+        for (int y = 0; y < M; y++) {
+            for (int x = 0; x < M; x++) {
+                final Cell currentCell = matrix.get(y).get(x);
+                //Arriba derecha caso borde
+                if (y == M - 1 && x == M - 1) {
+                    assertTrue(currentCell.getTopRightCell().getX() == 0 && currentCell.getTopRightCell().getY() == 0);
+                }
+                //Abajo derecha caso borde
+                else if (y == 0 && x == M - 1) {
+                    assertTrue(currentCell.getBottomRightCell().getX() == 0 && currentCell.getBottomRightCell().getY() == M - 1);
+                }
+                //Derecha X
+                if (x == M - 1) {
+                    assertEquals(0, currentCell.getRightCell().getX());
+                }
+                //Medio X
+                else {
+                    assertEquals(currentCell.getRightCell().getX(), currentCell.getX() + 1);
+                }
+                //Arriba al medio
+                if (y == M - 1 && x != M - 1) {
+                    assertEquals(0, currentCell.getTopCell().getY());
+                    assertEquals(currentCell.getX() + 1, currentCell.getTopRightCell().getX());
+                }
+                //Arriba derecha normal
+                if (x != M - 1 && y != M - 1) {
+                    assertEquals(currentCell.getX() + 1, currentCell.getTopRightCell().getX());
+                    assertEquals(currentCell.getY() + 1, currentCell.getTopRightCell().getY());
+                }
+                //Abajo derecha normal
+                if (y != 0 && x != M - 1) {
+                    assertEquals(currentCell.getX() + 1, currentCell.getBottomRightCell().getX());
+                    assertEquals(currentCell.getY() - 1, currentCell.getBottomRightCell().getY());
+                }
+            }
+        }
+    }
+
+    @Test
+    public void testCellNeighborsNonPeriodic() {
+        final int M = 5;
+        final int L = particlesParserResult.getL();
+
+        final Grid grid = new Grid(L, M, particles, false);
+
+        List<List<Cell>> matrix = grid.getGrid();
+        for (int y = 0; y < M; y++) {
+            for (int x = 0; x < M; x++) {
+                final Cell currentCell = matrix.get(y).get(x);
+                //Arriba derecha caso borde
+                if (y == M - 1 && x == M - 1) {
+                    assertNull(currentCell.getTopRightCell());
+                    assertNull(currentCell.getTopCell());
+                    assertNull(currentCell.getRightCell());
+                    assertNull(currentCell.getBottomRightCell());
+                }
+                //Abajo derecha caso borde
+                else if (y == 0 && x == M - 1) {
+                    assertNull(currentCell.getBottomRightCell());
+                }
+                //Derecha X
+                if (x == M - 1) {
+                    assertNull(currentCell.getBottomRightCell());
+                    assertNull(currentCell.getRightCell());
+                }
+                //Medio X
+                else {
+                    assertEquals(currentCell.getRightCell().getX(), currentCell.getX() + 1);
+                }
+                //Arriba al medio
+                if (y == M - 1 && x != M - 1) {
+                    assertNull(currentCell.getTopCell());
+                    assertNull(currentCell.getTopRightCell());
+                }
+                //Arriba derecha normal
+                if (x != M - 1 && y != M - 1) {
+                    assertEquals(currentCell.getX() + 1, currentCell.getTopRightCell().getX());
+                    assertEquals(currentCell.getY() + 1, currentCell.getTopRightCell().getY());
+                }
+                //Abajo derecha normal
+                if (y != 0 && x != M - 1) {
+                    assertEquals(currentCell.getX() + 1, currentCell.getBottomRightCell().getX());
+                    assertEquals(currentCell.getY() - 1, currentCell.getBottomRightCell().getY());
+                }
+            }
         }
     }
 }
