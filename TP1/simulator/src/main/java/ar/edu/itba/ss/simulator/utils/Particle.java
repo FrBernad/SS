@@ -2,6 +2,9 @@ package ar.edu.itba.ss.simulator.utils;
 
 import java.util.Objects;
 
+import static java.lang.Math.pow;
+import static java.lang.Math.sqrt;
+
 public class Particle {
 
     private final int id;
@@ -39,7 +42,7 @@ public class Particle {
         return Objects.hash(id);
     }
 
-    public static class Position{
+    public static class Position {
         private final double x;
         private final double y;
 
@@ -54,6 +57,10 @@ public class Particle {
 
         public double getY() {
             return y;
+        }
+
+        public static double calculateDistance(Position p1, Position p2) {
+            return sqrt(pow(p1.getX() - p2.getX(), 2) + pow(p1.getY() - p2.getY(), 2));
         }
     }
 }

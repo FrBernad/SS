@@ -1,5 +1,7 @@
 package ar.edu.itba.ss.methods;
 
+import ar.edu.itba.ss.simulator.methods.CellIndex.Cell;
+import ar.edu.itba.ss.simulator.methods.CellIndex.Grid;
 import ar.edu.itba.ss.simulator.utils.Particle;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,9 +13,8 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
-import static ar.edu.itba.ss.simulator.methods.CellIndexMethod.*;
-import static ar.edu.itba.ss.simulator.methods.CellIndexMethod.Grid.*;
-import static ar.edu.itba.ss.simulator.utils.ParseUtils.*;
+import static ar.edu.itba.ss.simulator.utils.ParseUtils.ParticlesParserResult;
+import static ar.edu.itba.ss.simulator.utils.ParseUtils.parseParticlesList;
 import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -161,6 +162,44 @@ public class CellIndexMethodTest {
                     assertEquals(currentCell.getX() + 1, currentCell.getBottomRightCell().getX());
                     assertEquals(currentCell.getY() - 1, currentCell.getBottomRightCell().getY());
                 }
+            }
+        }
+    }
+
+    @Test
+    public void testCellNeighborsM1Periodic() {
+        final int M = 1;
+        final int L = particlesParserResult.getL();
+
+        final Grid grid = new Grid(L, M, particles, true);
+
+        List<List<Cell>> matrix = grid.getGrid();
+        for (int y = 0; y < M; y++) {
+            for (int x = 0; x < M; x++) {
+                final Cell currentCell = matrix.get(y).get(x);
+                assertEquals(currentCell.getRightCell(), currentCell);
+                assertEquals(currentCell.getTopCell(), currentCell);
+                assertEquals(currentCell.getTopRightCell(), currentCell);
+                assertEquals(currentCell.getBottomRightCell(), currentCell);
+            }
+        }
+    }
+
+    @Test
+    public void testCellNeighborsM1NonPeriodic() {
+        final int M = 1;
+        final int L = particlesParserResult.getL();
+
+        final Grid grid = new Grid(L, M, particles, false);
+
+        List<List<Cell>> matrix = grid.getGrid();
+        for (int y = 0; y < M; y++) {
+            for (int x = 0; x < M; x++) {
+                final Cell currentCell = matrix.get(y).get(x);
+                assertNull(currentCell.getRightCell());
+                assertNull(currentCell.getTopCell());
+                assertNull(currentCell.getTopRightCell());
+                assertNull(currentCell.getBottomRightCell());
             }
         }
     }

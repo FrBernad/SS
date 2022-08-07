@@ -1,10 +1,9 @@
 package ar.edu.itba.ss.simulator;
 
-import ar.edu.itba.ss.simulator.methods.CellIndexMethod;
-import ar.edu.itba.ss.simulator.methods.CellIndexMethod.CellIndexMethodResults;
+import ar.edu.itba.ss.simulator.methods.CellIndex.CellIndexMethod;
+import ar.edu.itba.ss.simulator.methods.CellIndex.CellIndexMethodResults;
 import ar.edu.itba.ss.simulator.utils.ActionLogger;
 import ar.edu.itba.ss.simulator.utils.BaseArguments;
-import ar.edu.itba.ss.simulator.utils.ExecutionTimestamps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +11,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.util.Properties;
 
 import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrDefault;
@@ -70,7 +68,11 @@ public class Simulator {
         );
 
         try (PrintWriter pw = new PrintWriter(baseArguments.getOutNeighborsFile())) {
-            methodResults.getNeighbors().forEach(pw::println);
+            methodResults.getNeighbors().forEach((key, value) -> {
+                pw.append(String.format("%d ", key));
+                value.forEach(p -> pw.append(String.format("%d ", p.getId())));
+                pw.println();
+            });
         }
 
         try (PrintWriter pw = new PrintWriter(baseArguments.getOutTimeFile())) {
