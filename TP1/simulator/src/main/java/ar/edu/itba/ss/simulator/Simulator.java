@@ -4,6 +4,7 @@ import ar.edu.itba.ss.simulator.methods.CellIndex.CellIndexMethod;
 import ar.edu.itba.ss.simulator.methods.CellIndex.CellIndexMethodResults;
 import ar.edu.itba.ss.simulator.utils.ActionLogger;
 import ar.edu.itba.ss.simulator.utils.BaseArguments;
+import ar.edu.itba.ss.simulator.utils.Particle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,9 +53,15 @@ public class Simulator {
             baseArguments.getDynamicFile(),
             DEFAULT_DELIMITER);
 
-        if (particlesParserResult.getL() / (double) baseArguments.getM() <= baseArguments.getR()) {
-//            #FIXME: NO HAY Q TENER EN CUENTA Ro TAMBN?
-            System.out.printf("Invalid value M=%d given R=%f --- (L/M>R)\n", baseArguments.getM(), baseArguments.getR());
+        final double maxRadius = particlesParserResult.getParticlesPerTime()
+            .get(0)
+            .keySet()
+            .stream()
+            .map(Particle::getRadius)
+            .max(Double::compare).orElse(0.0);
+
+        if (particlesParserResult.getL() / (double) baseArguments.getM() <= baseArguments.getR() + 2 * maxRadius) {
+            System.out.printf("Invalid value M=%d given R=%f and maxR=%f --- (L/M>R)\n", baseArguments.getM(), baseArguments.getR(), maxRadius);
             return;
         }
 
