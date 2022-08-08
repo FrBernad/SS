@@ -7,4 +7,7 @@ config:
   L: 100
   M: 4
   R: 8
+
+#  for ovito
+  particle: 1
 ...

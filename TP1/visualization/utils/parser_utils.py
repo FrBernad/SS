@@ -1,31 +1,15 @@
+from typing import List
+
+import numpy as np
 import ovito.data as od
-import pandas
 import pandas as pd
 from ovito.pipeline import StaticSource
 from pandas import DataFrame
 
 
-def get_particles_static_source(dynamic_file: str, static_file: str):
-    position = []
-    identifier = []
-    radius = []
-    with open(dynamic_file) as df:
-        next(df)
-        particle_index = 0
-        for line in df.readlines():
-            line_parts = line.split(' ')
-            position.append([float(line_parts[0]), float(line_parts[1]), 0])
-            identifier.append(particle_index)
-            particle_index += 1
-
-    with open(static_file) as sf:
-        next(sf)
-        next(sf)
-        particle_index = 0
-        for line in sf.readlines():
-            line_parts = line.split(' ')
-            radius.append(float(line_parts[0]))
-            particle_index += 1
+def get_particles_static_source(dynamic_file: str, static_file: str, neighbors: List[int], particle_id: int):
+    dynamic_df = pd.read_csv(dynamic_file, skiprows=1, sep=" ", names=["x", "y"])
+    static_df = pd.read_csv(static_file, skiprows=2, sep=" ", names=["radius", "prop"])
 
     # Create a Particles object containing two particles:
     data = od.DataCollection()
@@ -36,10 +20,12 @@ def get_particles_static_source(dynamic_file: str, static_file: str):
     cell[:, 2] = (0, 0, 2)
     data.objects.append(cell)
 
+    ids = np.arange(1, len(dynamic_df.x) + 1)
     particles = od.Particles()
-    particles.create_property('Particle Identifier', data=identifier)
-    particles.create_property('Position', data=position)
-    particles.create_property('Radius', data=radius)
+    particles.create_property('Particle Identifier', data=ids)
+    particles.create_property('Position', data=np.array((dynamic_df.x, dynamic_df.y, np.zeros(len(dynamic_df.x)))).T)
+    particles.create_property('Radius', data=static_df.radius)
+    particles.create_property('Neighbor', data=[1 if i in neighbors or i == particle_id else 0 for i in ids])
     data.objects.append(particles)
 
     return StaticSource(data=data)
@@ -49,7 +35,7 @@ def get_particles_data(dynamic_file: str, static_file: str) -> DataFrame:
     dynamic_df = pd.read_csv(dynamic_file, skiprows=1, sep=" ", names=["x", "y"])
     static_df = pd.read_csv(static_file, skiprows=2, sep=" ", names=["radius", "prop"])
 
-    return pandas.concat([dynamic_df, static_df], axis=1)
+    return pd.concat([dynamic_df, static_df], axis=1)
 
 
 def get_neighbors_data(neighbors_file: str) -> dict:

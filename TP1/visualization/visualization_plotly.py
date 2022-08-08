@@ -2,12 +2,12 @@ import sys
 
 from plots.particles_plot import make_particles_plot
 from utils.argument_parser import parse_arguments
-from utils.plotly_config import ConfigPlotly, get_plotly_config
+from utils.config import get_config
 from utils.parser_utils import get_particles_data, get_neighbors_data
 
 
 def visualization_plotly(config_file: str):
-    config = get_plotly_config(config_file)
+    config = get_config(config_file)
 
     df = get_particles_data(config.dynamic_file, config.static_file)
     neighbors = get_neighbors_data(config.neighbors_file)
