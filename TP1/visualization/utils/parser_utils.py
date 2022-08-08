@@ -1,9 +1,11 @@
-from typing import List
-
 import ovito.data as od
+import pandas
+import pandas as pd
+from ovito.pipeline import StaticSource
+from pandas import DataFrame
 
 
-def parse_particles(dynamic_file: str, static_file: str, temp_file: str):
+def get_particles_static_source(dynamic_file: str, static_file: str):
     position = []
     identifier = []
     radius = []
@@ -40,4 +42,21 @@ def parse_particles(dynamic_file: str, static_file: str, temp_file: str):
     particles.create_property('Radius', data=radius)
     data.objects.append(particles)
 
-    return data
+    return StaticSource(data=data)
+
+
+def get_particles_data(dynamic_file: str, static_file: str) -> DataFrame:
+    dynamic_df = pd.read_csv(dynamic_file, skiprows=1, sep=" ", names=["x", "y"])
+    static_df = pd.read_csv(static_file, skiprows=2, sep=" ", names=["radius", "prop"])
+
+    return pandas.concat([dynamic_df, static_df], axis=1)
+
+
+def get_neighbors_data(neighbors_file: str) -> dict:
+    neighbors = dict()
+    with open(neighbors_file) as f:
+        for line in f.readlines():
+            aux = [int(i) for i in line.split(" ")[:-1]]
+            neighbors[aux[0]] = aux[1:]
+
+    return neighbors

@@ -112,6 +112,6 @@ public class Simulator {
     private static void printClientUsage() {
         System.out.println("Invalid simulator invocation.\n" +
             "Usage: ./simulator -DstaticFile='path/to/static/file' -DdynamicFile='path/to/dynamic/file' " +
-            "[-Dperiodic] -Dradius=radius -DM=M");
+            "[-Dperiodic] -Dradius=radius -DM=M -DneighborsFile=neighborsFile -DtimeFile=timeFile");
     }
 }

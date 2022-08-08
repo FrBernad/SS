@@ -47,7 +47,6 @@ public class Grid {
 
     }
 
-
     private void fillGrid(Map<Particle, Position> particles, final double increment) {
         for (Map.Entry<Particle, Position> entry : particles.entrySet()) {
             final int x_index = (int) Math.floor(entry.getValue().getX() / increment);

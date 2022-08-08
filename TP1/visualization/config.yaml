@@ -1,0 +1,10 @@
+---
+# --- Visualization plotly config ---
+config:
+#  dynamic_file:
+#  static_file:
+#  neighbors_file:
+  L: 100
+  M: 4
+  R: 8
+...

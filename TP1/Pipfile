@@ -7,6 +7,9 @@ name = "pypi"
 numpy = "*"
 ovito = "*"
 pandas = "*"
+plotly = "*"
+pydantic = "*"
+pyyaml = "*"
 
 [dev-packages]
 

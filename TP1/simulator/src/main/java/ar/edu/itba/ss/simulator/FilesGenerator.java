@@ -72,7 +72,7 @@ public class FilesGenerator {
         final String dynamicFilePath = getPropertyOrFail(properties, DYNAMIC_FILE_PATH_P);
 
         final String delimiter = getPropertyOrDefault(properties, DELIMITER_P, DEFAULT_DELIMITER);
-        final double L = parseDouble(getPropertyOrDefault(properties, L_P, "100"));
+        final int L = parseInt(getPropertyOrDefault(properties, L_P, "100"));
         final double R = parseDouble(getPropertyOrFail(properties, RADIUS_P));
         final double P = parseDouble(getPropertyOrFail(properties, PROPERTY_P));
 
@@ -86,7 +86,7 @@ public class FilesGenerator {
     }
 
     private static void printClientUsage() {
-        System.out.println("Invalid simulator invocation.\n" +
+        System.out.println("Invalid generator invocation.\n" +
                 "Usage: ./files_generator -DstaticFile='path/to/static/file' -DdynamicFile='path/to/dynamic/file' " +
                 "-DL=L -Dradius=radius -DN=N -Dproperty=property");
     }

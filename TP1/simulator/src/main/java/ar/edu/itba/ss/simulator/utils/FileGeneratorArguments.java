@@ -5,14 +5,14 @@ import java.io.File;
 public class FileGeneratorArguments {
     private final File staticFile;
     private final File dynamicFile;
-    private final double L;
+    private final int L;
     private final double R;
     private final double property;
     private final int N;
     private final String delimiter;
     private final int times;
 
-    public FileGeneratorArguments(File staticFile, File dynamicFile, double L, double R, double property, int N, String delimiter, int times) {
+    public FileGeneratorArguments(File staticFile, File dynamicFile, int L, double R, double property, int N, String delimiter, int times) {
         this.staticFile = staticFile;
         this.dynamicFile = dynamicFile;
         this.L = L;
@@ -31,7 +31,7 @@ public class FileGeneratorArguments {
         return dynamicFile;
     }
 
-    public double getL() {
+    public int getL() {
         return L;
     }
 
