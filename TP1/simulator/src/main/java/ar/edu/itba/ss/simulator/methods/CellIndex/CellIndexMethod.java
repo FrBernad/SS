@@ -53,6 +53,8 @@ public class CellIndexMethod {
 
         final Position particlePosition = particles.get(particle);
 
+//        FIXME: ver caso con M=1
+
         for (Particle otherParticle : cell.getParticles()) {
             Position otherParticlePosition = particles.get(otherParticle);
             if (!particle.equals(otherParticle)) {
@@ -82,9 +84,12 @@ public class CellIndexMethod {
             for (Particle otherParticle : topRightCell.getParticles()) {
                 Position otherParticlePosition = particles.get(otherParticle);
                 if (otherParticlePosition.getY() < particlePosition.getY()) {
-                    otherParticlePosition = new Position(otherParticlePosition.getX() + (otherParticlePosition.getX() < particlePosition.getX() ? L : 0),
-                        otherParticlePosition.getY() + L);
+                    otherParticlePosition = new Position(otherParticlePosition.getX() + (otherParticlePosition.getX() < particlePosition.getX() ? L : 0)
+                        , otherParticlePosition.getY() + L);
+                } else if (otherParticlePosition.getX() < particlePosition.getX()) {
+                    otherParticlePosition = new Position(otherParticlePosition.getX() + L, otherParticlePosition.getY());
                 }
+
                 final double distanceBetween = calculateDistance(particlePosition, otherParticlePosition) - particle.getRadius() - otherParticle.getRadius();
                 if (distanceBetween <= R) {
                     neighbors.get(particle.getId()).add(otherParticle);
@@ -113,7 +118,10 @@ public class CellIndexMethod {
                 if (otherParticlePosition.getY() > particlePosition.getY()) {
                     otherParticlePosition = new Position(otherParticlePosition.getX() + (otherParticlePosition.getX() < particlePosition.getX() ? L : 0),
                         otherParticlePosition.getY() - L);
+                } else if (otherParticlePosition.getX() < particlePosition.getX()) {
+                    otherParticlePosition = new Position(otherParticlePosition.getX() + L, otherParticlePosition.getY());
                 }
+
                 final double distanceBetween = calculateDistance(particlePosition, otherParticlePosition) - particle.getRadius() - otherParticle.getRadius();
                 if (distanceBetween <= R) {
                     neighbors.get(particle.getId()).add(otherParticle);

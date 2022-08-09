@@ -6,7 +6,7 @@ config:
 #  neighbors_file:
   L: 100
   M: 4
-  R: 8
+  R: 12
 
 #  for ovito
   particle: 1
