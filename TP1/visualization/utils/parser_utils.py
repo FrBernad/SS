@@ -26,7 +26,7 @@ def get_particles_static_source(df: DataFrame, neighbors: List[int], particle_id
     particles.create_property('Particle Identifier', data=ids)
     particles.create_property('Position',
                               data=np.concatenate((np.array((df.x, df.y, np.zeros(len(df.x)))).T, radius_points)))
-    particles.create_property('Radius', data=np.concatenate((df.radius, np.full(len(radius_points), 0.2))))
+    particles.create_property('Radius', data=np.concatenate((df.radius, np.full(len(radius_points), max(df.radius)/4))))
     particles.create_property('Neighbor', data=[1 if i in neighbors or i == particle_id
                                                 else 2 if i > len(df.x) else 0 for i in ids])
     data.objects.append(particles)
