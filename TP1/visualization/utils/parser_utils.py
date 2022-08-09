@@ -1,3 +1,5 @@
+import math
+from math import pi
 from typing import List
 
 import numpy as np
@@ -7,10 +9,7 @@ from ovito.pipeline import StaticSource
 from pandas import DataFrame
 
 
-def get_particles_static_source(dynamic_file: str, static_file: str, neighbors: List[int], particle_id: int):
-    dynamic_df = pd.read_csv(dynamic_file, skiprows=1, sep=" ", names=["x", "y"])
-    static_df = pd.read_csv(static_file, skiprows=2, sep=" ", names=["radius", "prop"])
-
+def get_particles_static_source(df: DataFrame, neighbors: List[int], particle_id: int, R: float):
     # Create a Particles object containing two particles:
     data = od.DataCollection()
 
@@ -20,15 +19,24 @@ def get_particles_static_source(dynamic_file: str, static_file: str, neighbors: 
     cell[:, 2] = (0, 0, 2)
     data.objects.append(cell)
 
-    ids = np.arange(1, len(dynamic_df.x) + 1)
+    radius_points = _generate_radius(R+df.radius[particle_id - 1], df.x[particle_id - 1], df.y[particle_id - 1])
+
+    ids = np.arange(1, len(df.x) + len(radius_points) + 1)
     particles = od.Particles()
     particles.create_property('Particle Identifier', data=ids)
-    particles.create_property('Position', data=np.array((dynamic_df.x, dynamic_df.y, np.zeros(len(dynamic_df.x)))).T)
-    particles.create_property('Radius', data=static_df.radius)
-    particles.create_property('Neighbor', data=[1 if i in neighbors or i == particle_id else 0 for i in ids])
+    particles.create_property('Position',
+                              data=np.concatenate((np.array((df.x, df.y, np.zeros(len(df.x)))).T, radius_points)))
+    particles.create_property('Radius', data=np.concatenate((df.radius, np.full(len(radius_points), 0.2))))
+    particles.create_property('Neighbor', data=[1 if i in neighbors or i == particle_id
+                                                else 2 if i >= len(radius_points) else 0 for i in ids])
     data.objects.append(particles)
 
     return StaticSource(data=data)
+
+
+def _generate_radius(R: float, x_offset: float, y_offset: float):
+    return [[x_offset + math.cos(2 * pi / 100 * x) * R, y_offset + math.sin(2 * pi / 100 * x) * R, 0] for x in
+            range(0, 100 + 1)]
 
 
 def get_particles_data(dynamic_file: str, static_file: str) -> DataFrame:
