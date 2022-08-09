@@ -39,12 +39,14 @@ public class FilesGenerator {
         final Properties properties = System.getProperties();
 
         try {
+            LOGGER.info("Parsing arguments ...");
             fileArguments = getAndParseBaseArguments(properties);
         } catch (IllegalArgumentException e) {
             printClientUsage();
             return;
         }
 
+        LOGGER.info("Generating files ...");
         final double minR = fileArguments.getMinR();
         final double maxR = fileArguments.getMaxR();
         try (PrintWriter pw = new PrintWriter(fileArguments.getStaticFile())) {
@@ -68,6 +70,7 @@ public class FilesGenerator {
             }
         }
 
+        LOGGER.info("Finished!");
 
     }
 
@@ -93,6 +96,6 @@ public class FilesGenerator {
     private static void printClientUsage() {
         System.out.println("Invalid generator invocation.\n" +
             "Usage: ./files_generator -DstaticFile='path/to/static/file' -DdynamicFile='path/to/dynamic/file' " +
-            "-DL=L -Dradius=radius -DN=N -Dproperty=property");
+            "-DL=L -DminRadius=minRadius -DmaxRadius=minRadius -DN=N -Dproperty=property");
     }
 }
