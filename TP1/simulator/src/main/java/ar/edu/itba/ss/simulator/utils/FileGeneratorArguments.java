@@ -6,19 +6,23 @@ public class FileGeneratorArguments {
     private final File staticFile;
     private final File dynamicFile;
     private final int L;
-    private final double R;
+    private final double minR;
+    private final double maxR;
     private final double property;
     private final int N;
     private final String delimiter;
     private final int times;
 
-    public FileGeneratorArguments(File staticFile, File dynamicFile, int L, double R, double property, int N, String delimiter, int times) {
+
+    public FileGeneratorArguments(File staticFile, File dynamicFile, int l, double minR, double maxR,
+                                  double property, int n, String delimiter, int times) {
         this.staticFile = staticFile;
         this.dynamicFile = dynamicFile;
-        this.L = L;
-        this.R = R;
+        L = l;
+        this.minR = minR;
+        this.maxR = maxR;
         this.property = property;
-        this.N = N;
+        N = n;
         this.delimiter = delimiter;
         this.times = times;
     }
@@ -35,8 +39,12 @@ public class FileGeneratorArguments {
         return L;
     }
 
-    public double getR() {
-        return R;
+    public double getMinR() {
+        return minR;
+    }
+
+    public double getMaxR() {
+        return maxR;
     }
 
     public double getProperty() {

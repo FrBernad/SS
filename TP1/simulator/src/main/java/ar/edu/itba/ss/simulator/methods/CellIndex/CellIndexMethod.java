@@ -33,7 +33,7 @@ public class CellIndexMethod {
                 final Cell currentCell = cells.get(y).get(x);
                 if (!currentCell.isEmpty()) {
                     for (Particle p : currentCell.getParticles()) {
-                        checkNeighbors(R, p, particles, currentCell, neighbors, L);
+                        checkNeighbors(p, particles, currentCell, neighbors, R, L, M, periodic);
                     }
                 }
             }
@@ -44,8 +44,9 @@ public class CellIndexMethod {
         return new CellIndexMethodResults(neighbors, executionTimestamps);
     }
 
-    private static void checkNeighbors(double R, final Particle particle, final Map<Particle, Position> particles,
-                                       final Cell cell, final Map<Integer, Set<Particle>> neighbors, final int L) {
+    private static void checkNeighbors(final Particle particle, final Map<Particle, Position> particles,
+                                       final Cell cell, final Map<Integer, Set<Particle>> neighbors,
+                                       final double R, final int L, final int M, final boolean periodic) {
         final Cell topCell = cell.getTopCell();
         final Cell rightCell = cell.getRightCell();
         final Cell topRightCell = cell.getTopRightCell();
@@ -53,98 +54,86 @@ public class CellIndexMethod {
 
         final Position particlePosition = particles.get(particle);
 
-//        FIXME: ver caso con M=1
-
         for (Particle otherParticle : cell.getParticles()) {
             Position otherParticlePosition = particles.get(otherParticle);
             if (!particle.equals(otherParticle)) {
-                final double distanceBetween = calculateDistance(particlePosition, otherParticlePosition) - particle.getRadius() - otherParticle.getRadius();
-                if (distanceBetween <= R) {
-                    neighbors.get(particle.getId()).add(otherParticle);
-                    neighbors.get(otherParticle.getId()).add(particle);
-                }
+
+                addIfInRadius(particle, particlePosition, otherParticle, otherParticlePosition, neighbors, R);
             }
         }
 
         if (topCell != null && !topCell.isEmpty()) {
             for (Particle otherParticle : topCell.getParticles()) {
                 Position otherParticlePosition = particles.get(otherParticle);
-                if (otherParticlePosition.getY() < particlePosition.getY()) {
-                    otherParticlePosition = new Position(otherParticlePosition.getX(), otherParticlePosition.getY() + L);
+
+                if (periodic && M != 1) {
+                    if (otherParticlePosition.getY() < particlePosition.getY()) {
+                        otherParticlePosition = new Position(otherParticlePosition.getX(), otherParticlePosition.getY() + L);
+                    }
                 }
-                final double distanceBetween = calculateDistance(particlePosition, otherParticlePosition) - particle.getRadius() - otherParticle.getRadius();
-                if (distanceBetween <= R) {
-                    neighbors.get(particle.getId()).add(otherParticle);
-                    neighbors.get(otherParticle.getId()).add(particle);
-                }
+
+                addIfInRadius(particle, particlePosition, otherParticle, otherParticlePosition, neighbors, R);
             }
         }
 
         if (topRightCell != null && !topRightCell.isEmpty()) {
             for (Particle otherParticle : topRightCell.getParticles()) {
                 Position otherParticlePosition = particles.get(otherParticle);
-                if (otherParticlePosition.getY() < particlePosition.getY()) {
-                    otherParticlePosition = new Position(otherParticlePosition.getX() + (otherParticlePosition.getX() < particlePosition.getX() ? L : 0)
-                        , otherParticlePosition.getY() + L);
-                } else if (otherParticlePosition.getX() < particlePosition.getX()) {
-                    otherParticlePosition = new Position(otherParticlePosition.getX() + L, otherParticlePosition.getY());
+
+                if (periodic && M != 1) {
+                    if (otherParticlePosition.getY() < particlePosition.getY()) {
+                        otherParticlePosition = new Position(otherParticlePosition.getX() + (otherParticlePosition.getX() < particlePosition.getX() ? L : 0)
+                            , otherParticlePosition.getY() + L);
+                    } else if (otherParticlePosition.getX() < particlePosition.getX()) {
+                        otherParticlePosition = new Position(otherParticlePosition.getX() + L, otherParticlePosition.getY());
+                    }
                 }
 
-                final double distanceBetween = calculateDistance(particlePosition, otherParticlePosition) - particle.getRadius() - otherParticle.getRadius();
-                if (distanceBetween <= R) {
-                    neighbors.get(particle.getId()).add(otherParticle);
-                    neighbors.get(otherParticle.getId()).add(particle);
-                }
+                addIfInRadius(particle, particlePosition, otherParticle, otherParticlePosition, neighbors, R);
             }
         }
 
         if (rightCell != null && !rightCell.isEmpty()) {
             for (Particle otherParticle : rightCell.getParticles()) {
                 Position otherParticlePosition = particles.get(otherParticle);
-                if (otherParticlePosition.getX() < particlePosition.getX()) {
-                    otherParticlePosition = new Position(otherParticlePosition.getX() + L, otherParticlePosition.getY());
+
+                if (periodic && M != 1) {
+                    if (otherParticlePosition.getX() < particlePosition.getX()) {
+                        otherParticlePosition = new Position(otherParticlePosition.getX() + L, otherParticlePosition.getY());
+                    }
                 }
-                final double distanceBetween = calculateDistance(particlePosition, otherParticlePosition) - particle.getRadius() - otherParticle.getRadius();
-                if (distanceBetween <= R) {
-                    neighbors.get(particle.getId()).add(otherParticle);
-                    neighbors.get(otherParticle.getId()).add(particle);
-                }
+
+                addIfInRadius(particle, particlePosition, otherParticle, otherParticlePosition, neighbors, R);
             }
         }
 
         if (bottomRightCell != null && !bottomRightCell.isEmpty()) {
             for (Particle otherParticle : bottomRightCell.getParticles()) {
                 Position otherParticlePosition = particles.get(otherParticle);
-                if (otherParticlePosition.getY() > particlePosition.getY()) {
-                    otherParticlePosition = new Position(otherParticlePosition.getX() + (otherParticlePosition.getX() < particlePosition.getX() ? L : 0),
-                        otherParticlePosition.getY() - L);
-                } else if (otherParticlePosition.getX() < particlePosition.getX()) {
-                    otherParticlePosition = new Position(otherParticlePosition.getX() + L, otherParticlePosition.getY());
+
+                if (periodic && M != 1) {
+                    if (otherParticlePosition.getY() > particlePosition.getY()) {
+                        otherParticlePosition = new Position(otherParticlePosition.getX() + (otherParticlePosition.getX() < particlePosition.getX() ? L : 0),
+                            otherParticlePosition.getY() - L);
+                    } else if (otherParticlePosition.getX() < particlePosition.getX()) {
+                        otherParticlePosition = new Position(otherParticlePosition.getX() + L, otherParticlePosition.getY());
+                    }
                 }
 
-                final double distanceBetween = calculateDistance(particlePosition, otherParticlePosition) - particle.getRadius() - otherParticle.getRadius();
-                if (distanceBetween <= R) {
-                    neighbors.get(particle.getId()).add(otherParticle);
-                    neighbors.get(otherParticle.getId()).add(particle);
-                }
+                addIfInRadius(particle, particlePosition, otherParticle, otherParticlePosition, neighbors, R);
             }
         }
 
-//        for (Cell c : neighborCells) {
-//            if (c.isPresent() && !c.get().isEmpty()) {
-//                for (Particle otherParticle : c.get().getParticles()) {
-//                    if (!otherParticle.equals(particle)) {
-//                        final Position otherParticlePosition = particles.get(otherParticle);
-//                        final double distanceBetween = calculateDistance(particlePosition, otherParticlePosition) - particle.getRadius() - otherParticle.getRadius();
-//                        if (distanceBetween <= R) {
-//                            neighbors.get(particle.getId()).add(otherParticle);
-//                            neighbors.get(otherParticle.getId()).add(particle);
-//                        }
-//                    }
-//                }
-//            }
-//        }
+    }
 
+    private static void addIfInRadius(final Particle particle, final Position particlePosition,
+                                      final Particle otherParticle, final Position otherParticlePosition,
+                                      final Map<Integer, Set<Particle>> neighbors, final double R) {
+        final double distanceBetween = calculateDistance(particlePosition, otherParticlePosition) - particle.getRadius() - otherParticle.getRadius();
+        if (distanceBetween <= R) {
+            neighbors.get(particle.getId()).add(otherParticle);
+            neighbors.get(otherParticle.getId()).add(particle);
+        }
     }
 
 }

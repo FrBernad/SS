@@ -19,7 +19,7 @@ def get_particles_static_source(df: DataFrame, neighbors: List[int], particle_id
     cell[:, 2] = (0, 0, 2)
     data.objects.append(cell)
 
-    radius_points = _generate_radius(R+df.radius[particle_id - 1], df.x[particle_id - 1], df.y[particle_id - 1])
+    radius_points = _generate_radius(R + df.radius[particle_id - 1], df.x[particle_id - 1], df.y[particle_id - 1])
 
     ids = np.arange(1, len(df.x) + len(radius_points) + 1)
     particles = od.Particles()
@@ -28,15 +28,15 @@ def get_particles_static_source(df: DataFrame, neighbors: List[int], particle_id
                               data=np.concatenate((np.array((df.x, df.y, np.zeros(len(df.x)))).T, radius_points)))
     particles.create_property('Radius', data=np.concatenate((df.radius, np.full(len(radius_points), 0.2))))
     particles.create_property('Neighbor', data=[1 if i in neighbors or i == particle_id
-                                                else 2 if i >= len(radius_points) else 0 for i in ids])
+                                                else 2 if i > len(df.x) else 0 for i in ids])
     data.objects.append(particles)
 
     return StaticSource(data=data)
 
 
-def _generate_radius(R: float, x_offset: float, y_offset: float):
-    return [[x_offset + math.cos(2 * pi / 100 * x) * R, y_offset + math.sin(2 * pi / 100 * x) * R, 0] for x in
-            range(0, 100 + 1)]
+def _generate_radius(R: float, x_offset: float, y_offset: float, n: int = 500):
+    return [[x_offset + math.cos(2 * pi / n * x) * R, y_offset + math.sin(2 * pi / n * x) * R, 0] for x in
+            range(0, n + 1)]
 
 
 def get_particles_data(dynamic_file: str, static_file: str) -> DataFrame:

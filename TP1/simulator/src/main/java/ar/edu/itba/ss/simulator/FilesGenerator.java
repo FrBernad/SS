@@ -12,6 +12,7 @@ import java.util.Random;
 
 import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrDefault;
 import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrFail;
+import static java.lang.Double.max;
 import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
 
@@ -22,7 +23,8 @@ public class FilesGenerator {
     private static final String DYNAMIC_FILE_PATH_P = "dynamicFile";
     private static final String N_P = "N";
     private static final String L_P = "L";
-    private static final String RADIUS_P = "radius";
+    private static final String MAX_RADIUS_P = "maxRadius";
+    private static final String MIN_RADIUS_P = "minRadius";
     private static final String PROPERTY_P = "property";
     private static final String DELIMITER_P = "delimiter";
     private static final String TIMES_P = "times";
@@ -43,11 +45,13 @@ public class FilesGenerator {
             return;
         }
 
+        final double minR = fileArguments.getMinR();
+        final double maxR = fileArguments.getMaxR();
         try (PrintWriter pw = new PrintWriter(fileArguments.getStaticFile())) {
             pw.println(fileArguments.getN());
             pw.println(fileArguments.getL());
             for (int i = 0; i < fileArguments.getN(); i++) {
-                pw.printf("%f %f\n", fileArguments.getR(), fileArguments.getProperty());
+                pw.printf("%f %f\n", minR + Math.random() * (maxR - minR), fileArguments.getProperty());
             }
         }
 
@@ -73,7 +77,8 @@ public class FilesGenerator {
 
         final String delimiter = getPropertyOrDefault(properties, DELIMITER_P, DEFAULT_DELIMITER);
         final int L = parseInt(getPropertyOrDefault(properties, L_P, "100"));
-        final double R = parseDouble(getPropertyOrFail(properties, RADIUS_P));
+        final double minR = parseDouble(getPropertyOrFail(properties, MIN_RADIUS_P));
+        final double maxR = parseDouble(getPropertyOrFail(properties, MAX_RADIUS_P));
         final double P = parseDouble(getPropertyOrFail(properties, PROPERTY_P));
 
         final int N = parseInt(getPropertyOrDefault(properties, N_P, "100"));
@@ -82,12 +87,12 @@ public class FilesGenerator {
         final File staticFile = new File(staticFilePath);
         final File dynamicFile = new File(dynamicFilePath);
 
-        return new FileGeneratorArguments(staticFile, dynamicFile, L, R, P, N, delimiter, times);
+        return new FileGeneratorArguments(staticFile, dynamicFile, L, minR, maxR, P, N, delimiter, times);
     }
 
     private static void printClientUsage() {
         System.out.println("Invalid generator invocation.\n" +
-                "Usage: ./files_generator -DstaticFile='path/to/static/file' -DdynamicFile='path/to/dynamic/file' " +
-                "-DL=L -Dradius=radius -DN=N -Dproperty=property");
+            "Usage: ./files_generator -DstaticFile='path/to/static/file' -DdynamicFile='path/to/dynamic/file' " +
+            "-DL=L -Dradius=radius -DN=N -Dproperty=property");
     }
 }

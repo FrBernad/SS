@@ -11,7 +11,7 @@ from utils.parser_utils import get_particles_static_source
 
 def visualization_ovito(config_file: str):
     config = get_config(config_file)
-    df = get_particles_data(config.dynamic_file, config.static_file);
+    df = get_particles_data(config.dynamic_file, config.static_file)
     static_source = get_particles_static_source(df,
                                                 get_neighbors_data(config.neighbors_file).get(config.particle),
                                                 config.particle,

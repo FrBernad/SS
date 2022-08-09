@@ -43,12 +43,14 @@ public class Simulator {
         final Properties properties = System.getProperties();
 
         try {
+            LOGGER.info("Parsing Arguments ...");
             baseArguments = getAndParseBaseArguments(properties);
         } catch (IllegalArgumentException e) {
             printClientUsage();
             return;
         }
 
+        LOGGER.info("Parsing Particles ...");
         final ParticlesParserResult particlesParserResult = parseParticlesList(baseArguments.getStaticFile(),
             baseArguments.getDynamicFile(),
             DEFAULT_DELIMITER);
@@ -65,6 +67,7 @@ public class Simulator {
             return;
         }
 
+        LOGGER.info("Calculating Neighbors ...");
         CellIndexMethodResults methodResults = CellIndexMethod.calculateNeighbors(
             particlesParserResult.getParticlesPerTime().get(0),
             particlesParserResult.getN(),
@@ -74,6 +77,7 @@ public class Simulator {
             baseArguments.getPeriodic()
         );
 
+        LOGGER.info("Writing Results ...");
         try (PrintWriter pw = new PrintWriter(baseArguments.getOutNeighborsFile())) {
             methodResults.getNeighbors().forEach((key, value) -> {
                 pw.append(String.format("%d ", key));
