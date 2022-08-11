@@ -12,12 +12,11 @@ import java.util.Random;
 
 import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrDefault;
 import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrFail;
-import static java.lang.Double.max;
 import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
 
-public class FilesGenerator {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Simulator.class);
+public class ParticlesGenerator {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ParticlesGenerator.class);
 
     private static final String STATIC_FILE_PATH_P = "staticFile";
     private static final String DYNAMIC_FILE_PATH_P = "dynamicFile";

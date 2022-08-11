@@ -9,5 +9,5 @@ config:
   R: 1
 
 #  for ovito
-  particle: 1
+  particle: 55
 ...

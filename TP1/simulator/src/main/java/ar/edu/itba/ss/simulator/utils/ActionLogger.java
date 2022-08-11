@@ -18,8 +18,7 @@ public class ActionLogger {
     public static void logTimestamps(final PrintWriter writer, final ExecutionTimestamps executionTimestamps) {
         logAlgorithmStart(writer, executionTimestamps.getAlgorithmStart());
         logAlgorithmEnd(writer, executionTimestamps.getAlgorithmEnd());
-        logTotalAlgorithmTime(writer, LocalTime.ofNanoOfDay(
-            executionTimestamps.getAlgorithmEnd().toLocalTime().toNanoOfDay() - executionTimestamps.getAlgorithmStart().toLocalTime().toNanoOfDay())
+        logTotalAlgorithmTime(writer, executionTimestamps.getAlgorithmTotalTime()
         );
     }
 

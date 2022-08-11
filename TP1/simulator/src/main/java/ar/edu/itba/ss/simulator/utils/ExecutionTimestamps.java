@@ -1,6 +1,7 @@
 package ar.edu.itba.ss.simulator.utils;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public class ExecutionTimestamps {
 
@@ -13,6 +14,12 @@ public class ExecutionTimestamps {
 
     public LocalDateTime getAlgorithmEnd() {
         return algorithmEnd;
+    }
+
+    public LocalTime getAlgorithmTotalTime() {
+        return LocalTime.ofNanoOfDay(
+            getAlgorithmEnd().toLocalTime().toNanoOfDay() - getAlgorithmStart().toLocalTime().toNanoOfDay()
+        );
     }
 
     public void setAlgorithmStart(LocalDateTime algorithmStart) {
