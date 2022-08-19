@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import static ar.edu.itba.ss.simulator.utils.Particle.*;
 import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
 
@@ -18,7 +19,7 @@ public class ParseUtils {
         final int N = parseInt(staticScanner.nextLine().split(delimiter)[0]);
         final int L = parseInt(staticScanner.nextLine().split(delimiter)[0]);
 
-        final List<Map<Particle, Position>> particlesPerTime = new ArrayList<>();
+        final List<Map<Particle, State>> particlesPerTime = new ArrayList<>();
 
         final List<Particle> particles = new ArrayList<>();
 
@@ -44,16 +45,20 @@ public class ParseUtils {
                 particlesPerTime.add(new HashMap<>());
             }
 
-            final Map<Particle, Position> currentParticlesPerTime = particlesPerTime.get(timeIndex);
+            final Map<Particle, State> currentParticlesPerTime = particlesPerTime.get(timeIndex);
 
             final Particle currentParticle = particles.get(particleIndex);
 
-            final Position currentParticlePosition = new Position(
-                parseDouble(dynamicArray.get(DynamicFields.X.getValue())),
-                parseDouble(dynamicArray.get(DynamicFields.Y.getValue()))
+            final State currentParticleState = new State(
+                new Position(
+                    parseDouble(dynamicArray.get(DynamicFields.X.getValue())),
+                    parseDouble(dynamicArray.get(DynamicFields.Y.getValue()))
+                ),
+                parseDouble(dynamicArray.get(DynamicFields.SPEED.getValue())),
+                parseDouble(dynamicArray.get(DynamicFields.ANGLE.getValue()))
             );
 
-            currentParticlesPerTime.put(currentParticle, currentParticlePosition);
+            currentParticlesPerTime.put(currentParticle, currentParticleState);
 
             particleIndex++;
         }
@@ -64,11 +69,11 @@ public class ParseUtils {
     }
 
     public static class ParticlesParserResult {
-        private final List<Map<Particle, Position>> particlesPerTime;
+        private final List<Map<Particle, State>> particlesPerTime;
         private final int N;
         private final int L;
 
-        public ParticlesParserResult(int N, int L, List<Map<Particle, Position>> particlesPerTime) {
+        public ParticlesParserResult(int N, int L, List<Map<Particle, State>> particlesPerTime) {
             this.N = N;
             this.L = L;
             this.particlesPerTime = particlesPerTime;
@@ -82,7 +87,7 @@ public class ParseUtils {
             return L;
         }
 
-        public List<Map<Particle, Position>> getParticlesPerTime() {
+        public List<Map<Particle, State>> getParticlesPerTime() {
             return particlesPerTime;
         }
     }
@@ -102,7 +107,7 @@ public class ParseUtils {
     }
 
     public enum DynamicFields {
-        X(0), Y(1);
+        X(0), Y(1), SPEED(2), ANGLE(3);
 
         private final int value;
 

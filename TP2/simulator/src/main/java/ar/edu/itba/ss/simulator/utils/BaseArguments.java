@@ -11,18 +11,23 @@ public class BaseArguments {
     private final Boolean isPeriodic;
     private final String delimiter;
     private final double R;
-
     private final int M;
+    private final double eta;
+    private final double dt;
+    private final double threshold;
 
-    public BaseArguments(File staticFile, File dynamicFile, File outNeighborsFile, File outTimeFile, Boolean isPeriodic, String delimiter, double r, int m) {
+    public BaseArguments(File staticFile, File dynamicFile, File outNeighborsFile, File outTimeFile, Boolean isPeriodic, String delimiter, double r, int m, double eta, double dt, double threshold) {
         this.staticFile = staticFile;
         this.dynamicFile = dynamicFile;
         this.outNeighborsFile = outNeighborsFile;
         this.outTimeFile = outTimeFile;
         this.isPeriodic = isPeriodic;
         this.delimiter = delimiter;
-        this.R = r;
-        this.M = m;
+        R = r;
+        M = m;
+        this.eta = eta;
+        this.dt = dt;
+        this.threshold = threshold;
     }
 
     public File getStaticFile() {
@@ -55,6 +60,18 @@ public class BaseArguments {
 
     public int getM() {
         return M;
+    }
+
+    public double getEta() {
+        return eta;
+    }
+
+    public double getDt() {
+        return dt;
+    }
+
+    public double getThreshold() {
+        return threshold;
     }
 }
 

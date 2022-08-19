@@ -41,12 +41,12 @@ public class Particle {
         return Objects.hash(id);
     }
 
-    public static class Instant {
+    public static class State {
         private final Position position;
         private final double speed;
         private final double angle; //velocity angle in radians
 
-        public Instant(Position position, double speed, double angle) {
+        public State(Position position, double speed, double angle) {
             this.position = position;
             this.speed = speed;
             this.angle = angle;
@@ -58,6 +58,10 @@ public class Particle {
 
         public double getAngle() {
             return angle;
+        }
+
+        public double getSpeed() {
+            return speed;
         }
 
         public double getXVelocity() {
