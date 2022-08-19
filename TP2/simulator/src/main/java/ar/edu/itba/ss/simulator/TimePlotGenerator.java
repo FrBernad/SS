@@ -1,6 +1,5 @@
 package ar.edu.itba.ss.simulator;
 
-import ar.edu.itba.ss.simulator.utils.ParseUtils;
 import ar.edu.itba.ss.simulator.utils.Particle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,18 +11,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
-import static ar.edu.itba.ss.simulator.methods.CellIndex.CellIndexMethod.calculateNeighbors;
+import static ar.edu.itba.ss.simulator.methods.cellIndex.CellIndexMethod.calculateNeighbors;
 import static ar.edu.itba.ss.simulator.utils.ParseUtils.*;
 
 public class TimePlotGenerator {
     private static final Logger LOGGER = LoggerFactory.getLogger(TimePlotGenerator.class);
-    private static final String dynamicFilePath = "/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP1/results/Dynamic2.txt";
+    private static final String dynamicFilePath = "/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP2/results/Dynamic2.txt";
 
-    private static final String staticFilePath = "/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP1/results/Static2.txt";
+    private static final String staticFilePath = "/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP2/results/Static2.txt";
 
-    private static final String outFilePath = "/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP1/results/timePlot.txt";
+    private static final String outFilePath = "/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP2/results/timePlot.txt";
 
 
     public static void main(String[] args) throws IOException {

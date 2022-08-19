@@ -1,5 +1,6 @@
-package ar.edu.itba.ss.simulator.methods.CellIndex;
+package ar.edu.itba.ss.simulator.methods.cellIndex;
 
+import ar.edu.itba.ss.simulator.methods.cellIndex.Cell;
 import ar.edu.itba.ss.simulator.utils.Particle;
 
 import java.util.ArrayList;

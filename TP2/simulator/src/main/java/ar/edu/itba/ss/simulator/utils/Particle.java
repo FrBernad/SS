@@ -2,8 +2,7 @@ package ar.edu.itba.ss.simulator.utils;
 
 import java.util.Objects;
 
-import static java.lang.Math.pow;
-import static java.lang.Math.sqrt;
+import static java.lang.Math.*;
 
 public class Particle {
 
@@ -40,6 +39,35 @@ public class Particle {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public static class Instant {
+        private final Position position;
+        private final double speed;
+        private final double angle; //velocity angle in radians
+
+        public Instant(Position position, double speed, double angle) {
+            this.position = position;
+            this.speed = speed;
+            this.angle = angle;
+        }
+
+        public Position getPosition() {
+            return position;
+        }
+
+        public double getAngle() {
+            return angle;
+        }
+
+        public double getXVelocity() {
+            return cos(angle) * speed;
+        }
+
+        public double getYVelocity() {
+            return sin(angle) * speed;
+        }
+
     }
 
     public static class Position {
