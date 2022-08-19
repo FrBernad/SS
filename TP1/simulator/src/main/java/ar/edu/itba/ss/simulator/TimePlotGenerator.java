@@ -57,7 +57,7 @@ public class TimePlotGenerator {
         for (int M = 1; M <= maxM; M++) {
             System.out.printf("Calculating for M = %d: ", M);
             times.put(M, new ArrayList<>());
-            for (int n = 0; n < 100; n++) {
+            for (int n = 0; n < 150; n++) {
                 System.out.printf("%d ", n + 1);
                 final long time = calculateNeighbors(particles, N, L, M, R, false)
                     .getExecutionTimestamps()
