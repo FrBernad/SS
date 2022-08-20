@@ -34,11 +34,14 @@ public class Flocks {
         final ExecutionTimestamps executionTimestamps = new ExecutionTimestamps();
         executionTimestamps.setAlgorithmStart(LocalDateTime.now());
 
+        final List<Double> orderParameters = new ArrayList<>();
+
         while (true) {
             final Map<Particle, State> currentParticlesStates = particlesStates.get(particlesStates.size() - 1);
 
             //Update order parameter
             currentOrderParameter = generateOrderParameter(currentParticlesStates.values());
+            orderParameters.add(currentOrderParameter);
             if (abs(previousOrderParameter - currentOrderParameter) < threshold) {
                 iterationsOverThreshold++;
                 if (iterationsOverThreshold >= maxIterationsOverThreshold) {
@@ -51,15 +54,15 @@ public class Flocks {
 
             //Update order parameter
             final Map<Particle, Position> currentParticlesPositions = currentParticlesStates.entrySet()
-                    .stream()
-                    .collect(Collectors.toMap(Entry::getKey, e -> e.getValue().getPosition()));
+                .stream()
+                .collect(Collectors.toMap(Entry::getKey, e -> e.getValue().getPosition()));
 
             final Map<Particle, Set<Particle>> currentNeighbors = CellIndexMethod.calculateNeighbors(currentParticlesPositions, N, L, M, R, periodic).getNeighbors();
 
             final Map<Particle, State> nextParticlesState = new HashMap<>();
 
             currentNeighbors.forEach((particle, neighbors) ->
-                    nextParticlesState.put(particle, getNextState(particle, neighbors, currentParticlesStates, dt, eta, L))
+                nextParticlesState.put(particle, getNextState(particle, neighbors, currentParticlesStates, dt, eta, L))
             );
 
             particlesStates.add(nextParticlesState);
@@ -67,7 +70,7 @@ public class Flocks {
 
         executionTimestamps.setAlgorithmEnd(LocalDateTime.now());
 
-        return new FlocksAlgorithmResults(executionTimestamps, particlesStates);
+        return new FlocksAlgorithmResults(executionTimestamps, particlesStates, orderParameters);
     }
 
     private static State getNextState(final Particle currentParticle, final Set<Particle> neighbors,

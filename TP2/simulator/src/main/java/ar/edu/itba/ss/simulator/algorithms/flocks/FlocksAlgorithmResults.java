@@ -7,12 +7,14 @@ import java.util.List;
 import java.util.Map;
 
 public class FlocksAlgorithmResults {
-    private ExecutionTimestamps executionTimestamps;
-    private List<Map<Particle, Particle.State>> particlesStates;
+    private final ExecutionTimestamps executionTimestamps;
+    private final List<Map<Particle, Particle.State>> particlesStates;
+    private final List<Double> orderParameter;
 
-    public FlocksAlgorithmResults(ExecutionTimestamps executionTimestamps, List<Map<Particle, Particle.State>> particlesStates) {
+    public FlocksAlgorithmResults(ExecutionTimestamps executionTimestamps, List<Map<Particle, Particle.State>> particlesStates, List<Double> orderParameter) {
         this.executionTimestamps = executionTimestamps;
         this.particlesStates = particlesStates;
+        this.orderParameter = orderParameter;
     }
 
     public ExecutionTimestamps getExecutionTimestamps() {
@@ -22,4 +24,9 @@ public class FlocksAlgorithmResults {
     public List<Map<Particle, Particle.State>> getParticlesStates() {
         return particlesStates;
     }
+
+    public List<Double> getOrderParameter() {
+        return orderParameter;
+    }
+
 }

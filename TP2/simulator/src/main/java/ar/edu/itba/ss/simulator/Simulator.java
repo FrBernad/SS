@@ -65,7 +65,7 @@ public class Simulator {
                 .keySet()
                 .stream()
                 .map(Particle::getRadius)
-                .max(Double::compare).orElse(0.0);
+                .max(Double::compare).orElseThrow();
 
 //        #FIXME: que onda cuando da entero el floor del menor no comple la desigualad
         final double gridCondition = particlesParserResult.getL() / baseArguments.getR() + 2 * maxRadius;

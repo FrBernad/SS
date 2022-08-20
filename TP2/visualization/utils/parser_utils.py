@@ -20,7 +20,7 @@ def get_frame_particles(df: DataFrame):
     particles.create_property('Angle', data=df.angle)
     particles.create_property('Force', data=np.array((np.cos(df.angle) * df.speed, np.sin(df.angle) * df.speed,
                                                       np.zeros(len(df.x)))).T)
-                              
+
     return particles
 
 
