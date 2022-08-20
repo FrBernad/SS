@@ -6,8 +6,8 @@ public class BaseArguments {
 
     private final File staticFile;
     private final File dynamicFile;
-    private final File outNeighborsFile;
-    private final File outTimeFile;
+    private final String outFlocksFilePath;
+    private final String outTimeFilePath;
     private final Boolean isPeriodic;
     private final String delimiter;
     private final double R;
@@ -17,11 +17,11 @@ public class BaseArguments {
 
     private final int maxHits;
 
-    public BaseArguments(File staticFile, File dynamicFile, File outNeighborsFile, File outTimeFile, Boolean isPeriodic, String delimiter, double r, double eta, double dt, double threshold, int maxHits) {
+    public BaseArguments(File staticFile, File dynamicFile, String outFlocksFilePath, String outTimeFilePath, Boolean isPeriodic, String delimiter, double r, double eta, double dt, double threshold, int maxHits) {
         this.staticFile = staticFile;
         this.dynamicFile = dynamicFile;
-        this.outNeighborsFile = outNeighborsFile;
-        this.outTimeFile = outTimeFile;
+        this.outFlocksFilePath = outFlocksFilePath;
+        this.outTimeFilePath = outTimeFilePath;
         this.isPeriodic = isPeriodic;
         this.delimiter = delimiter;
         this.R = r;
@@ -39,12 +39,12 @@ public class BaseArguments {
         return dynamicFile;
     }
 
-    public File getOutNeighborsFile() {
-        return outNeighborsFile;
+    public String getOutFlocksFilePath() {
+        return outFlocksFilePath;
     }
 
-    public File getOutTimeFile() {
-        return outTimeFile;
+    public String getOutTimeFilePath() {
+        return outTimeFilePath;
     }
 
     public Boolean getPeriodic() {
