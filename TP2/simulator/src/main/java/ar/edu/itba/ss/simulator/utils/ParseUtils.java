@@ -6,7 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import static ar.edu.itba.ss.simulator.utils.Particle.*;
+import static ar.edu.itba.ss.simulator.utils.Particle.State;
 import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
 

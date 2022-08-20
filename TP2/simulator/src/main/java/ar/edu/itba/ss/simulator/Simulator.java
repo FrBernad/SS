@@ -2,8 +2,6 @@ package ar.edu.itba.ss.simulator;
 
 import ar.edu.itba.ss.simulator.algorithms.flocks.Flocks;
 import ar.edu.itba.ss.simulator.algorithms.flocks.FlocksAlgorithmResults;
-import ar.edu.itba.ss.simulator.methods.cellIndex.CellIndexMethod;
-import ar.edu.itba.ss.simulator.methods.cellIndex.CellIndexMethodResults;
 import ar.edu.itba.ss.simulator.utils.ActionLogger;
 import ar.edu.itba.ss.simulator.utils.BaseArguments;
 import ar.edu.itba.ss.simulator.utils.Particle;
@@ -41,7 +39,6 @@ public class Simulator {
 
     private static final String THRESHOLD_P = "threshold";
     private static final String RADIUS_P = "radius";
-    private static final String M_P = "M";
     private static final String DELIMITER_P = "delimiter";
     private static final String DEFAULT_DELIMITER = " ";
 
@@ -63,15 +60,15 @@ public class Simulator {
 
         LOGGER.info("Parsing Particles ...");
         final ParticlesParserResult particlesParserResult = parseParticlesList(baseArguments.getStaticFile(),
-                baseArguments.getDynamicFile(),
-                DEFAULT_DELIMITER);
+            baseArguments.getDynamicFile(),
+            DEFAULT_DELIMITER);
 
         final double maxRadius = particlesParserResult.getParticlesPerTime()
-                .get(0)
-                .keySet()
-                .stream()
-                .map(Particle::getRadius)
-                .max(Double::compare).orElse(0.0);
+            .get(0)
+            .keySet()
+            .stream()
+            .map(Particle::getRadius)
+            .max(Double::compare).orElse(0.0);
 
 //        #FIXME: que onda cuando da entero el floor del menor no comple la desigualad
         final double gridCondition = particlesParserResult.getL() / baseArguments.getR() + 2 * maxRadius;
@@ -83,16 +80,16 @@ public class Simulator {
         LOGGER.info("Executing Flocks algorithm ...");
 
         FlocksAlgorithmResults methodResults = Flocks.execute(
-                particlesParserResult.getParticlesPerTime().get(0),
-                particlesParserResult.getN(),
-                particlesParserResult.getL(),
-                optimalM,
-                baseArguments.getR(),
-                baseArguments.getDt(),
-                baseArguments.getEta(),
-                baseArguments.getThreshold(),
-                baseArguments.getPeriodic(),
-                baseArguments.getMaxHits()
+            particlesParserResult.getParticlesPerTime().get(0),
+            particlesParserResult.getN(),
+            particlesParserResult.getL(),
+            optimalM,
+            baseArguments.getR(),
+            baseArguments.getDt(),
+            baseArguments.getEta(),
+            baseArguments.getThreshold(),
+            baseArguments.getPeriodic(),
+            baseArguments.getMaxHits()
         );
 
         LOGGER.info("Writing Results ...");
@@ -101,10 +98,10 @@ public class Simulator {
                 pw.append(String.format("%d\n", i));
                 final Map<Particle, State> currentStates = methodResults.getParticlesStates().get(i);
                 currentStates.forEach((particle, state) ->
-                        pw.printf("%d %f %f %f %f\n",
-                                particle.getId(),
-                                state.getPosition().getX(), state.getPosition().getY(),
-                                state.getSpeed(), state.getAngle())
+                    pw.printf("%d %f %f %f %f\n",
+                        particle.getId(),
+                        state.getPosition().getX(), state.getPosition().getY(),
+                        state.getSpeed(), state.getAngle())
                 );
             }
         }
@@ -125,7 +122,6 @@ public class Simulator {
 
         final Boolean isPeriodic = !getPropertyOrDefault(properties, PERIODIC_CONDITION_P, "NOT_EMPTY").equals("");
         final double radius = parseDouble(getPropertyOrFail(properties, RADIUS_P));
-        final int M = parseInt(getPropertyOrFail(properties, M_P));
         final int maxHits = parseInt(getPropertyOrDefault(properties, MAX_HITS_P, "10"));
 
         final double eta = parseDouble(getPropertyOrDefault(properties, ETA_P, "1"));
@@ -138,12 +134,12 @@ public class Simulator {
         final File outFlockFile = new File(outFlockFilePath);
         final File outTimeFile = new File(outTimeFilePath);
 
-        return new BaseArguments(staticFile, dynamicFile, outFlockFile, outTimeFile, isPeriodic, delimiter, radius, M, eta, dt, threshold, maxHits);
+        return new BaseArguments(staticFile, dynamicFile, outFlockFile, outTimeFile, isPeriodic, delimiter, radius, eta, dt, threshold, maxHits);
     }
 
     private static void printClientUsage() {
         System.out.println("Invalid simulator invocation.\n" +
-                "Usage: ./simulator -DstaticFile='path/to/static/file' -DdynamicFile='path/to/dynamic/file' " +
-                "[-Dperiodic] -Dradius=radius -DM=M -DresultsFile=resultsFile -DtimeFile=timeFile [-DmaxHits=maxHits]");
+            "Usage: ./simulator -DstaticFile='path/to/static/file' -DdynamicFile='path/to/dynamic/file' " +
+            "[-Dperiodic] -Dradius=radius -DresultsFile=resultsFile -DtimeFile=timeFile [-DmaxHits=maxHits]");
     }
 }

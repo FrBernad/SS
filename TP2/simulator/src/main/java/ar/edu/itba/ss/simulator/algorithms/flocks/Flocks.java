@@ -1,9 +1,6 @@
 package ar.edu.itba.ss.simulator.algorithms.flocks;
 
-import ar.edu.itba.ss.simulator.methods.cellIndex.Cell;
 import ar.edu.itba.ss.simulator.methods.cellIndex.CellIndexMethod;
-import ar.edu.itba.ss.simulator.methods.cellIndex.CellIndexMethodResults;
-import ar.edu.itba.ss.simulator.methods.cellIndex.Grid;
 import ar.edu.itba.ss.simulator.utils.ExecutionTimestamps;
 import ar.edu.itba.ss.simulator.utils.Particle;
 
@@ -11,9 +8,9 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import static ar.edu.itba.ss.simulator.utils.Particle.*;
+import static ar.edu.itba.ss.simulator.utils.Particle.Position;
+import static ar.edu.itba.ss.simulator.utils.Particle.State;
 import static java.lang.Math.*;
 
 public class Flocks {

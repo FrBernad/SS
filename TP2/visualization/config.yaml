@@ -1,9 +1,9 @@
 ---
 # --- Visualization plotly config ---
 config:
-  dynamic_file: "../results/Dynamic2.txt"
-  static_file: "../results/Static2.txt"
-  neighbors_file: "../results/neighbors2.txt"
+  dynamic_file: "../results/Dynamic.txt"
+  static_file: "../results/Static.txt"
+  flocks_file: "../results/flocksFile.txt"
   L: 20
   M: 4
   R: 1

@@ -3,7 +3,7 @@ from pydantic import BaseModel, ValidationError
 
 DYNAMIC_FILE = "../results/Dynamic100.txt"
 STATIC_FILE = "../results/Static100.txt"
-NEIGHBORS_FILE = "../results/neighbors.txt"
+NEIGHBORS_FILE = "../results/flocksFile.txt"
 
 
 class Config(BaseModel):
