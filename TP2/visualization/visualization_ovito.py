@@ -1,26 +1,38 @@
 import sys
 
+from ovito.data import DataCollection, SimulationCell
 from ovito.io import export_file
-from ovito.pipeline import Pipeline
+from ovito.pipeline import Pipeline, StaticSource
 
 from utils.argument_parser import parse_arguments
 from utils.config import get_config
-from utils.parser_utils import get_neighbors_data, get_particles_data
-from utils.parser_utils import get_particles_static_source
+from utils.parser_utils import get_particles_data
+
+from utils.parser_utils import get_frame_particles
 
 
 def visualization_ovito(config_file: str):
     config = get_config(config_file)
-    df = get_particles_data(config.dynamic_file, config.static_file)
-    static_source = get_particles_static_source(df,
-                                                get_neighbors_data(config.neighbors_file).get(config.particle),
-                                                config.particle,
-                                                config.R)
+    dfs = get_particles_data(config.static_file, config.flocks_files_fmt, config.particle_R)
 
-    pipeline = Pipeline(source=static_source)
+    pipeline = Pipeline(source=StaticSource(data=DataCollection()))
 
-    export_file(pipeline, '../results/visualization.dump', 'lammps/dump',
-                columns=["Particle Identifier", "Position.X", "Position.Y", "Position.Z", "Radius", "Neighbor"])
+    def create_particle_pos(frame, data):
+        cell = SimulationCell(pbc=(False, False, False), is2D=True)
+        cell[:, 0] = (4, 0, 0)
+        cell[:, 1] = (0, 2, 0)
+        cell[:, 2] = (0, 0, 2)
+        data.objects.append(cell)
+
+        particles = get_frame_particles(dfs[frame])
+        data.objects.append(particles)
+
+    pipeline.modifiers.append(create_particle_pos)
+
+    export_file(pipeline, '../results/visualization/visualization.*.dump', 'lammps/dump',
+                columns=["Particle Identifier", "Position.X", "Position.Y", "Position.Z", "Radius", "Angle",
+                         "Force.X", "Force.Y", "Force.Z"],
+                multiple_frames=True, start_frame=0, end_frame=len(dfs) - 1)
 
 
 if __name__ == "__main__":

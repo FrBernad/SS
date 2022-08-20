@@ -5,33 +5,23 @@ from typing import List
 import numpy as np
 import ovito.data as od
 import pandas as pd
-from ovito.pipeline import StaticSource
 from pandas import DataFrame
 
+import glob
 
-def get_particles_static_source(df: DataFrame, neighbors: List[int], particle_id: int, R: float):
-    # Create a Particles object containing two particles:
-    data = od.DataCollection()
 
-    cell = od.SimulationCell(pbc=(False, False, False), is2D=True)
-    cell[:, 0] = (4, 0, 0)
-    cell[:, 1] = (0, 2, 0)
-    cell[:, 2] = (0, 0, 2)
-    data.objects.append(cell)
-
-    radius_points = _generate_radius(R + df.radius[particle_id - 1], df.x[particle_id - 1], df.y[particle_id - 1])
-
-    ids = np.arange(1, len(df.x) + len(radius_points) + 1)
+def get_frame_particles(df: DataFrame):
+    ids = np.arange(1, len(df.x) + 1)
     particles = od.Particles()
     particles.create_property('Particle Identifier', data=ids)
     particles.create_property('Position',
-                              data=np.concatenate((np.array((df.x, df.y, np.zeros(len(df.x)))).T, radius_points)))
-    particles.create_property('Radius',
-                              data=np.concatenate((df.radius, np.full(len(radius_points), max(df.radius) / 4))))
-
-    data.objects.append(particles)
-
-    return StaticSource(data=data)
+                              data=np.array((df.x, df.y, np.zeros(len(df.x)))).T)
+    particles.create_property('Radius', data=df.radius)
+    particles.create_property('Angle', data=df.angle)
+    particles.create_property('Force', data=np.array((np.cos(df.angle) * df.speed, np.sin(df.angle) * df.speed,
+                                                      np.zeros(len(df.x)))).T)
+                              
+    return particles
 
 
 def _generate_radius(R: float, x_offset: float, y_offset: float, n: int = 500):
@@ -39,19 +29,16 @@ def _generate_radius(R: float, x_offset: float, y_offset: float, n: int = 500):
             range(0, n + 1)]
 
 
-def get_particles_data(dynamic_file: str, static_file: str) -> DataFrame:
+def get_particles_data(static_file: str, flocks_file_format: str, particle_R: float) -> List[DataFrame]:
+    file_list = glob.glob(flocks_file_format)
+
     static_df = pd.read_csv(static_file, skiprows=2, sep=" ", names=["radius", "prop"])
+    static_df['radius'].replace([0], particle_R, inplace=True)
 
-    dynamic_df = pd.read_csv(dynamic_file, skiprows=1, sep=" ", names=["id", "x", "y", "speed", "angle"])
+    dfs = []
+    for i in range(1, len(file_list)):
+        df = pd.read_csv(file_list[i], skiprows=1, sep=" ", names=["id", "x", "y", "speed", "angle"])
+        df = pd.concat([df, static_df], axis=1)
+        dfs.append(df)
 
-    return pd.concat([dynamic_df, static_df], axis=1)
-
-
-def get_neighbors_data(neighbors_file: str) -> dict:
-    neighbors = dict()
-    with open(neighbors_file) as f:
-        for line in f.readlines():
-            aux = [int(i) for i in line.split(" ")[:-1]]
-            neighbors[aux[0]] = aux[1:]
-
-    return neighbors
+    return dfs

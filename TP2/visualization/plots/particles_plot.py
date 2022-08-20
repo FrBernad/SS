@@ -1,9 +1,22 @@
 import plotly.colors
+import sys
 import plotly.graph_objects as go
 from pandas import DataFrame
+from ..utils.argument_parser import parse_arguments
+from ..utils.config import get_config
+from ..utils.parser_utils import get_particles_data
 
 
 def make_particles_plot(df: DataFrame, neighbors: dict, M: int, L: int, R: float):
+    config = get_config(config_file)
+    dfs = get_particles_data(config.static_file, config.flocks_files_fmt)
+
+    static_source = get_particles_static_source(dfs, config.R)
+    #
+    pipeline = Pipeline(source=static_source)
+
+    export_file(pipeline, '../results/visualization.dump', 'lammps/dump',
+                columns=["Particle Identifier", "Position.X", "Position.Y", "Position.Z", "Radius"])
     indexes = range(1, len(df.x) + 1)
 
     fig = go.Figure()
@@ -57,3 +70,21 @@ def make_particles_plot(df: DataFrame, neighbors: dict, M: int, L: int, R: float
     fig.update_layout(width=1000, height=1000)
 
     fig.show()
+
+
+if __name__ == "__main__":
+    arguments = parse_arguments(sys.argv[1:])
+
+    config_file = arguments['config_file']
+
+    try:
+        make_particles_plot(config_file)
+    except FileNotFoundError as e:
+        print("File not found")
+        print(e)
+    except OSError:
+        print("Error occurred.")
+    except KeyboardInterrupt:
+        print('Program interrupted by user.')
+    except Exception as e:
+        print(e)

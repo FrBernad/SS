@@ -3,17 +3,15 @@ from pydantic import BaseModel, ValidationError
 
 DYNAMIC_FILE = "../results/Dynamic100.txt"
 STATIC_FILE = "../results/Static100.txt"
-NEIGHBORS_FILE = "../results/flocksFile.txt"
+FLOCKS_FILE_FMT = "../results/flocks_*"
 
 
 class Config(BaseModel):
     dynamic_file: str = DYNAMIC_FILE
     static_file: str = STATIC_FILE
-    neighbors_file: str = NEIGHBORS_FILE
-    L: int
-    M: int
-    R: float
-    particle: int
+    flocks_files_fmt: str = FLOCKS_FILE_FMT
+    particle_R: float
+    Rc: float
 
 
 def get_config(config_file: str) -> Config:

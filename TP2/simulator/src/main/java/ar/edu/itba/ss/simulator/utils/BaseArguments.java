@@ -15,9 +15,9 @@ public class BaseArguments {
     private final double dt;
     private final double threshold;
 
-    private final int maxHits;
+    private final int maxIterationsOverThreshold;
 
-    public BaseArguments(File staticFile, File dynamicFile, String outFlocksFilePath, String outTimeFilePath, Boolean isPeriodic, String delimiter, double r, double eta, double dt, double threshold, int maxHits) {
+    public BaseArguments(File staticFile, File dynamicFile, String outFlocksFilePath, String outTimeFilePath, Boolean isPeriodic, String delimiter, double r, double eta, double dt, double threshold, int maxIterationsOverThreshold) {
         this.staticFile = staticFile;
         this.dynamicFile = dynamicFile;
         this.outFlocksFilePath = outFlocksFilePath;
@@ -28,7 +28,7 @@ public class BaseArguments {
         this.eta = eta;
         this.dt = dt;
         this.threshold = threshold;
-        this.maxHits = maxHits;
+        this.maxIterationsOverThreshold = maxIterationsOverThreshold;
     }
 
     public File getStaticFile() {
@@ -71,8 +71,8 @@ public class BaseArguments {
         return threshold;
     }
 
-    public int getMaxHits() {
-        return maxHits;
+    public int getMaxIterationsOverThreshold() {
+        return maxIterationsOverThreshold;
     }
 }
 
