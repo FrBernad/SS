@@ -7,6 +7,7 @@ import ar.edu.itba.ss.simulator.methods.cellIndex.CellIndexMethodResults;
 import ar.edu.itba.ss.simulator.utils.ActionLogger;
 import ar.edu.itba.ss.simulator.utils.BaseArguments;
 import ar.edu.itba.ss.simulator.utils.Particle;
+import ar.edu.itba.ss.simulator.utils.Particle.State;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Paths;
+import java.util.Map;
 import java.util.Properties;
 
 import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrDefault;
@@ -28,7 +30,7 @@ public class Simulator {
 
     private static final String STATIC_FILE_PATH_P = "staticFile";
     private static final String DYNAMIC_FILE_PATH_P = "dynamicFile";
-    private static final String NEIGHBORS_OUT_PATH_P = "neighborsFile";
+    private static final String RESULTS_OUT_PATH_P = "resultsFile";
     private static final String TIME_OUT_PATH_P = "timeFile";
     private static final String PERIODIC_CONDITION_P = "periodic";
 
@@ -72,7 +74,11 @@ public class Simulator {
                 .max(Double::compare).orElse(0.0);
 
 //        #FIXME: que onda cuando da entero el floor del menor no comple la desigualad
-        final double optimalM = Math.floor(particlesParserResult.getL() / baseArguments.getR() + 2 * maxRadius);
+        final double gridCondition = particlesParserResult.getL() / baseArguments.getR() + 2 * maxRadius;
+        int optimalM = (int) Math.floor(gridCondition);
+        if (gridCondition == (int) gridCondition) {
+            optimalM = (int) gridCondition - 1;
+        }
 
         LOGGER.info("Executing Flocks algorithm ...");
 
@@ -80,7 +86,7 @@ public class Simulator {
                 particlesParserResult.getParticlesPerTime().get(0),
                 particlesParserResult.getN(),
                 particlesParserResult.getL(),
-                baseArguments.getM(),
+                optimalM,
                 baseArguments.getR(),
                 baseArguments.getDt(),
                 baseArguments.getEta(),
@@ -89,18 +95,23 @@ public class Simulator {
                 baseArguments.getMaxHits()
         );
 
-//        LOGGER.info("Writing Results ...");
-//        try (PrintWriter pw = new PrintWriter(baseArguments.getOutNeighborsFile())) {
-//            methodResults.getNeighbors().forEach((key, value) -> {
-//                pw.append(String.format("%d ", key));
-//                value.forEach(p -> pw.append(String.format("%d ", p.getId())));
-//                pw.println();
-//            });
-//        }
-//
-//        try (PrintWriter pw = new PrintWriter(baseArguments.getOutTimeFile())) {
-//            ActionLogger.logTimestamps(pw, methodResults.getExecutionTimestamps());
-//        }
+        LOGGER.info("Writing Results ...");
+        try (PrintWriter pw = new PrintWriter(baseArguments.getOutNeighborsFile())) {
+            for (int i = 0; i < methodResults.getParticlesStates().size(); i++) {
+                pw.append(String.format("%d\n", i));
+                final Map<Particle, State> currentStates = methodResults.getParticlesStates().get(i);
+                currentStates.forEach((particle, state) ->
+                        pw.printf("%d %f %f %f %f\n",
+                                particle.getId(),
+                                state.getPosition().getX(), state.getPosition().getY(),
+                                state.getSpeed(), state.getAngle())
+                );
+            }
+        }
+
+        try (PrintWriter pw = new PrintWriter(baseArguments.getOutTimeFile())) {
+            ActionLogger.logTimestamps(pw, methodResults.getExecutionTimestamps());
+        }
 
     }
 
@@ -108,7 +119,7 @@ public class Simulator {
         final String staticFilePath = getPropertyOrFail(properties, STATIC_FILE_PATH_P);
         final String dynamicFilePath = getPropertyOrFail(properties, DYNAMIC_FILE_PATH_P);
 
-        final String outNeighborsFilePath = getPropertyOrFail(properties, NEIGHBORS_OUT_PATH_P);
+        final String outFlockFilePath = getPropertyOrFail(properties, RESULTS_OUT_PATH_P);
         final String outTimeFilePath = getPropertyOrFail(properties, TIME_OUT_PATH_P);
         final String delimiter = getPropertyOrDefault(properties, DELIMITER_P, DEFAULT_DELIMITER);
 
@@ -124,15 +135,15 @@ public class Simulator {
         final File staticFile = Paths.get(staticFilePath).toFile();
         final File dynamicFile = Paths.get(dynamicFilePath).toFile();
 
-        final File outNeighborsFile = new File(outNeighborsFilePath);
+        final File outFlockFile = new File(outFlockFilePath);
         final File outTimeFile = new File(outTimeFilePath);
 
-        return new BaseArguments(staticFile, dynamicFile, outNeighborsFile, outTimeFile, isPeriodic, delimiter, radius, M, eta, dt, threshold, maxHits);
+        return new BaseArguments(staticFile, dynamicFile, outFlockFile, outTimeFile, isPeriodic, delimiter, radius, M, eta, dt, threshold, maxHits);
     }
 
     private static void printClientUsage() {
         System.out.println("Invalid simulator invocation.\n" +
                 "Usage: ./simulator -DstaticFile='path/to/static/file' -DdynamicFile='path/to/dynamic/file' " +
-                "[-Dperiodic] -Dradius=radius -DM=M -DneighborsFile=neighborsFile -DtimeFile=timeFile [-DmaxHits=maxHits]");
+                "[-Dperiodic] -Dradius=radius -DM=M -DresultsFile=resultsFile -DtimeFile=timeFile [-DmaxHits=maxHits]");
     }
 }

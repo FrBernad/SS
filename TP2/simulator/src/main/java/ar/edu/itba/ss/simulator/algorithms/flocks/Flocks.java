@@ -37,7 +37,6 @@ public class Flocks {
         final ExecutionTimestamps executionTimestamps = new ExecutionTimestamps();
         executionTimestamps.setAlgorithmStart(LocalDateTime.now());
 
-
         while (true) {
             final Map<Particle, State> currentParticlesStates = particlesStates.get(particlesStates.size() - 1);
 
@@ -45,7 +44,7 @@ public class Flocks {
             currentOrderParameter = generateOrderParameter(currentParticlesStates.values());
             if (abs(previousOrderParameter - currentOrderParameter) < threshold) {
                 iterationsOverThreshold++;
-                if (iterationsOverThreshold < maxIterationsOverThreshold) {
+                if (iterationsOverThreshold >= maxIterationsOverThreshold) {
                     break;
                 }
             } else {
@@ -63,7 +62,7 @@ public class Flocks {
             final Map<Particle, State> nextParticlesState = new HashMap<>();
 
             currentNeighbors.forEach((particle, neighbors) ->
-                    nextParticlesState.put(particle, getNextState(particle, neighbors, currentParticlesStates, dt, eta))
+                    nextParticlesState.put(particle, getNextState(particle, neighbors, currentParticlesStates, dt, eta, L))
             );
 
             particlesStates.add(nextParticlesState);
@@ -75,13 +74,20 @@ public class Flocks {
     }
 
     private static State getNextState(final Particle currentParticle, final Set<Particle> neighbors,
-                                      final Map<Particle, State> particlesState, final double dt, final double eta) {
+                                      final Map<Particle, State> particlesState,
+                                      final double dt, final double eta, final int L) {
 
         final List<State> neighborsStates = neighbors.stream().map(particlesState::get).collect(Collectors.toList());
         final State currentParticleState = particlesState.get(currentParticle);
 
-        final double nextX = currentParticleState.getPosition().getX() + currentParticleState.getXVelocity() * dt;
-        final double nextY = currentParticleState.getPosition().getY() + currentParticleState.getYVelocity() * dt;
+        double nextX = (currentParticleState.getPosition().getX() + currentParticleState.getXVelocity() * dt) % L;
+        if (nextX < 0) {
+            nextX += L;
+        }
+        double nextY = (currentParticleState.getPosition().getY() + currentParticleState.getYVelocity() * dt) % L;
+        if (nextY < 0) {
+            nextY += L;
+        }
 
         final List<State> surroundingParticlesStates = new ArrayList<>(neighborsStates);
         surroundingParticlesStates.add(currentParticleState);
