@@ -32,6 +32,7 @@ public class Simulator {
     private static final String TIME_OUT_PATH_P = "timeFile";
     private static final String PERIODIC_CONDITION_P = "periodic";
 
+    private static final String MAX_HITS_P = "maxHits";
     private static final String DELTA_TIME_P = "dt";
 
     private static final String ETA_P = "eta";
@@ -60,34 +61,34 @@ public class Simulator {
 
         LOGGER.info("Parsing Particles ...");
         final ParticlesParserResult particlesParserResult = parseParticlesList(baseArguments.getStaticFile(),
-            baseArguments.getDynamicFile(),
-            DEFAULT_DELIMITER);
+                baseArguments.getDynamicFile(),
+                DEFAULT_DELIMITER);
 
         final double maxRadius = particlesParserResult.getParticlesPerTime()
-            .get(0)
-            .keySet()
-            .stream()
-            .map(Particle::getRadius)
-            .max(Double::compare).orElse(0.0);
+                .get(0)
+                .keySet()
+                .stream()
+                .map(Particle::getRadius)
+                .max(Double::compare).orElse(0.0);
 
 //        #FIXME: que onda cuando da entero el floor del menor no comple la desigualad
         final double optimalM = Math.floor(particlesParserResult.getL() / baseArguments.getR() + 2 * maxRadius);
 
-
         LOGGER.info("Executing Flocks algorithm ...");
 
         FlocksAlgorithmResults methodResults = Flocks.execute(
-            particlesParserResult.getParticlesPerTime().get(0),
-            particlesParserResult.getN(),
-            particlesParserResult.getL(),
-            baseArguments.getM(),
-            baseArguments.getR(),
-            baseArguments.getDt(),
-            baseArguments.getEta(),
-            baseArguments.getThreshold(),
-            baseArguments.getPeriodic()
+                particlesParserResult.getParticlesPerTime().get(0),
+                particlesParserResult.getN(),
+                particlesParserResult.getL(),
+                baseArguments.getM(),
+                baseArguments.getR(),
+                baseArguments.getDt(),
+                baseArguments.getEta(),
+                baseArguments.getThreshold(),
+                baseArguments.getPeriodic(),
+                baseArguments.getMaxHits()
         );
-//
+
 //        LOGGER.info("Writing Results ...");
 //        try (PrintWriter pw = new PrintWriter(baseArguments.getOutNeighborsFile())) {
 //            methodResults.getNeighbors().forEach((key, value) -> {
@@ -114,10 +115,11 @@ public class Simulator {
         final Boolean isPeriodic = !getPropertyOrDefault(properties, PERIODIC_CONDITION_P, "NOT_EMPTY").equals("");
         final double radius = parseDouble(getPropertyOrFail(properties, RADIUS_P));
         final int M = parseInt(getPropertyOrFail(properties, M_P));
+        final int maxHits = parseInt(getPropertyOrDefault(properties, MAX_HITS_P, "10"));
 
         final double eta = parseDouble(getPropertyOrDefault(properties, ETA_P, "1"));
         final double dt = Double.parseDouble(getPropertyOrDefault(properties, DELTA_TIME_P, "1"));
-        final double threshold = Double.parseDouble(getPropertyOrDefault(properties, THRESHOLD_P, "0.001"));
+        final double threshold = Double.parseDouble(getPropertyOrDefault(properties, THRESHOLD_P, "0.1"));
 
         final File staticFile = Paths.get(staticFilePath).toFile();
         final File dynamicFile = Paths.get(dynamicFilePath).toFile();
@@ -125,12 +127,12 @@ public class Simulator {
         final File outNeighborsFile = new File(outNeighborsFilePath);
         final File outTimeFile = new File(outTimeFilePath);
 
-        return new BaseArguments(staticFile, dynamicFile, outNeighborsFile, outTimeFile, isPeriodic, delimiter, radius, M, eta, dt, threshold);
+        return new BaseArguments(staticFile, dynamicFile, outNeighborsFile, outTimeFile, isPeriodic, delimiter, radius, M, eta, dt, threshold, maxHits);
     }
 
     private static void printClientUsage() {
         System.out.println("Invalid simulator invocation.\n" +
-            "Usage: ./simulator -DstaticFile='path/to/static/file' -DdynamicFile='path/to/dynamic/file' " +
-            "[-Dperiodic] -Dradius=radius -DM=M -DneighborsFile=neighborsFile -DtimeFile=timeFile");
+                "Usage: ./simulator -DstaticFile='path/to/static/file' -DdynamicFile='path/to/dynamic/file' " +
+                "[-Dperiodic] -Dradius=radius -DM=M -DneighborsFile=neighborsFile -DtimeFile=timeFile [-DmaxHits=maxHits]");
     }
 }

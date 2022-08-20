@@ -25,8 +25,8 @@ public class CellIndexMethod {
 
         final List<List<Cell>> cells = grid.getGrid();
 
-        final Map<Integer, Set<Particle>> neighbors = new HashMap<>();
-        particles.forEach((key, value) -> neighbors.put(key.getId(), new HashSet<>()));
+        final Map<Particle, Set<Particle>> neighbors = new HashMap<>();
+        particles.forEach((key, value) -> neighbors.put(key, new HashSet<>()));
 
         for (int y = 0; y < M; y++) {
             for (int x = 0; x < M; x++) {
@@ -45,7 +45,7 @@ public class CellIndexMethod {
     }
 
     private static void checkNeighbors(final Particle particle, final Map<Particle, Position> particles,
-                                       final Cell cell, final Map<Integer, Set<Particle>> neighbors,
+                                       final Cell cell, final Map<Particle, Set<Particle>> neighbors,
                                        final double R, final int L, final int M, final boolean periodic) {
         final Cell topCell = cell.getTopCell();
         final Cell rightCell = cell.getRightCell();
@@ -83,7 +83,7 @@ public class CellIndexMethod {
                 if (periodic && M != 1) {
                     if (otherParticlePosition.getY() < particlePosition.getY()) {
                         otherParticlePosition = new Position(otherParticlePosition.getX() + (otherParticlePosition.getX() < particlePosition.getX() ? L : 0)
-                            , otherParticlePosition.getY() + L);
+                                , otherParticlePosition.getY() + L);
                     } else if (otherParticlePosition.getX() < particlePosition.getX()) {
                         otherParticlePosition = new Position(otherParticlePosition.getX() + L, otherParticlePosition.getY());
                     }
@@ -114,7 +114,7 @@ public class CellIndexMethod {
                 if (periodic && M != 1) {
                     if (otherParticlePosition.getY() > particlePosition.getY()) {
                         otherParticlePosition = new Position(otherParticlePosition.getX() + (otherParticlePosition.getX() < particlePosition.getX() ? L : 0),
-                            otherParticlePosition.getY() - L);
+                                otherParticlePosition.getY() - L);
                     } else if (otherParticlePosition.getX() < particlePosition.getX()) {
                         otherParticlePosition = new Position(otherParticlePosition.getX() + L, otherParticlePosition.getY());
                     }
@@ -128,11 +128,11 @@ public class CellIndexMethod {
 
     private static void addIfInRadius(final Particle particle, final Position particlePosition,
                                       final Particle otherParticle, final Position otherParticlePosition,
-                                      final Map<Integer, Set<Particle>> neighbors, final double R) {
+                                      final Map<Particle, Set<Particle>> neighbors, final double R) {
         final double distanceBetween = calculateDistance(particlePosition, otherParticlePosition) - particle.getRadius() - otherParticle.getRadius();
         if (distanceBetween <= R) {
-            neighbors.get(particle.getId()).add(otherParticle);
-            neighbors.get(otherParticle.getId()).add(particle);
+            neighbors.get(particle).add(otherParticle);
+            neighbors.get(otherParticle).add(particle);
         }
     }
 

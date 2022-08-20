@@ -8,14 +8,14 @@ import java.util.Set;
 
 public class CellIndexMethodResults {
     private ExecutionTimestamps executionTimestamps;
-    private Map<Integer, Set<Particle>> neighbors;
+    private Map<Particle, Set<Particle>> neighbors;
 
-    public CellIndexMethodResults(Map<Integer, Set<Particle>> neighbors, ExecutionTimestamps executionTimestamps) {
+    public CellIndexMethodResults(Map<Particle, Set<Particle>> neighbors, ExecutionTimestamps executionTimestamps) {
         this.executionTimestamps = executionTimestamps;
         this.neighbors = neighbors;
     }
 
-    public void setNeighbors(Map<Integer, Set<Particle>> neighbors) {
+    public void setNeighbors(Map<Particle, Set<Particle>> neighbors) {
         this.neighbors = neighbors;
     }
 
@@ -27,7 +27,7 @@ public class CellIndexMethodResults {
         return executionTimestamps;
     }
 
-    public Map<Integer, Set<Particle>> getNeighbors() {
+    public Map<Particle, Set<Particle>> getNeighbors() {
         return neighbors;
     }
 

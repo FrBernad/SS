@@ -18,7 +18,7 @@ public class ExecutionTimestamps {
 
     public LocalTime getAlgorithmTotalTime() {
         return LocalTime.ofNanoOfDay(
-            getAlgorithmEnd().toLocalTime().toNanoOfDay() - getAlgorithmStart().toLocalTime().toNanoOfDay()
+                getAlgorithmEnd().toLocalTime().toNanoOfDay() - getAlgorithmStart().toLocalTime().toNanoOfDay()
         );
     }
 
