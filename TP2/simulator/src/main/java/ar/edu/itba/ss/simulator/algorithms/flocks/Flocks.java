@@ -94,11 +94,9 @@ public class Flocks {
 
         final Position nextPosition = new Position(nextX, nextY);
 
-        //FIXME: EL PROMEDIO ES DE LOS ANGULOS O DE LOS SENOS COMOT TENEMOS ACA?
         final double avgCos = surroundingParticlesStates.stream().mapToDouble(p -> cos(p.getAngle())).average().orElseThrow(RuntimeException::new);
         final double avgSin = surroundingParticlesStates.stream().mapToDouble(p -> sin(p.getAngle())).average().orElseThrow(RuntimeException::new);
 
-        //FIXME: QUE ONDA EL ATAN2 QUE RECIBE 2 COSAS
         final double nextAngle = atan2(avgSin, avgCos) + generateNoise(eta);
 
         return new State(nextPosition, currentParticleState.getSpeed(), nextAngle);

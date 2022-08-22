@@ -2,10 +2,8 @@ package ar.edu.itba.ss.simulator;
 
 import ar.edu.itba.ss.simulator.algorithms.flocks.Flocks;
 import ar.edu.itba.ss.simulator.algorithms.flocks.FlocksAlgorithmResults;
-import ar.edu.itba.ss.simulator.utils.BaseArguments;
 import ar.edu.itba.ss.simulator.utils.Particle;
 import ar.edu.itba.ss.simulator.utils.Particle.State;
-import com.sun.source.tree.Tree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,12 +13,9 @@ import java.io.PrintWriter;
 import java.nio.file.Paths;
 import java.util.*;
 
-import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrDefault;
 import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrFail;
 import static ar.edu.itba.ss.simulator.utils.ParseUtils.ParticlesParserResult;
 import static ar.edu.itba.ss.simulator.utils.ParseUtils.parseParticlesList;
-import static java.lang.Double.parseDouble;
-import static java.lang.Integer.parseInt;
 
 public class OrderParameterGenerator {
 
