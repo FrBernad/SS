@@ -1,6 +1,6 @@
-import plotly.graph_objects as go
-import pandas as pd
 import numpy as np
+import pandas as pd
+import plotly.graph_objects as go
 
 
 def make_time_plot(df: pd.DataFrame, N: int, L: int, R: float):

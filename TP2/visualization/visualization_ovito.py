@@ -6,9 +6,8 @@ from ovito.pipeline import Pipeline, StaticSource
 
 from utils.argument_parser import parse_arguments
 from utils.config import get_config
-from utils.parser_utils import get_particles_data
-
 from utils.parser_utils import get_frame_particles
+from utils.parser_utils import get_particles_data
 
 
 def visualization_ovito(config_file: str):

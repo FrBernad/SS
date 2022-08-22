@@ -1,7 +1,9 @@
-import plotly.colors
 import sys
+
+import plotly.colors
 import plotly.graph_objects as go
 from pandas import DataFrame
+
 from ..utils.argument_parser import parse_arguments
 from ..utils.config import get_config
 from ..utils.parser_utils import get_particles_data

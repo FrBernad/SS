@@ -1,3 +1,4 @@
+import glob
 import math
 from math import pi
 from typing import List
@@ -6,8 +7,6 @@ import numpy as np
 import ovito.data as od
 import pandas as pd
 from pandas import DataFrame
-
-import glob
 
 
 def get_frame_particles(df: DataFrame):
@@ -29,14 +28,19 @@ def _generate_radius(R: float, x_offset: float, y_offset: float, n: int = 500):
             range(0, n + 1)]
 
 
+def get_file_num(filename: str) -> int:
+    return int(filename.split("_")[1])
+
+
 def get_particles_data(static_file: str, flocks_file_format: str, particle_R: float) -> List[DataFrame]:
     file_list = glob.glob(flocks_file_format)
+    file_list.sort(key=get_file_num)
 
     static_df = pd.read_csv(static_file, skiprows=2, sep=" ", names=["radius", "prop"])
     static_df['radius'].replace([0], particle_R, inplace=True)
 
     dfs = []
-    for i in range(1, len(file_list)):
+    for i in range(0, len(file_list)):
         df = pd.read_csv(file_list[i], skiprows=1, sep=" ", names=["id", "x", "y", "speed", "angle"])
         df = pd.concat([df, static_df], axis=1)
         dfs.append(df)
