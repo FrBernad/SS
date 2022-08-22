@@ -29,13 +29,11 @@ public class Simulator {
     private static final String DYNAMIC_FILE_PATH_P = "dynamicFile";
     private static final String RESULTS_OUT_PATH_P = "resultsFile";
     private static final String ORDER_OUT_PATH_P = "orderFile";
-
     private static final String TIME_OUT_PATH_P = "timeFile";
     private static final String PERIODIC_CONDITION_P = "periodic";
-    private static final String MAX_ITERATIONS_OVER_THRESHOLD_P = "maxIterationsOverThreshold";
+    private static final String MAX_ITERATIONS_P = "maxIterations";
     private static final String DELTA_TIME_P = "dt";
     private static final String ETA_P = "eta";
-    private static final String THRESHOLD_P = "threshold";
     private static final String RADIUS_P = "radius";
     private static final String DELIMITER_P = "delimiter";
     private static final String DEFAULT_DELIMITER = " ";
@@ -83,9 +81,8 @@ public class Simulator {
             baseArguments.getR(),
             baseArguments.getDt(),
             baseArguments.getEta(),
-            baseArguments.getThreshold(),
             baseArguments.getPeriodic(),
-            baseArguments.getMaxIterationsOverThreshold()
+            baseArguments.getMaxIterations()
         );
 
 
@@ -107,6 +104,11 @@ public class Simulator {
 
         final File outOrderFile = new File(baseArguments.getOutOrderFilePath());
         try (PrintWriter pw = new PrintWriter(outOrderFile)) {
+            pw.printf("%d ", particlesParserResult.getN());
+            pw.printf("%d ", particlesParserResult.getL());
+            pw.printf("%f ", baseArguments.getR());
+            pw.printf("%f ", baseArguments.getEta());
+            pw.printf("%d\n", baseArguments.getMaxIterations());
             methodResults.getOrderParameter().forEach(pw::println);
         }
 
@@ -114,6 +116,8 @@ public class Simulator {
         try (PrintWriter pw = new PrintWriter(outTimeFile)) {
             ActionLogger.logTimestamps(pw, methodResults.getExecutionTimestamps());
         }
+
+        LOGGER.info("Done!");
 
     }
 
@@ -128,23 +132,22 @@ public class Simulator {
 
         final Boolean isPeriodic = !getPropertyOrDefault(properties, PERIODIC_CONDITION_P, "NOT_EMPTY").equals("");
         final double radius = parseDouble(getPropertyOrFail(properties, RADIUS_P));
-        final int maxIterationsOverThreshold = parseInt(getPropertyOrDefault(properties, MAX_ITERATIONS_OVER_THRESHOLD_P, "10"));
+        final int maxIterations = parseInt(getPropertyOrDefault(properties, MAX_ITERATIONS_P, "3000"));
 
         final double eta = parseDouble(getPropertyOrDefault(properties, ETA_P, "1"));
         final double dt = Double.parseDouble(getPropertyOrDefault(properties, DELTA_TIME_P, "1"));
-        final double threshold = Double.parseDouble(getPropertyOrDefault(properties, THRESHOLD_P, "0.1"));
 
         final File staticFile = Paths.get(staticFilePath).toFile();
         final File dynamicFile = Paths.get(dynamicFilePath).toFile();
 
 
-        return new BaseArguments(staticFile, dynamicFile, outFlockFilePath, timeFilePath, orderFilePath, isPeriodic, delimiter, radius, eta, dt, threshold, maxIterationsOverThreshold);
+        return new BaseArguments(staticFile, dynamicFile, outFlockFilePath, timeFilePath, orderFilePath, isPeriodic, delimiter, radius, eta, dt, maxIterations);
     }
 
     private static void printClientUsage() {
         System.out.println("Invalid simulator invocation.\n" +
             "Usage: ./simulator -DstaticFile='path/to/static/file' -DdynamicFile='path/to/dynamic/file' " +
-            "[-Dperiodic] -Dradius=radius -DresultsFile=resultsFile -DtimeFile=timeFile -DorderFile=orderFile [-DmaxIterationsOverThreshold=iters] " +
-            "[-Deta=eta] [-Dthreshold=threshold] [-Ddt=dt]");
+            "[-Dperiodic] -Dradius=radius -DresultsFile=resultsFile -DtimeFile=timeFile -DorderFile=orderFile [-DmaxIterations=iters] " +
+            "[-Deta=eta] [-Ddt=dt]");
     }
 }

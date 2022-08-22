@@ -13,9 +13,11 @@ import java.io.PrintWriter;
 import java.nio.file.Paths;
 import java.util.*;
 
+import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrDefault;
 import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrFail;
 import static ar.edu.itba.ss.simulator.utils.ParseUtils.ParticlesParserResult;
 import static ar.edu.itba.ss.simulator.utils.ParseUtils.parseParticlesList;
+import static java.lang.Integer.parseInt;
 
 public class OrderParameterGenerator {
 
@@ -23,12 +25,12 @@ public class OrderParameterGenerator {
     private static final String STATIC_FILE_PATH_P = "staticFile";
     private static final String DYNAMIC_FILE_PATH_P = "dynamicFile";
     private static final String OUT_FILE_PATH_P = "outFilePath";
+    private static final String MAX_ITERATIONS_P = "maxIterations";
+    private static final String SIMULATIONS_QUANTITY_P = "simulationsQuantity";
     private static final Double MIN_ETA = 0.1;
     private static final Double MAX_ETA = 1.0;
     private static final Double ETA_STEP = 0.1;
-    private static final int ITERATIONS = 5;
-    private static final double THRESHOLD = 0.01;
-    private static final int MAX_ITERATIONS_OVER_THRESHOLD = 20;
+
 
     public static void main(String[] args) throws IOException {
         LOGGER.info("Order Parameter Generator Starting ...");
@@ -38,6 +40,9 @@ public class OrderParameterGenerator {
         final String dynamicFilePath = getPropertyOrFail(properties, DYNAMIC_FILE_PATH_P);
 
         final String outFilePath = getPropertyOrFail(properties, OUT_FILE_PATH_P);
+
+        final int maxIterations = parseInt(getPropertyOrDefault(properties, MAX_ITERATIONS_P, "3000"));
+        final int simulationsQuantity = parseInt(getPropertyOrDefault(properties, SIMULATIONS_QUANTITY_P, "1"));
 
         final File staticFile = Paths.get(staticFilePath).toFile();
         final File dynamicFile = Paths.get(dynamicFilePath).toFile();
@@ -74,8 +79,8 @@ public class OrderParameterGenerator {
 
             orderParameters.put(eta, new ArrayList<>());
 
-            for (int n = 0; n < ITERATIONS; n++) {
-                System.out.printf("%d ", n);
+            for (int n = 0; n < simulationsQuantity; n++) {
+                System.out.printf("%d ", n + 1);
 
                 FlocksAlgorithmResults methodResults = Flocks.execute(
                     particles,
@@ -85,12 +90,10 @@ public class OrderParameterGenerator {
                     R,
                     1,
                     eta,
-                    THRESHOLD,
                     true,
-                    MAX_ITERATIONS_OVER_THRESHOLD
-                );
+                    maxIterations);
 
-                orderParameters.get(eta).add(methodResults.getOrderParameter().get(methodResults.getOrderParameter().size() - 1));
+                orderParameters.get(eta).addAll(methodResults.getOrderParameter());
             }
             System.out.println();
         }
@@ -99,7 +102,8 @@ public class OrderParameterGenerator {
             pw.printf("%d ", particlesParserResult.getN());
             pw.printf("%d ", particlesParserResult.getL());
             pw.printf("%f ", R);
-            pw.printf("%d\n", ITERATIONS);
+            pw.printf("%d ", maxIterations);
+            pw.printf("%d\n", simulationsQuantity);
 
             orderParameters.forEach((eta, ops) -> {
                 pw.printf("%f", eta);

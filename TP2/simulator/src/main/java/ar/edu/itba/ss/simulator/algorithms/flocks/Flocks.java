@@ -22,35 +22,23 @@ public class Flocks {
                                                  final double R,
                                                  final double dt,
                                                  final double eta,
-                                                 final double threshold,
                                                  final boolean periodic,
-                                                 final int maxIterationsOverThreshold) {
-        int iterationsOverThreshold = 0;
+                                                 final int maxIterations) {
 
         final List<Map<Particle, State>> particlesStates = new ArrayList<>(List.of(initialParticlesStates));
-        double previousOrderParameter = 10;
         double currentOrderParameter;
 
         final ExecutionTimestamps executionTimestamps = new ExecutionTimestamps();
         executionTimestamps.setAlgorithmStart(LocalDateTime.now());
 
         final List<Double> orderParameters = new ArrayList<>();
-
-        while (true) {
+        int iterations = 0;
+        while (iterations < maxIterations) {
             final Map<Particle, State> currentParticlesStates = particlesStates.get(particlesStates.size() - 1);
 
             //Update order parameter
             currentOrderParameter = generateOrderParameter(currentParticlesStates.values());
             orderParameters.add(currentOrderParameter);
-            if (abs(previousOrderParameter - currentOrderParameter) < threshold) {
-                iterationsOverThreshold++;
-                if (iterationsOverThreshold >= maxIterationsOverThreshold) {
-                    break;
-                }
-            } else {
-                iterationsOverThreshold = 0;
-            }
-            previousOrderParameter = currentOrderParameter;
 
             //Update order parameter
             final Map<Particle, Position> currentParticlesPositions = currentParticlesStates.entrySet()
@@ -66,6 +54,7 @@ public class Flocks {
             );
 
             particlesStates.add(nextParticlesState);
+            iterations++;
         }
 
         executionTimestamps.setAlgorithmEnd(LocalDateTime.now());

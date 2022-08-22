@@ -31,7 +31,6 @@ public class ParticlesGenerator {
     private static final String DEFAULT_DELIMITER = " ";
     private static final Double MAX_ANGLE = 2 * Math.PI;
 
-
     public static void main(String[] args) throws IOException {
         LOGGER.info("Files Generator Starting ...");
 
