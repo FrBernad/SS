@@ -3,13 +3,13 @@ from pydantic import BaseModel, ValidationError
 
 DYNAMIC_FILE = "../results/Dynamic100.txt"
 STATIC_FILE = "../results/Static100.txt"
-FLOCKS_FILE_FMT = "../results/flocks_*"
+FLOCKS_FILE = "../results/flocks"
 
 
 class Config(BaseModel):
     dynamic_file: str = DYNAMIC_FILE
     static_file: str = STATIC_FILE
-    flocks_files_fmt: str = FLOCKS_FILE_FMT
+    flocks_file: str = FLOCKS_FILE
     particle_R: float
     Rc: float
 

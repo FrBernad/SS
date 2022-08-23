@@ -3,7 +3,7 @@
 config:
   dynamic_file: "../results/Dynamic.txt"
   static_file: "../results/Static.txt"
-  flocks_files_fmt: "../results/flocks/flocks_*"
+  flocks_file: "../results/flocks.txt"
   particle_R: 0.1
   Rc: 1
 ...

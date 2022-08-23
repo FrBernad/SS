@@ -1,4 +1,3 @@
-import glob
 import math
 from math import pi
 from typing import List
@@ -28,21 +27,23 @@ def _generate_radius(R: float, x_offset: float, y_offset: float, n: int = 500):
             range(0, n + 1)]
 
 
-def get_file_num(filename: str) -> int:
-    return int(filename.split("_")[1])
-
-
-def get_particles_data(static_file: str, flocks_file_format: str, particle_R: float) -> List[DataFrame]:
-    file_list = glob.glob(flocks_file_format)
-    file_list.sort(key=get_file_num)
-
+def get_particles_data(static_file: str, flocks_file: str, particle_R: float) -> List[DataFrame]:
     static_df = pd.read_csv(static_file, skiprows=2, sep=" ", names=["radius", "prop"])
     static_df['radius'].replace([0], particle_R, inplace=True)
 
     dfs = []
-    for i in range(0, len(file_list)):
-        df = pd.read_csv(file_list[i], skiprows=1, sep=" ", names=["id", "x", "y", "speed", "angle"])
-        df = pd.concat([df, static_df], axis=1)
-        dfs.append(df)
+    with open(flocks_file, "r") as flocks:
+        next(flocks)
+        current_frame = []
+        for line in flocks:
+            float_vals = list(map(lambda v: float(v), line.split()))
+            if len(float_vals) > 1:
+                current_frame.append(float_vals)
+            elif len(float_vals) == 1:
+                df = pd.DataFrame(np.array(current_frame), columns=["id", "x", "y", "speed", "angle"])
+                dfs.append(pd.concat([df, static_df], axis=1))
+                current_frame = []
+        df = pd.DataFrame(np.array(current_frame), columns=["id", "x", "y", "speed", "angle"])
+        dfs.append(pd.concat([df, static_df], axis=1))
 
     return dfs

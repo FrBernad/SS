@@ -87,10 +87,9 @@ public class Simulator {
 
 
         LOGGER.info("Writing Results ...");
-        for (int i = 0; i < methodResults.getParticlesStates().size(); i++) {
-            String outPathFile = String.format("%s_%d", baseArguments.getOutFlocksFilePath(), i + 1);
-            final File outFlockFile = new File(outPathFile);
-            try (PrintWriter pw = new PrintWriter(outFlockFile)) {
+        final File outFlockFile = new File(baseArguments.getOutFlocksFilePath());
+        try (PrintWriter pw = new PrintWriter(outFlockFile)) {
+            for (int i = 0; i < methodResults.getParticlesStates().size(); i++) {
                 pw.append(String.format("%d\n", i));
                 final Map<Particle, State> currentStates = methodResults.getParticlesStates().get(i);
                 currentStates.forEach((particle, state) ->
