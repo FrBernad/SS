@@ -1,9 +1,9 @@
 ---
 # --- Visualization plotly config ---
 config:
-  dynamic_file: "../results/Dynamic.txt"
-  static_file: "../results/Static.txt"
+  dynamic_file: "../assets/Dynamic.txt"
+  static_file: "../assets/Static.txt"
   flocks_file: "../results/flocks.txt"
-  particle_R: 0.1
+  particle_R: 0
   Rc: 1
 ...
