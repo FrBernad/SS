@@ -19,15 +19,14 @@ import static ar.edu.itba.ss.simulator.utils.ParseUtils.ParticlesParserResult;
 import static ar.edu.itba.ss.simulator.utils.ParseUtils.parseParticlesList;
 import static java.lang.Integer.parseInt;
 
-public class OrderParameterGenerator {
+public class OrderParameterGeneratorETA {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OrderParameterGenerator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OrderParameterGeneratorETA.class);
     private static final String STATIC_FILE_PATH_P = "staticFile";
     private static final String DYNAMIC_FILE_PATH_P = "dynamicFile";
     private static final String OUT_FILE_PATH_P = "outFilePath";
     private static final String MAX_ITERATIONS_P = "maxIterations";
-    private static final String SIMULATIONS_QUANTITY_P = "simulationsQuantity";
-    private static final Double MIN_ETA = 0.1;
+    private static final Double MIN_ETA = 0.0;
     private static final Double MAX_ETA = 1.0;
     private static final Double ETA_STEP = 0.1;
 
@@ -42,24 +41,23 @@ public class OrderParameterGenerator {
         final String outFilePath = getPropertyOrFail(properties, OUT_FILE_PATH_P);
 
         final int maxIterations = parseInt(getPropertyOrDefault(properties, MAX_ITERATIONS_P, "3000"));
-        final int simulationsQuantity = parseInt(getPropertyOrDefault(properties, SIMULATIONS_QUANTITY_P, "1"));
 
         final File staticFile = Paths.get(staticFilePath).toFile();
         final File dynamicFile = Paths.get(dynamicFilePath).toFile();
 
         final ParticlesParserResult particlesParserResult = parseParticlesList(
-            staticFile,
-            dynamicFile,
-            " "
+                staticFile,
+                dynamicFile,
+                " "
         );
 
         final Map<Particle, State> particles = particlesParserResult.getParticlesPerTime().get(0);
 
         final double maxRadius = particles
-            .keySet()
-            .stream()
-            .map(Particle::getRadius)
-            .max(Double::compare).orElseThrow();
+                .keySet()
+                .stream()
+                .map(Particle::getRadius)
+                .max(Double::compare).orElseThrow();
 
         final double R = 1;
 
@@ -79,10 +77,7 @@ public class OrderParameterGenerator {
 
             orderParameters.put(eta, new ArrayList<>());
 
-            for (int n = 0; n < simulationsQuantity; n++) {
-                System.out.printf("%d ", n + 1);
-
-                FlocksAlgorithmResults methodResults = Flocks.execute(
+            FlocksAlgorithmResults methodResults = Flocks.execute(
                     particles,
                     particlesParserResult.getN(),
                     particlesParserResult.getL(),
@@ -93,9 +88,7 @@ public class OrderParameterGenerator {
                     true,
                     maxIterations);
 
-                orderParameters.get(eta).addAll(methodResults.getOrderParameter());
-            }
-            System.out.println();
+            orderParameters.get(eta).addAll(methodResults.getOrderParameter());
         }
 
         try (PrintWriter pw = new PrintWriter(outFilePath)) {
@@ -103,7 +96,6 @@ public class OrderParameterGenerator {
             pw.printf("%d ", particlesParserResult.getL());
             pw.printf("%f ", R);
             pw.printf("%d ", maxIterations);
-            pw.printf("%d\n", simulationsQuantity);
 
             orderParameters.forEach((eta, ops) -> {
                 pw.printf("%f", eta);

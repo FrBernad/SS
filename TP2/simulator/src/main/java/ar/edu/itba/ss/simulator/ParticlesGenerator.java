@@ -1,17 +1,18 @@
 package ar.edu.itba.ss.simulator;
 
 import ar.edu.itba.ss.simulator.utils.FileGeneratorArguments;
+import ar.edu.itba.ss.simulator.utils.Particle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Properties;
-import java.util.Random;
+import java.util.*;
 
 import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrDefault;
 import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrFail;
+import static ar.edu.itba.ss.simulator.utils.Particle.*;
 import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
 
@@ -97,9 +98,26 @@ public class ParticlesGenerator {
         return new FileGeneratorArguments(staticFile, dynamicFile, L, minR, maxR, P, N, delimiter, times, speed);
     }
 
+    public static Map<Particle, State> generateParticles(final int N,
+                                                          final int L,
+                                                          final double particleRadius,
+                                                          final double particleProperty,
+                                                          final double speed) {
+        Map<Particle, State> particles = new HashMap<>();
+        final Random random = new Random();
+
+        for (int i = 0; i < N; i++) {
+            Position position = new Position(random.nextDouble() * L, random.nextDouble() * L);
+            double angle = random.nextDouble() * (MAX_ANGLE);
+            particles.put(new Particle(i, particleRadius, particleProperty),
+                    new State(position, speed, angle));
+        }
+        return particles;
+    }
+
     private static void printClientUsage() {
         System.out.println("Invalid generator invocation.\n" +
-            "Usage: ./files_generator -DstaticFile='path/to/static/file' -DdynamicFile='path/to/dynamic/file' " +
-            "-DL=L -DminRadius=minRadius -DmaxRadius=minRadius -DN=N -Dproperty=property -Dspeed=speed");
+                "Usage: ./files_generator -DstaticFile='path/to/static/file' -DdynamicFile='path/to/dynamic/file' " +
+                "-DL=L -DminRadius=minRadius -DmaxRadius=minRadius -DN=N -Dproperty=property -Dspeed=speed");
     }
 }
