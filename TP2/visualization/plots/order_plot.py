@@ -6,7 +6,7 @@ def make_order_plot(df: pd.DataFrame, N: int, L: int, R: float, eta: float, iter
     fig = go.Figure(
         data=go.Scatter(
             x=list(range(1, iters + 1)), y=df.order,
-            mode='lines',
+            mode='  lines',
         ),
         layout=go.Layout(
             title=dict(text=f'Order parameter per iteration [N={N} - L={L} - Rc={R} - eta={eta}]', x=0.5),

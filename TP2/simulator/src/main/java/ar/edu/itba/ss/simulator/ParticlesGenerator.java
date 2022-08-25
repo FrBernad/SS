@@ -18,7 +18,6 @@ import static java.lang.Integer.parseInt;
 
 public class ParticlesGenerator {
     private static final Logger LOGGER = LoggerFactory.getLogger(ParticlesGenerator.class);
-
     private static final String STATIC_FILE_PATH_P = "staticFile";
     private static final String DYNAMIC_FILE_PATH_P = "dynamicFile";
     private static final String N_P = "N";

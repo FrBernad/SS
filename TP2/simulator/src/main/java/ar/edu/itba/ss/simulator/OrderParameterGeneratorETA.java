@@ -18,6 +18,7 @@ import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrFail;
 import static ar.edu.itba.ss.simulator.utils.ParseUtils.ParticlesParserResult;
 import static ar.edu.itba.ss.simulator.utils.ParseUtils.parseParticlesList;
 import static java.lang.Integer.parseInt;
+import static java.lang.Math.PI;
 
 public class OrderParameterGeneratorETA {
 
@@ -27,7 +28,7 @@ public class OrderParameterGeneratorETA {
     private static final String OUT_FILE_PATH_P = "outFilePath";
     private static final String MAX_ITERATIONS_P = "maxIterations";
     private static final Double MIN_ETA = 0.0;
-    private static final Double MAX_ETA = 1.0;
+    private static final Double MAX_ETA = 2 * PI;
     private static final Double ETA_STEP = 0.1;
 
 
@@ -46,18 +47,18 @@ public class OrderParameterGeneratorETA {
         final File dynamicFile = Paths.get(dynamicFilePath).toFile();
 
         final ParticlesParserResult particlesParserResult = parseParticlesList(
-                staticFile,
-                dynamicFile,
-                " "
+            staticFile,
+            dynamicFile,
+            " "
         );
 
         final Map<Particle, State> particles = particlesParserResult.getParticlesPerTime().get(0);
 
         final double maxRadius = particles
-                .keySet()
-                .stream()
-                .map(Particle::getRadius)
-                .max(Double::compare).orElseThrow();
+            .keySet()
+            .stream()
+            .map(Particle::getRadius)
+            .max(Double::compare).orElseThrow();
 
         final double R = 1;
 
@@ -78,15 +79,15 @@ public class OrderParameterGeneratorETA {
             orderParameters.put(eta, new ArrayList<>());
 
             FlocksAlgorithmResults methodResults = Flocks.execute(
-                    particles,
-                    particlesParserResult.getN(),
-                    particlesParserResult.getL(),
-                    optimalM,
-                    R,
-                    1,
-                    eta,
-                    true,
-                    maxIterations);
+                particles,
+                particlesParserResult.getN(),
+                particlesParserResult.getL(),
+                optimalM,
+                R,
+                1,
+                eta,
+                true,
+                maxIterations);
 
             orderParameters.get(eta).addAll(methodResults.getOrderParameter());
         }
