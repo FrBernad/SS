@@ -25,7 +25,7 @@ public class OrderParameterGeneratorL {
     private static final String N_P = "N";
     private static final String ETA_P = "eta";
 
-    private static final int MIN_L = 2;
+    private static final int MIN_L = 5;
     private static final int MAX_L = 50;
     private static final int L_STEP = 1;
     private static final double RADIUS_RC = 1; // interaction radius
@@ -50,7 +50,7 @@ public class OrderParameterGeneratorL {
 
         for (int l = MIN_L; l <= MAX_L; l += L_STEP) {
 
-            System.out.printf("Calculating for L = %d: ", l);
+            System.out.printf("Calculating for L = %d: \n", l);
 
             orderParameters.put(l, new ArrayList<>());
             Map<Particle, State> particles = ParticlesGenerator.generateParticles(N, l, RADIUS, PROPERTY, SPEED);
@@ -86,7 +86,7 @@ public class OrderParameterGeneratorL {
             pw.printf("%d ", N);
             pw.printf("%f ", eta);
             pw.printf("%f ", RADIUS);
-            pw.printf("%d ", maxIterations);
+            pw.printf("%d\n", maxIterations);
 
             orderParameters.forEach((l, ops) -> {
                 pw.printf("%d", l);

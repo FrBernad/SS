@@ -96,7 +96,7 @@ public class OrderParameterGeneratorETA {
             pw.printf("%d ", particlesParserResult.getN());
             pw.printf("%d ", particlesParserResult.getL());
             pw.printf("%f ", R);
-            pw.printf("%d ", maxIterations);
+            pw.printf("%d\n", maxIterations);
 
             orderParameters.forEach((eta, ops) -> {
                 pw.printf("%f", eta);
