@@ -26,7 +26,7 @@ public class OrderParameterGeneratorL {
     private static final String ETA_P = "eta";
 
     private static final int MIN_L = 5;
-    private static final int MAX_L = 50;
+    private static final int MAX_L = 150;
     private static final int L_STEP = 1;
     private static final double RADIUS_RC = 1; // interaction radius
     private static final double RADIUS = 0; // particle's radius

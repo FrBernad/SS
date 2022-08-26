@@ -47,18 +47,18 @@ public class OrderParameterGeneratorETA {
         final File dynamicFile = Paths.get(dynamicFilePath).toFile();
 
         final ParticlesParserResult particlesParserResult = parseParticlesList(
-            staticFile,
-            dynamicFile,
-            " "
+                staticFile,
+                dynamicFile,
+                " "
         );
 
         final Map<Particle, State> particles = particlesParserResult.getParticlesPerTime().get(0);
 
         final double maxRadius = particles
-            .keySet()
-            .stream()
-            .map(Particle::getRadius)
-            .max(Double::compare).orElseThrow();
+                .keySet()
+                .stream()
+                .map(Particle::getRadius)
+                .max(Double::compare).orElseThrow();
 
         final double R = 1;
 
@@ -74,20 +74,20 @@ public class OrderParameterGeneratorETA {
 
         for (double eta = MIN_ETA; eta <= MAX_ETA; eta += ETA_STEP) {
 
-            System.out.printf("Calculating for eta = %f: ", eta);
+            System.out.printf("Calculating for eta = %f: \n", eta);
 
             orderParameters.put(eta, new ArrayList<>());
 
             FlocksAlgorithmResults methodResults = Flocks.execute(
-                particles,
-                particlesParserResult.getN(),
-                particlesParserResult.getL(),
-                optimalM,
-                R,
-                1,
-                eta,
-                true,
-                maxIterations);
+                    particles,
+                    particlesParserResult.getN(),
+                    particlesParserResult.getL(),
+                    optimalM,
+                    R,
+                    1,
+                    eta,
+                    true,
+                    maxIterations);
 
             orderParameters.get(eta).addAll(methodResults.getOrderParameter());
         }

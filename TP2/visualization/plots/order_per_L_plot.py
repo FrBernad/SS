@@ -4,21 +4,28 @@ import plotly.graph_objects as go
 
 
 def make_order_per_noise_plot(df: pd.DataFrame, N: float, Eta: int, R: float, iters: int):
-    aux = df.values[:, 2500:]
+    aux = df.values[:, 3000:]
+    step = 10
+    final = len(aux)
+    aux = aux[0:final:step]
     avg = np.average(aux, axis=1)
     std = np.std(aux, axis=1)
+    density = (N / df.L ** 2)
+    density = density[0:final:step]
 
     fig = go.Figure(
         data=go.Scatter(
-            x=df.L, y=avg,
+            x=density, y=avg,
             mode='markers+lines',
             error_y=dict(array=std),
         ),
         layout=go.Layout(
             title=dict(text=f'Order parameter per L [ N={N} - Eta={Eta} - Rc={R} - iters={iters}]', x=0.5),
-            xaxis=dict(title='L'),
+            xaxis=dict(title='Density', type='log'),
             yaxis=dict(title='Order parameter'),
+
         )
+
     )
 
     # Set figure size
