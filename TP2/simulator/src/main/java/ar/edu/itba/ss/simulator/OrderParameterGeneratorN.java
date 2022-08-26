@@ -16,18 +16,17 @@ import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrFail;
 import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
 
-public class OrderParameterGeneratorL {
+public class OrderParameterGeneratorN {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OrderParameterGeneratorETA.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OrderParameterGeneratorN.class);
     private static final String OUT_FILE_PATH_P = "outFilePath";
     private static final String MAX_ITERATIONS_P = "maxIterations";
-    private static final String SIMULATIONS_QUANTITY_P = "simulationsQuantity";
-    private static final String N_P = "N";
+    private static final String L_P = "L";
     private static final String ETA_P = "eta";
 
-    private static final int MIN_L = 5;
-    private static final int MAX_L = 150;
-    private static final int L_STEP = 1;
+    private static final int MIN_N = 100;
+    private static final int MAX_N = 4000;
+    private static final int N_STEP = 100;
     private static final double RADIUS_RC = 1; // interaction radius
     private static final double RADIUS = 0; // particle's radius
     private static final double PROPERTY = 0; // particle's property
@@ -44,16 +43,14 @@ public class OrderParameterGeneratorL {
 
         final int maxIterations = parseInt(getPropertyOrDefault(properties, MAX_ITERATIONS_P, "3000"));
         final double eta = parseDouble(getPropertyOrDefault(properties, ETA_P, "0.2"));
-        final int N = parseInt(getPropertyOrDefault(properties, N_P, "300"));
+        final int L = parseInt(getPropertyOrDefault(properties, L_P, "300"));
 
         final Map<Integer, List<Double>> orderParameters = new TreeMap<>(Integer::compare);
+        for (int N = MIN_N, i = 0; N <= MAX_N; N += N_STEP) {
+            System.out.printf("Calculating for N = %d: \n", N);
 
-        for (int l = MIN_L; l <= MAX_L; l += L_STEP) {
-
-            System.out.printf("Calculating for L = %d: \n", l);
-
-            orderParameters.put(l, new ArrayList<>());
-            Map<Particle, State> particles = ParticlesGenerator.generateParticles(N, l, RADIUS, PROPERTY, SPEED);
+            orderParameters.put(N, new ArrayList<>());
+            Map<Particle, State> particles = ParticlesGenerator.generateParticles(N, L, RADIUS, PROPERTY, SPEED);
 
             final double maxRadius = particles
                     .keySet()
@@ -61,7 +58,7 @@ public class OrderParameterGeneratorL {
                     .map(Particle::getRadius)
                     .max(Double::compare).orElseThrow();
 
-            final double gridCondition = l / RADIUS_RC + 2 * maxRadius;
+            final double gridCondition = L / RADIUS_RC + 2 * maxRadius;
             int optimalM = (int) Math.floor(gridCondition);
             if (gridCondition == (int) gridCondition) {
                 optimalM = (int) gridCondition - 1;
@@ -70,7 +67,7 @@ public class OrderParameterGeneratorL {
             FlocksAlgorithmResults methodResults = Flocks.execute(
                     particles,
                     N,
-                    l,
+                    L,
                     optimalM,
                     RADIUS_RC,
                     1,
@@ -78,18 +75,19 @@ public class OrderParameterGeneratorL {
                     true,
                     maxIterations);
 
-            orderParameters.get(l).addAll(methodResults.getOrderParameter());
+            orderParameters.get(N).addAll(methodResults.getOrderParameter());
+
 
         }
 
         try (PrintWriter pw = new PrintWriter(outFilePath)) {
-            pw.printf("%d ", N);
+            pw.printf("%d ", L);
             pw.printf("%f ", eta);
             pw.printf("%f ", RADIUS);
             pw.printf("%d\n", maxIterations);
 
-            orderParameters.forEach((l, ops) -> {
-                pw.printf("%d", l);
+            orderParameters.forEach((n, ops) -> {
+                pw.printf("%d", n);
                 ops.forEach(op -> pw.printf(" %f", op));
                 pw.printf("\n");
             });

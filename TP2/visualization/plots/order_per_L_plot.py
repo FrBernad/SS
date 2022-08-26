@@ -1,31 +1,31 @@
-import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 
 
-def make_order_per_noise_plot(df: pd.DataFrame, N: float, Eta: int, R: float, iters: int):
-    aux = df.values[:, 3000:]
-    step = 10
-    final = len(aux)
-    aux = aux[0:final:step]
-    avg = np.average(aux, axis=1)
-    std = np.std(aux, axis=1)
-    density = (N / df.L ** 2)
-    density = density[0:final:step]
+def make_order_per_noise_plot(df: pd.DataFrame, N: int, Eta: int, R: float, iters: int):
+    l_step = 1
+    iteration_step = 1
+
+    final = len(df.values[0])
+    final_L = 25
+    it = list(range(1, iters - 1))[0:final:iteration_step]
+    aux = df.values[0:final_L:l_step, 1:final:iteration_step]
+    data = []
+    L = df.values[:final_L:l_step, 0]
+    for i in range(len(aux)):
+        data.append(go.Scatter(
+            x=it, y=aux[i],
+            mode='lines',
+            name=L[i]
+        ))
 
     fig = go.Figure(
-        data=go.Scatter(
-            x=density, y=avg,
-            mode='markers+lines',
-            error_y=dict(array=std),
-        ),
+        data=data,
         layout=go.Layout(
-            title=dict(text=f'Order parameter per L [ N={N} - Eta={Eta} - Rc={R} - iters={iters}]', x=0.5),
-            xaxis=dict(title='Density', type='log'),
+            title=dict(text=f'Order parameter per iteration [ N={N} - L={Eta} - Rc={R} - iters={iters}]', x=0.5),
+            xaxis=dict(title='iteration'),
             yaxis=dict(title='Order parameter'),
-
         )
-
     )
 
     # Set figure size
