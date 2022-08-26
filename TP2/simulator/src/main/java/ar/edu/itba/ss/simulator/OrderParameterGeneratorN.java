@@ -24,9 +24,7 @@ public class OrderParameterGeneratorN {
     private static final String L_P = "L";
     private static final String ETA_P = "eta";
 
-    private static final int MIN_N = 100;
-    private static final int MAX_N = 4000;
-    private static final int N_STEP = 100;
+    private static final List<Integer> N_LIST = new ArrayList<>(Arrays.asList(2, 12, 20, 50, 75, 80, 100, 150, 200, 300, 500, 800, 1200));
     private static final double RADIUS_RC = 1; // interaction radius
     private static final double RADIUS = 0; // particle's radius
     private static final double PROPERTY = 0; // particle's property
@@ -46,11 +44,11 @@ public class OrderParameterGeneratorN {
         final int L = parseInt(getPropertyOrDefault(properties, L_P, "300"));
 
         final Map<Integer, List<Double>> orderParameters = new TreeMap<>(Integer::compare);
-        for (int N = MIN_N, i = 0; N <= MAX_N; N += N_STEP) {
-            System.out.printf("Calculating for N = %d: \n", N);
+        N_LIST.forEach(n -> {
+            System.out.printf("Calculating for N = %d: \n", n);
 
-            orderParameters.put(N, new ArrayList<>());
-            Map<Particle, State> particles = ParticlesGenerator.generateParticles(N, L, RADIUS, PROPERTY, SPEED);
+            orderParameters.put(n, new ArrayList<>());
+            Map<Particle, State> particles = ParticlesGenerator.generateParticles(n, L, RADIUS, PROPERTY, SPEED);
 
             final double maxRadius = particles
                     .keySet()
@@ -66,7 +64,7 @@ public class OrderParameterGeneratorN {
 
             FlocksAlgorithmResults methodResults = Flocks.execute(
                     particles,
-                    N,
+                    n,
                     L,
                     optimalM,
                     RADIUS_RC,
@@ -75,10 +73,10 @@ public class OrderParameterGeneratorN {
                     true,
                     maxIterations);
 
-            orderParameters.get(N).addAll(methodResults.getOrderParameter());
+            orderParameters.get(n).addAll(methodResults.getOrderParameter());
 
 
-        }
+        });
 
         try (PrintWriter pw = new PrintWriter(outFilePath)) {
             pw.printf("%d ", L);

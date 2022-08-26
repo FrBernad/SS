@@ -1,28 +1,29 @@
+import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 
 
-def make_order_per_noise_plot(df: pd.DataFrame, N: int, Eta: int, R: float, iters: int):
-    l_step = 1
-    iteration_step = 1
-
-    final = len(df.values[0])
-    final_L = 25
+def make_order_per_noise_plot(df: pd.DataFrame, L: int, Eta: int, R: float, iters: int):
+    iteration_step = 50
+    # aux_list = []
+    aux_list = [20, 50, 100, 300, 800, 1200]  # 2, 12, 20, 50, 75, 80, 100, 150, 200, 300, 500, 800, 1200
+    values = np.array([num for num in df.values if int(num[0]) in aux_list])
+    final = len(values[0])
     it = list(range(1, iters - 1))[0:final:iteration_step]
-    aux = df.values[0:final_L:l_step, 1:final:iteration_step]
+    aux = values[:, 1:final:iteration_step]
     data = []
-    L = df.values[:final_L:l_step, 0]
+    N = values[:, 0]
     for i in range(len(aux)):
         data.append(go.Scatter(
             x=it, y=aux[i],
             mode='lines',
-            name=L[i]
+            name='Density:' + str(N[i] / L ** 2)
         ))
 
     fig = go.Figure(
         data=data,
         layout=go.Layout(
-            title=dict(text=f'Order parameter per iteration [ N={N} - L={Eta} - Rc={R} - iters={iters}]', x=0.5),
+            title=dict(text=f'Order parameter per iteration [ L={L} - Eta={Eta} - Rc={R} - iters={iters}]', x=0.5),
             xaxis=dict(title='iteration'),
             yaxis=dict(title='Order parameter'),
         )
@@ -35,10 +36,13 @@ def make_order_per_noise_plot(df: pd.DataFrame, N: int, Eta: int, R: float, iter
 
 
 if __name__ == "__main__":
-    names = ['N', 'Eta', 'R', 'iters']
-    parameters = pd.read_csv('../../results/orderParameters.txt', sep=" ", nrows=1, names=names)
+    file = '../../results/orderParametersL_1.txt'
 
-    names = ['L'] + [f'''iter {i}''' for i in range(1, parameters.iters[0] + 1)]
-    df = pd.read_csv('../../results/orderParameters.txt', sep=" ", names=names, skiprows=1)
 
-    make_order_per_noise_plot(df, parameters.N[0], parameters.Eta[0], parameters.R[0], parameters.iters[0])
+    names = ['L', 'Eta', 'R', 'iters']
+    parameters = pd.read_csv(file, sep=" ", nrows=1, names=names)
+
+    names = ['N'] + [f'''iter {i}''' for i in range(1, parameters.iters[0] + 1)]
+    df = pd.read_csv(file, sep=" ", names=names, skiprows=1)
+
+    make_order_per_noise_plot(df, parameters.L[0], parameters.Eta[0], parameters.R[0], parameters.iters[0])

@@ -4,7 +4,7 @@ import plotly.graph_objects as go
 
 
 def make_order_per_noise_plot(df: pd.DataFrame, L: int, Eta: int, R: float, iters: int):
-    aux = df.values[:, 8000:]
+    aux = df.values[:, 10000:]
     step = 1
     final = len(aux)
     aux = aux[0:final:step]
@@ -36,9 +36,11 @@ def make_order_per_noise_plot(df: pd.DataFrame, L: int, Eta: int, R: float, iter
 
 if __name__ == "__main__":
     names = ['L', 'Eta', 'R', 'iters']
-    parameters = pd.read_csv('../../results/orderParameters.txt', sep=" ", nrows=1, names=names)
+    file = '../../results/orderParametersL_1.txt'
+
+    parameters = pd.read_csv(file, sep=" ", nrows=1, names=names)
 
     names = ['N'] + [f'''iter {i}''' for i in range(1, parameters.iters[0] + 1)]
-    df = pd.read_csv('../../results/orderParameters.txt', sep=" ", names=names, skiprows=1)
+    df = pd.read_csv(file, sep=" ", names=names, skiprows=1)
 
     make_order_per_noise_plot(df, parameters.L[0], parameters.Eta[0], parameters.R[0], parameters.iters[0])
