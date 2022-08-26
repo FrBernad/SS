@@ -4,19 +4,26 @@ import plotly.graph_objects as go
 
 
 def make_order_per_noise_plot(df: pd.DataFrame, N: int, L: int, R: float, iters: int):
-    aux = df.values[:, 2500:]
-    avg = np.average(aux, axis=1)
-    std = np.std(aux, axis=1)
+    eta_step = 8
+    iteration_step = 30
+
+    final = len(df.values[0])
+    it = list(range(1, iters - 1))[0:final:iteration_step]
+    aux = df.values[::eta_step, 1:final:iteration_step]
+    data = []
+    eta = df.values[::eta_step, 0]
+    for i in range(len(aux)):
+        data.append(go.Scatter(
+            x=it, y=aux[i],
+            mode='lines',
+            name=eta[i]
+        ))
 
     fig = go.Figure(
-        data=go.Scatter(
-            x=df.eta, y=avg,
-            mode='markers+lines',
-            error_y=dict(array=std),
-        ),
+        data=data,
         layout=go.Layout(
-            title=dict(text=f'Order parameter per eta [ N={N} - L={L} - Rc={R} - iters={iters}]', x=0.5),
-            xaxis=dict(title='eta'),
+            title=dict(text=f'Order parameter per iteration [ N={N} - L={L} - Rc={R} - iters={iters}]', x=0.5),
+            xaxis=dict(title='iteration'),
             yaxis=dict(title='Order parameter'),
         )
     )
