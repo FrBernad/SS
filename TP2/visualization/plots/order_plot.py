@@ -10,8 +10,12 @@ def make_order_plot(df: pd.DataFrame, N: int, L: int, R: float, eta: float, iter
         ),
         layout=go.Layout(
             title=dict(text=f'Order parameter per iteration [N={N} - L={L} - Rc={R} - eta={eta}]', x=0.5),
-            xaxis=dict(title='Iteration'),
-            yaxis=dict(title='Order parameter'),
+            xaxis=dict(title='Iteración'),
+            yaxis=dict(title='Parámetro de orden'),
+            font=dict(
+                family="Arial",
+                size=22,
+            )
         )
     )
 

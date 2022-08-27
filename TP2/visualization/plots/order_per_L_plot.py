@@ -26,6 +26,10 @@ def make_order_per_noise_plot(df: pd.DataFrame, L: int, Eta: int, R: float, iter
             title=dict(text=f'Order parameter per iteration [ L={L} - Eta={Eta} - Rc={R} - iters={iters}]', x=0.5),
             xaxis=dict(title='iteration'),
             yaxis=dict(title='Order parameter'),
+            font=dict(
+                family="Arial",
+                size=22,
+            )
         )
     )
 
@@ -37,7 +41,6 @@ def make_order_per_noise_plot(df: pd.DataFrame, L: int, Eta: int, R: float, iter
 
 if __name__ == "__main__":
     file = '../../results/orderParametersL_1.txt'
-
 
     names = ['L', 'Eta', 'R', 'iters']
     parameters = pd.read_csv(file, sep=" ", nrows=1, names=names)
