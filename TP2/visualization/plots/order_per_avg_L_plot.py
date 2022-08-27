@@ -21,8 +21,8 @@ def make_order_per_noise_plot(df: pd.DataFrame, L: int, Eta: int, R: float, iter
         ),
         layout=go.Layout(
             title=dict(text=f'Order parameter per N [ L={L} - Eta={Eta} - Rc={R} - iters={iters}]', x=0.5),
-            xaxis=dict(title='Density', type='log'),
-            yaxis=dict(title='Order parameter'),
+            xaxis=dict(title='Densidad', type='log'),
+            yaxis=dict(title='Parámetro de orden'),
             font=dict(
                 family="Arial",
                 size=22,

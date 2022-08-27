@@ -26,8 +26,8 @@ def make_order_avg_per_noise_plot(plots_data: List):
         layout=go.Layout(
             title=dict(text=f'Order parameter per eta [N={plots_data[0]["N"]}, L={plots_data[0]["L"]}]', x=0.5),
             # title=dict(text=f'Order parameter per eta" x=0.5),
-            xaxis=dict(title='eta'),
-            yaxis=dict(title='Order parameter'),
+            xaxis=dict(title='Ruido'),
+            yaxis=dict(title='Parámetro de orden'),
             font=dict(
                 family="Arial",
                 size=22,
