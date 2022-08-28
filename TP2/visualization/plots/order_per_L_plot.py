@@ -17,14 +17,14 @@ def make_order_per_noise_plot(df: pd.DataFrame, L: int, Eta: int, R: float, iter
         data.append(go.Scatter(
             x=it, y=aux[i],
             mode='lines',
-            name='Density:' + str(N[i] / L ** 2)
+            name='Densidad = ' + str(N[i] / L ** 2)
         ))
 
     fig = go.Figure(
         data=data,
         layout=go.Layout(
             title=dict(text=f'Order parameter per iteration [ L={L} - Eta={Eta} - Rc={R} - iters={iters}]', x=0.5),
-            xaxis=dict(title='Iteración'),
+            xaxis=dict(title='Iteración', tickformat='power'),
             yaxis=dict(title='Parámetro de orden'),
             font=dict(
                 family="Arial",
