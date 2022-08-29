@@ -22,6 +22,7 @@ def make_order_per_noise_plot(df: pd.DataFrame, N: int, L: int, R: float, iters:
     data.append(
         go.Scatter(x=[cut, cut], y=[0, 1],
                    mode='lines',
+                   showlegend=False,
                    line=dict(color='firebrick', width=4, dash='dash'))
     )
 
