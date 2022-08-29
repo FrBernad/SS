@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.graph_objects as go
 
 
-def make_order_per_noise_plot(df: pd.DataFrame, L: int, Eta: int, R: float, iters: int):
+def make_order_per_noise_plot(df: pd.DataFrame, L: int, Eta: int, R: float, iters: int, cut: int):
     iteration_step = 50
     # aux_list = []
     aux_list = [20, 50, 100, 300, 800, 1200]  # 2, 12, 20, 50, 75, 80, 100, 150, 200, 300, 500, 800, 1200
@@ -17,8 +17,15 @@ def make_order_per_noise_plot(df: pd.DataFrame, L: int, Eta: int, R: float, iter
         data.append(go.Scatter(
             x=it, y=aux[i],
             mode='lines',
-            name='Densidad = ' + str(N[i] / L ** 2)
+            name='Densidad = ' + str(N[i] / L ** 2),
+
         ))
+
+    data.append(
+        go.Scatter(x=[cut, cut], y=[0, 1],
+                   mode='lines',
+                   line=dict(color='firebrick', width=4, dash='dash'), showlegend=False)
+    )
 
     fig = go.Figure(
         data=data,
@@ -48,4 +55,4 @@ if __name__ == "__main__":
     names = ['N'] + [f'''iter {i}''' for i in range(1, parameters.iters[0] + 1)]
     df = pd.read_csv(file, sep=" ", names=names, skiprows=1)
 
-    make_order_per_noise_plot(df, parameters.L[0], parameters.Eta[0], parameters.R[0], parameters.iters[0])
+    make_order_per_noise_plot(df, parameters.L[0], parameters.Eta[0], parameters.R[0], parameters.iters[0], 10000)

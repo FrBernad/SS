@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.graph_objects as go
 
 
-def make_order_per_noise_plot(df: pd.DataFrame, L: int, Eta: int, R: float, iters: int):
+def make_order_per_noise_plot(df: pd.DataFrame, L: int, Eta: int, R: float, iters: int, cut: int):
     aux = df.values[:, 10000:]
     step = 1
     final = len(aux)
