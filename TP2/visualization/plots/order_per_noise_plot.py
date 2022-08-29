@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.graph_objects as go
 
 
-def make_order_per_noise_plot(df: pd.DataFrame, N: int, L: int, R: float, iters: int):
+def make_order_per_noise_plot(df: pd.DataFrame, N: int, L: int, R: float, iters: int, cut: int):
     eta_step = 8
     iteration_step = 30
 
@@ -16,8 +16,14 @@ def make_order_per_noise_plot(df: pd.DataFrame, N: int, L: int, R: float, iters:
         data.append(go.Scatter(
             x=it, y=aux[i],
             mode='lines',
-            name=eta[i]
+            name=f'ruido = {eta[i]}'
         ))
+
+    data.append(
+        go.Scatter(x=[cut, cut], y=[0, 1],
+                   mode='lines',
+                   line=dict(color='firebrick', width=4, dash='dash'))
+    )
 
     fig = go.Figure(
         data=data,
@@ -39,10 +45,12 @@ def make_order_per_noise_plot(df: pd.DataFrame, N: int, L: int, R: float, iters:
 
 
 if __name__ == "__main__":
+    file = '../../results/orderParametersN300L20.txt'
+
     names = ['N', 'L', 'R', 'iters']
-    parameters = pd.read_csv('../../results/orderParametersN300L10.txt', sep=" ", nrows=1, names=names)
+    parameters = pd.read_csv(file, sep=" ", nrows=1, names=names)
 
     names = ['eta'] + [f'''iter {i}''' for i in range(1, parameters.iters[0] + 1)]
-    df = pd.read_csv('../../results/orderParameters.txt', sep=" ", names=names, skiprows=1)
+    df = pd.read_csv(file, sep=" ", names=names, skiprows=1)
 
-    make_order_per_noise_plot(df, parameters.N[0], parameters.L[0], parameters.R[0], parameters.iters[0])
+    make_order_per_noise_plot(df, parameters.N[0], parameters.L[0], parameters.R[0], parameters.iters[0], 2500)

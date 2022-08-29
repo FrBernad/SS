@@ -17,7 +17,8 @@ def make_order_avg_per_noise_plot(plots_data: List):
                 x=df.eta, y=avg,
                 mode='markers+lines',
                 error_y=dict(array=std),
-                name=f'N={pd["N"]}, L={pd["L"]}'
+                line_color="#13cc99",
+                name=f'Densidad={pd["N"] / pd["L"] ** 2} (N={pd["N"]}, L={pd["L"]})'
             )
         )
 
@@ -27,10 +28,16 @@ def make_order_avg_per_noise_plot(plots_data: List):
             title=dict(text=f'Order parameter per eta [N={plots_data[0]["N"]}, L={plots_data[0]["L"]}]', x=0.5),
             # title=dict(text=f'Order parameter per eta" x=0.5),
             xaxis=dict(title='Ruido'),
-            yaxis=dict(title='Parámetro de orden'),
+            yaxis=dict(title='Parámetro de orden promedio'),
             font=dict(
                 family="Arial",
                 size=22,
+            ),
+            legend=dict(
+                yanchor="top",
+                y=0.99,
+                xanchor="right",
+                x=0.99
             )
         )
     )
@@ -53,7 +60,7 @@ if __name__ == "__main__":
     #         N=parameters.N[0], L=parameters.L[0], R=parameters.R[0], iters=parameters.iters[0], df=df
     #     )
     # )
-
+    #
     # parameters = pd.read_csv('../../results/orderParametersN300L10.txt', sep=" ", nrows=1, names=names1)
     # df = pd.read_csv('../../results/orderParametersN300L10.txt', sep=" ", names=names2, skiprows=1)
     # plots_data.append(
@@ -61,7 +68,7 @@ if __name__ == "__main__":
     #         N=parameters.N[0], L=parameters.L[0], R=parameters.R[0], iters=parameters.iters[0], df=df
     #     )
     # )
-
+    #
     parameters = pd.read_csv('../../results/orderParametersN300L20.txt', sep=" ", nrows=1, names=names1)
     df = pd.read_csv('../../results/orderParametersN300L20.txt', sep=" ", names=names2, skiprows=1)
     plots_data.append(
