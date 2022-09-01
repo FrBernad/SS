@@ -1,20 +1,8 @@
-# TP1
+# Authors
+- [Francisco Bernad](https://github.com/FrBernad)
+- [Nicolás Rampoldi](https://github.com/NicolasRampoldi)
+- [Agustín Manfredi](https://github.com/imanfredi)
 
-To package run:
+# CELL INDEX METHOD
 
-* mvn clean install
-
-
-Once packaged both client and api project contain a tar.gz with each application and on the root a package a script to run the main classes exists.
-
-To run the test
-
-* mvn test
-
-To get the coverage report
-
-* mvn site
-
-
-
-
+Implementation of the [Cell Index Method](http://www.pas.rochester.edu/~wangyt/algorithms/cell/index.html) with visualization of neighbors.
