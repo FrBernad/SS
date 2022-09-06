@@ -3,5 +3,5 @@
 - [Nicolás Rampoldi](https://github.com/NicolasRampoldi)
 - [Agustín Manfredi](https://github.com/imanfredi)
 
-# DINÁMICA MOLECULAR DIRIGIDA POR EVENTOS
-Dinámica Molecular Dirigida por eventos.
+# EVENT-DRIVEN MOLECULAR DYNAMICS - BROWNIAN MOTION
+Implementation of Brownian Motion Event-Driven Molecular Dynamics.

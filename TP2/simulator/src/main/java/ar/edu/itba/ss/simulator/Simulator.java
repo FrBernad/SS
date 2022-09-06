@@ -66,6 +66,7 @@ public class Simulator {
             .max(Double::compare).orElseThrow();
 
         final double gridCondition = particlesParserResult.getL() / baseArguments.getR() + 2 * maxRadius;
+        
         int optimalM = (int) Math.floor(gridCondition);
         if (gridCondition == (int) gridCondition) {
             optimalM = (int) gridCondition - 1;

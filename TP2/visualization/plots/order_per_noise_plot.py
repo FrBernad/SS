@@ -46,7 +46,7 @@ def make_order_per_noise_plot(df: pd.DataFrame, N: int, L: int, R: float, iters:
 
 
 if __name__ == "__main__":
-    file = '../../results/orderParametersN300L20.txt'
+    file = '../../results/orderParametersN300L10.txt'
 
     names = ['N', 'L', 'R', 'iters']
     parameters = pd.read_csv(file, sep=" ", nrows=1, names=names)
@@ -54,4 +54,4 @@ if __name__ == "__main__":
     names = ['eta'] + [f'''iter {i}''' for i in range(1, parameters.iters[0] + 1)]
     df = pd.read_csv(file, sep=" ", names=names, skiprows=1)
 
-    make_order_per_noise_plot(df, parameters.N[0], parameters.L[0], parameters.R[0], parameters.iters[0], 2500)
+    make_order_per_noise_plot(df, parameters.N[0], parameters.L[0], parameters.R[0], parameters.iters[0], 2000)

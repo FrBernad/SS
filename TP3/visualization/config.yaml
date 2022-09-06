@@ -1,11 +1,8 @@
 ---
 # --- Visualization plotly config ---
 config:
-  dynamic_file: "../results/Dynamic2.txt"
-  static_file: "../results/Static2.txt"
-  neighbors_file: "../results/neighbors2.txt"
-  L: 20
-  M: 4
+  dynamic_file: "../assets/Dynamic.txt"
+  static_file: "../assets/Static.txt"
   R: 1
 
 #  for ovito

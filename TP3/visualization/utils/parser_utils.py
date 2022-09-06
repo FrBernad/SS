@@ -40,17 +40,9 @@ def _generate_radius(R: float, x_offset: float, y_offset: float, n: int = 500):
 
 
 def get_particles_data(dynamic_file: str, static_file: str) -> DataFrame:
-    dynamic_df = pd.read_csv(dynamic_file, skiprows=1, sep=" ", names=["x", "y"])
-    static_df = pd.read_csv(static_file, skiprows=2, sep=" ", names=["radius", "prop"])
+    dynamic_df = pd.read_csv(dynamic_file, skiprows=1, sep=" ", names=["x", "y", "speed", "angle"])
+    static_df = pd.read_csv(static_file, skiprows=2, sep=" ", names=["radius", "mass"])
 
     return pd.concat([dynamic_df, static_df], axis=1)
 
 
-def get_neighbors_data(neighbors_file: str) -> dict:
-    neighbors = dict()
-    with open(neighbors_file) as f:
-        for line in f.readlines():
-            aux = [int(i) for i in line.split(" ")[:-1]]
-            neighbors[aux[0]] = aux[1:]
-
-    return neighbors
