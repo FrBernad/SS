@@ -50,7 +50,7 @@ class BrownianMotionUtils {
 
 
         collisions.removeIf(currentCollision -> !currentCollision.isWall() &&
-            (currentCollision.containsParticle(collision.getParticleA()) || currentCollision.containsParticle(collision.getParticleB()))
+                (currentCollision.containsParticle(collision.getParticleA()) || currentCollision.containsParticle(collision.getParticleB()))
         );
 
         Map<Particle, State> newState = new HashMap<>();
@@ -63,10 +63,10 @@ class BrownianMotionUtils {
                 } else {
                     if (!newState.containsKey(particle)) {
                         newState.putAll(particlesCollisionStates(
-                                collision,
-                                currentStates.get(collision.getParticleA()),
-                                currentStates.get(collision.getParticleB())
-                            )
+                                        collision,
+                                        currentStates.get(collision.getParticleA()),
+                                        currentStates.get(collision.getParticleB())
+                                )
                         );
                     }
                 }
@@ -110,33 +110,46 @@ class BrownianMotionUtils {
     private static Collision calculateWallCollision(final Particle particle,
                                                     final State state,
                                                     final int L) {
-        Double closestTimeX;
 
-        //Check vertical walls
-        if (state.getXVelocity() > 0) {
-            closestTimeX = (L - particle.getRadius() - state.getPosition().getX()) / state.getXVelocity();
-        } else {
-            closestTimeX = (particle.getRadius() - state.getPosition().getX()) / state.getXVelocity();
+        if (state.getXVelocity() == 0 && state.getYVelocity() == 0) {
+            return Collision.None();
         }
+
+        Double closestTimeX = null;
+        //Check vertical walls
+        if (state.getXVelocity() != 0) {
+            if (state.getXVelocity() > 0) {
+                closestTimeX = (L - particle.getRadius() - state.getPosition().getX()) / state.getXVelocity();
+            } else {
+                closestTimeX = (particle.getRadius() - state.getPosition().getX()) / state.getXVelocity();
+            }
+        }
+
 
         //Check horizontal walls
 
-        double closestTimeY;
-
-        if (state.getYVelocity() > 0) {
-            closestTimeY = (L - particle.getRadius() - state.getPosition().getY()) / state.getYVelocity();
-        } else {
-            closestTimeY = (particle.getRadius() - state.getPosition().getY()) / state.getYVelocity();
+        Double closestTimeY = null;
+        if (state.getYVelocity() != 0) {
+            if (state.getYVelocity() > 0) {
+                closestTimeY = (L - particle.getRadius() - state.getPosition().getY()) / state.getYVelocity();
+            } else {
+                closestTimeY = (particle.getRadius() - state.getPosition().getY()) / state.getYVelocity();
+            }
         }
 
-        if (closestTimeX.equals(closestTimeY)) {
+        if (closestTimeX != null && closestTimeX.equals(closestTimeY)) {
             return new Collision(closestTimeX, particle, null, WALL_CORNER);
         }
 
+        if (closestTimeX == null) {
+            return new Collision(closestTimeY, particle, null, WALL_HORIZONTAL);
+        } else if (closestTimeY == null) {
+            return new Collision(closestTimeX, particle, null, WALL_VERTICAL);
+        }
         return closestTimeX < closestTimeY ?
-            new Collision(closestTimeX, particle, null, WALL_VERTICAL)
-            :
-            new Collision(closestTimeX, particle, null, WALL_HORIZONTAL);
+                new Collision(closestTimeX, particle, null, WALL_VERTICAL)
+                :
+                new Collision(closestTimeY, particle, null, WALL_HORIZONTAL);
     }
 
     private static State wallCollisionState(Collision collision, State state) {

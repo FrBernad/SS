@@ -1,5 +1,6 @@
 package ar.edu.itba.ss.simulator.algorithms.brownianmotion;
 
+import ar.edu.itba.ss.simulator.algorithms.brownianmotion.Collision.CollisionType;
 import ar.edu.itba.ss.simulator.utils.BrownianMotionAlgorithmResults;
 import ar.edu.itba.ss.simulator.utils.ExecutionTimestamps;
 import ar.edu.itba.ss.simulator.utils.Particle;
@@ -30,7 +31,9 @@ public class BrownianMotion {
 
             currentStates.forEach((particle, state) -> {
                 Collision collision = getClosestCollision(particle, state, currentStates, L);
-                collisions.add(collision);
+                if (collision.getType() != CollisionType.NONE) {
+                    collisions.add(collision);
+                }
             });
 
             final Collision closestCollision = collisions.pollFirst();
