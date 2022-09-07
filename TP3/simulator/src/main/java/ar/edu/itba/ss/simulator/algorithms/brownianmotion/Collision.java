@@ -19,7 +19,7 @@ public class Collision implements Comparable<Collision> {
     }
 
     public static Collision None() {
-        return new Collision(null, null, null, CollisionType.NONE);
+        return new Collision(Double.POSITIVE_INFINITY, null, null, CollisionType.NONE);
     }
 
     public boolean containsParticle(final Particle particle) {

@@ -18,7 +18,7 @@ class BrownianMotionUtils {
                                          final Map<Particle, State> particlesState,
                                          final int L) {
 
-        Collision closestCollision = null;
+        Collision closestCollision = Collision.None();
 
         // Check collision with other particles
         for (Map.Entry<Particle, State> entry : particlesState.entrySet()) {
@@ -27,17 +27,15 @@ class BrownianMotionUtils {
 
             if (particle != currentParticle) {
                 final Collision collision = calculateParticleCollision(currentParticle, currentParticleState, particle, state);
-                if (collision.getType() != NONE && (closestCollision == null || collision.compareTo(closestCollision) < 0)) {
+                if (collision.getType() != NONE && collision.compareTo(closestCollision) < 0) {
                     closestCollision = collision;
                 }
-
-
             }
         }
 
         // Check collision with walls
         final Collision wallCollision = calculateWallCollision(currentParticle, currentParticleState, L);
-        if (closestCollision == null || wallCollision.compareTo(closestCollision) < 0) {
+        if (wallCollision.compareTo(closestCollision) < 0) {
             closestCollision = wallCollision;
         }
 
@@ -50,7 +48,7 @@ class BrownianMotionUtils {
 
 
         collisions.removeIf(currentCollision -> !currentCollision.isWall() &&
-                (currentCollision.containsParticle(collision.getParticleA()) || currentCollision.containsParticle(collision.getParticleB()))
+            (currentCollision.containsParticle(collision.getParticleA()) || currentCollision.containsParticle(collision.getParticleB()))
         );
 
         Map<Particle, State> newState = new HashMap<>();
@@ -63,10 +61,10 @@ class BrownianMotionUtils {
                 } else {
                     if (!newState.containsKey(particle)) {
                         newState.putAll(particlesCollisionStates(
-                                        collision,
-                                        currentStates.get(collision.getParticleA()),
-                                        currentStates.get(collision.getParticleB())
-                                )
+                                collision,
+                                currentStates.get(collision.getParticleA()),
+                                currentStates.get(collision.getParticleB())
+                            )
                         );
                     }
                 }
@@ -147,9 +145,9 @@ class BrownianMotionUtils {
             return new Collision(closestTimeX, particle, null, WALL_VERTICAL);
         }
         return closestTimeX < closestTimeY ?
-                new Collision(closestTimeX, particle, null, WALL_VERTICAL)
-                :
-                new Collision(closestTimeY, particle, null, WALL_HORIZONTAL);
+            new Collision(closestTimeX, particle, null, WALL_VERTICAL)
+            :
+            new Collision(closestTimeY, particle, null, WALL_HORIZONTAL);
     }
 
     private static State wallCollisionState(Collision collision, State state) {
@@ -179,7 +177,6 @@ class BrownianMotionUtils {
                                                                  final State particleStateB) {
 
         //FIXME: Está bien calcular la velocidad nueva así y el nuevo angulo así?
-
         final Map<Particle, State> newStates = new HashMap<>();
         final Particle particleA = collision.getParticleA();
         final Particle particleB = collision.getParticleB();
