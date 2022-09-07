@@ -9,8 +9,8 @@ from utils.parser_utils import get_particles_data
 def visualization_plotly(config_file: str):
     config = get_config(config_file)
 
-    df = get_particles_data(config.dynamic_file, config.static_file)
-    make_particles_plot(df)
+    df = get_particles_data(config.static_file, config.results_file)
+    make_particles_plot(df[0])
 
 
 if __name__ == "__main__":

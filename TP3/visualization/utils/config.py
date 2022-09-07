@@ -1,13 +1,12 @@
 import yaml
 from pydantic import BaseModel, ValidationError
 
-DYNAMIC_FILE = "../results/Dynamic100.txt"
-STATIC_FILE = "../results/Static100.txt"
-NEIGHBORS_FILE = "../results/neighbors.txt"
+RESULTS_FILE = "../results/results.txt"
+STATIC_FILE = "../results/Static.txt"
 
 
 class Config(BaseModel):
-    dynamic_file: str = DYNAMIC_FILE
+    results_file: str = RESULTS_FILE
     static_file: str = STATIC_FILE
 
 

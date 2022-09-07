@@ -1,19 +1,25 @@
 package ar.edu.itba.ss.simulator;
 
+import ar.edu.itba.ss.simulator.algorithms.brownianmotion.BrownianMotion;
+import ar.edu.itba.ss.simulator.utils.ActionLogger;
 import ar.edu.itba.ss.simulator.utils.BaseArguments;
+import ar.edu.itba.ss.simulator.utils.BrownianMotionAlgorithmResults;
 import ar.edu.itba.ss.simulator.utils.Particle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Paths;
+import java.util.Map;
 import java.util.Properties;
 
 import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrDefault;
 import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrFail;
 import static ar.edu.itba.ss.simulator.utils.ParseUtils.ParticlesParserResult;
 import static ar.edu.itba.ss.simulator.utils.ParseUtils.parseParticlesList;
+import static ar.edu.itba.ss.simulator.utils.Particle.State;
 import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
 
@@ -52,64 +58,34 @@ public class Simulator {
             baseArguments.getDynamicFile(),
             DEFAULT_DELIMITER);
 
-        final double maxRadius = particlesParserResult.getParticlesPerTime()
-            .get(0)
-            .keySet()
-            .stream()
-            .map(Particle::getRadius)
-            .max(Double::compare).orElseThrow();
-
-        final double gridCondition = particlesParserResult.getL() / baseArguments.getR() + 2 * maxRadius;
-
-        int optimalM = (int) Math.floor(gridCondition);
-        if (gridCondition == (int) gridCondition) {
-            optimalM = (int) gridCondition - 1;
-        }
-
         LOGGER.info("Executing Brownian Motion ...");
 
-//        FlocksAlgorithmResults methodResults = Flocks.execute(
-//            particlesParserResult.getParticlesPerTime().get(0),
-//            particlesParserResult.getN(),
-//            particlesParserResult.getL(),
-//            optimalM,
-//            baseArguments.getR(),
-//            baseArguments.getDt(),
-//            baseArguments.getEta(),
-//            baseArguments.getPeriodic(),
-//            baseArguments.getMaxIterations()
-//        );
+        BrownianMotionAlgorithmResults methodResults = BrownianMotion.execute(
+            particlesParserResult.getParticlesPerTime().get(0),
+            particlesParserResult.getL(),
+            baseArguments.getMaxIterations()
+        );
 
 
-//        LOGGER.info("Writing Results ...");
-//        final File outFlockFile = new File(baseArguments.getOutFlocksFilePath());
-//        try (PrintWriter pw = new PrintWriter(outFlockFile)) {
-//            for (int i = 0; i < methodResults.getParticlesStates().size(); i++) {
-//                pw.append(String.format("%d\n", i));
-//                final Map<Particle, State> currentStates = methodResults.getParticlesStates().get(i);
-//                currentStates.forEach((particle, state) ->
-//                    pw.printf("%d %f %f %f %f\n",
-//                        particle.getId(),
-//                        state.getPosition().getX(), state.getPosition().getY(),
-//                        state.getSpeed(), state.getAngle())
-//                );
-//            }
-//        }
-//
-//        final File outOrderFile = new File(baseArguments.getOutOrderFilePath());
-//        try (PrintWriter pw = new PrintWriter(outOrderFile)) {
-//            pw.printf("%d ", particlesParserResult.getN());
-//            pw.printf("%d ", particlesParserResult.getL());
-//            pw.printf("%f ", baseArguments.getR());
-//            pw.printf("%f ", baseArguments.getEta());
-//            pw.printf("%d\n", baseArguments.getMaxIterations());
-//            methodResults.getOrderParameter().forEach(pw::println);
-//        }
-//
-//        final File outTimeFile = new File(baseArguments.getOutTimeFilePath());
-//        try (PrintWriter pw = new PrintWriter(outTimeFile)) {
-//            ActionLogger.logTimestamps(pw, methodResults.getExecutionTimestamps());
-//        }
+        LOGGER.info("Writing Results ...");
+        final File outResultsFile = new File(baseArguments.getOutFlocksFilePath());
+        try (PrintWriter pw = new PrintWriter(outResultsFile)) {
+            for (int i = 0; i < methodResults.getParticlesStates().size(); i++) {
+                pw.append(String.format("%d\n", i));
+                final Map<Particle, State> currentStates = methodResults.getParticlesStates().get(i);
+                currentStates.forEach((particle, state) ->
+                    pw.printf("%d %f %f %f %f\n",
+                        particle.getId(),
+                        state.getPosition().getX(), state.getPosition().getY(),
+                        state.getSpeed(), state.getAngle())
+                );
+            }
+        }
+
+        final File outTimeFile = new File(baseArguments.getOutTimeFilePath());
+        try (PrintWriter pw = new PrintWriter(outTimeFile)) {
+            ActionLogger.logTimestamps(pw, methodResults.getExecutionTimestamps());
+        }
 
         LOGGER.info("Done!");
 

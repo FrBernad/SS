@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import static java.lang.Math.*;
 
-public class Particle {
+public class Particle implements Comparable<Particle> {
 
     private final int id;
     private final double radius;
@@ -41,6 +41,11 @@ public class Particle {
         return Objects.hash(id);
     }
 
+    @Override
+    public int compareTo(Particle o) {
+        return Integer.compare(id, o.id);
+    }
+
     public static class State {
         private final Position position;
         private final double speed;
@@ -72,6 +77,15 @@ public class Particle {
             return sin(angle) * speed;
         }
 
+        public static State nextInstant(State currentState, double speed, double angle, double time) {
+            Position position = new Position(
+                currentState.position.getX() + currentState.getXVelocity() * time,
+                currentState.position.getY() + currentState.getYVelocity() * time
+            );
+
+            return new State(position, speed, angle);
+        }
+
     }
 
     public static class Position {
@@ -94,5 +108,7 @@ public class Particle {
         public static double calculateDistance(Position p1, Position p2) {
             return sqrt(pow(p1.getX() - p2.getX(), 2) + pow(p1.getY() - p2.getY(), 2));
         }
+
+
     }
 }

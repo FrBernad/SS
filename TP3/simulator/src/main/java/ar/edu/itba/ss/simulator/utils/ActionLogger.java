@@ -7,9 +7,9 @@ import java.time.format.DateTimeFormatter;
 
 public class ActionLogger {
 
-    private final static String START_ALGORITHM = "Started cell index algorithm";
+    private final static String START_ALGORITHM = "Started algorithm";
 
-    private final static String FINISH_ALGORITHM = "Finished cell index algorithm";
+    private final static String FINISH_ALGORITHM = "Finished algorithm";
 
     private final static String TOTAL_ALGORITHM_TIME = "Total algorithm time";
 

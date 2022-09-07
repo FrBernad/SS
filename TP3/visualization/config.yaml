@@ -1,10 +1,6 @@
 ---
 # --- Visualization plotly config ---
 config:
-  dynamic_file: "../assets/Dynamic.txt"
+  results_file: "../results/results.txt"
   static_file: "../assets/Static.txt"
-  R: 1
-
-#  for ovito
-  particle: 311
 ...
