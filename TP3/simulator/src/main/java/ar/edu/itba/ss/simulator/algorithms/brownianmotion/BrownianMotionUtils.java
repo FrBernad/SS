@@ -48,22 +48,19 @@ class BrownianMotionUtils {
                                                       final Set<Particle> collisionParticles,
                                                       final Map<Particle, State> currentStates) {
 
+        collisionParticles.remove(currentCollision.getParticleA());
+        collisionParticles.remove(currentCollision.getParticleB());
 
         // Remove collisions that depend on current collision and remove from collisionParticles for further calculations
         // FIXME: podria sacarse la condicion de !wall porque si fuera wall alguna de sus particulas seria null y no hay forma de
         // FIXME: que la segunda particula sea la misma q la de la colision porque seria la misma colision
         collisions.removeIf(collision -> {
-                final boolean collisionContainsCurrentCollisionParticles = !collision.isWall() &&
-                    (collision.containsParticle(currentCollision.getParticleA())
-                        || collision.containsParticle(currentCollision.getParticleB()));
+                final boolean collisionContainsCurrentCollisionParticles = (collision.containsParticle(currentCollision.getParticleA())
+                    || collision.containsParticle(currentCollision.getParticleB()));
 
                 if (collisionContainsCurrentCollisionParticles) {
-                    if (collision.getParticleA() != null) {
-                        collisionParticles.remove(collision.getParticleA());
-                    }
-                    if (collision.getParticleB() != null) {
-                        collisionParticles.remove(collision.getParticleB());
-                    }
+                    collisionParticles.remove(collision.getParticleA());
+                    collisionParticles.remove(collision.getParticleB());
                 }
 
                 return collisionContainsCurrentCollisionParticles;

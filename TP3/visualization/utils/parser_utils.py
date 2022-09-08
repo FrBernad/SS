@@ -28,7 +28,7 @@ def get_frame_particles(df: DataFrame):
 
 def _generate_square(L: int):
     square_points = []
-    for x in np.arange(0, L, 0.1):
+    for x in np.arange(0, L + 0.1, 0.1):
         square_points.append([x, L, 0])
         square_points.append([x, 0, 0])
         square_points.append([L, x, 0])
