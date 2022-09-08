@@ -13,6 +13,10 @@ public class Collision implements Comparable<Collision> {
 
     public final static Collision NONE = new Collision(Double.POSITIVE_INFINITY, null, null, CollisionType.NONE);
 
+    public static Collision collisionWithNewTime(Collision collision, double time) {
+        return new Collision(collision.collisionTime - time, collision.particleA, collision.particleB, collision.type);
+    }
+
     public Collision(Double collisionTime, Particle particleA, Particle particleB, CollisionType type) {
         this.collisionTime = collisionTime;
         this.particleA = particleA;

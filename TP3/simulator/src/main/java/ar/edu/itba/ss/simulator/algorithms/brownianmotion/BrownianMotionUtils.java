@@ -4,6 +4,7 @@ import ar.edu.itba.ss.simulator.algorithms.brownianmotion.Collision.CollisionTyp
 import ar.edu.itba.ss.simulator.utils.Particle;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -51,6 +52,8 @@ class BrownianMotionUtils {
         collisionParticles.remove(currentCollision.getParticleA());
         collisionParticles.remove(currentCollision.getParticleB());
 
+        final Set<Collision> updatedTimeCollisions = new HashSet<>();
+
         // Remove collisions that depend on current collision and remove from collisionParticles for further calculations
         // FIXME: podria sacarse la condicion de !wall porque si fuera wall alguna de sus particulas seria null y no hay forma de
         // FIXME: que la segunda particula sea la misma q la de la colision porque seria la misma colision
@@ -61,11 +64,18 @@ class BrownianMotionUtils {
                 if (collisionContainsCurrentCollisionParticles) {
                     collisionParticles.remove(collision.getParticleA());
                     collisionParticles.remove(collision.getParticleB());
+                } else {
+                    updatedTimeCollisions.add(Collision.collisionWithNewTime(collision, currentCollision.getCollisionTime()));
                 }
 
                 return collisionContainsCurrentCollisionParticles;
             }
         );
+
+        //Update collision times
+        collisions.clear();
+        collisions.addAll(updatedTimeCollisions);
+
 
         // For each particle update its state
         Map<Particle, State> newState = new HashMap<>();
