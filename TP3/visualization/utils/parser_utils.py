@@ -8,19 +8,37 @@ from pandas import DataFrame
 
 def get_frame_particles(df: DataFrame):
     particles = od.Particles()
-    particles.create_property('Particle Identifier', data=df.id)
+
+    square_points = _generate_square(6)
+
+    particles.create_property('Particle Identifier',
+                              data=np.concatenate((df.id, np.arange(len(df.x), len(df.x) + len(square_points)))))
     particles.create_property('Position',
-                              data=np.array((df.x, df.y, np.zeros(len(df.x)))).T)
-    particles.create_property('Radius', data=df.radius)
-    particles.create_property('angle', data=df.angle)
-    particles.create_property('Force', data=np.array((np.cos(df.angle) * df.speed, np.sin(df.angle) * df.speed,
-                                                      np.zeros(len(df.x)))).T)
+                              data=np.concatenate((np.array((df.x, df.y, np.zeros(len(df.x)))).T, square_points)))
+    particles.create_property('Radius', data=np.concatenate((df.radius, np.full(len(square_points), 0.05))))
+    particles.create_property('angle', data=np.concatenate((df.angle, np.zeros(len(square_points)))))
+    particles.create_property('Force',
+                              data=np.concatenate((np.array((np.cos(df.angle) * df.speed, np.sin(df.angle) * df.speed,
+                                                             np.zeros(len(df.x)))).T,
+                                                   np.zeros((len(square_points), 3))))
+                              )
 
     return particles
 
 
+def _generate_square(L: int):
+    square_points = []
+    for x in np.arange(0, L, 0.1):
+        square_points.append([x, L, 0])
+        square_points.append([x, 0, 0])
+        square_points.append([L, x, 0])
+        square_points.append([0, x, 0])
+
+    return np.array(square_points)
+
+
 def get_particles_data(static_file: str, results_file: str) -> List[DataFrame]:
-    static_df = pd.read_csv(static_file, skiprows=2, sep=" ", names=["radius", "prop"])
+    static_df = pd.read_csv(static_file, skiprows=2, sep=" ", names=["radius", "mass"])
 
     dfs = []
     with open(results_file, "r") as results:

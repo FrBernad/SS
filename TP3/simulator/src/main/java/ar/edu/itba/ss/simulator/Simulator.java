@@ -28,13 +28,8 @@ public class Simulator {
     private static final String STATIC_FILE_PATH_P = "staticFile";
     private static final String DYNAMIC_FILE_PATH_P = "dynamicFile";
     private static final String RESULTS_OUT_PATH_P = "resultsFile";
-    private static final String ORDER_OUT_PATH_P = "orderFile";
     private static final String TIME_OUT_PATH_P = "timeFile";
-    private static final String PERIODIC_CONDITION_P = "periodic";
     private static final String MAX_ITERATIONS_P = "maxIterations";
-    private static final String DELTA_TIME_P = "dt";
-    private static final String ETA_P = "eta";
-    private static final String RADIUS_P = "radius";
     private static final String DELIMITER_P = "delimiter";
     private static final String DEFAULT_DELIMITER = " ";
 
@@ -68,7 +63,7 @@ public class Simulator {
 
 
         LOGGER.info("Writing Results ...");
-        final File outResultsFile = new File(baseArguments.getOutFlocksFilePath());
+        final File outResultsFile = new File(baseArguments.getOutResultsFilePath());
         try (PrintWriter pw = new PrintWriter(outResultsFile)) {
             for (int i = 0; i < methodResults.getParticlesStates().size(); i++) {
                 pw.append(String.format("%d\n", i));
@@ -95,29 +90,23 @@ public class Simulator {
         final String staticFilePath = getPropertyOrFail(properties, STATIC_FILE_PATH_P);
         final String dynamicFilePath = getPropertyOrFail(properties, DYNAMIC_FILE_PATH_P);
 
-        final String outFlockFilePath = getPropertyOrFail(properties, RESULTS_OUT_PATH_P);
-        final String orderFilePath = getPropertyOrFail(properties, ORDER_OUT_PATH_P);
+        final String outResultsFile = getPropertyOrFail(properties, RESULTS_OUT_PATH_P);
         final String timeFilePath = getPropertyOrFail(properties, TIME_OUT_PATH_P);
         final String delimiter = getPropertyOrDefault(properties, DELIMITER_P, DEFAULT_DELIMITER);
 
-        final Boolean isPeriodic = !getPropertyOrDefault(properties, PERIODIC_CONDITION_P, "NOT_EMPTY").equals("");
-        final double radius = parseDouble(getPropertyOrFail(properties, RADIUS_P));
         final int maxIterations = parseInt(getPropertyOrDefault(properties, MAX_ITERATIONS_P, "3000"));
-
-        final double eta = parseDouble(getPropertyOrDefault(properties, ETA_P, "1"));
-        final double dt = Double.parseDouble(getPropertyOrDefault(properties, DELTA_TIME_P, "1"));
 
         final File staticFile = Paths.get(staticFilePath).toFile();
         final File dynamicFile = Paths.get(dynamicFilePath).toFile();
 
 
-        return new BaseArguments(staticFile, dynamicFile, outFlockFilePath, timeFilePath, orderFilePath, isPeriodic, delimiter, radius, eta, dt, maxIterations);
+        return new BaseArguments(staticFile, dynamicFile, outResultsFile, timeFilePath, delimiter, maxIterations);
     }
 
     private static void printClientUsage() {
         System.out.println("Invalid simulator invocation.\n" +
             "Usage: ./simulator -DstaticFile='path/to/static/file' -DdynamicFile='path/to/dynamic/file' " +
-            "[-Dperiodic] -Dradius=radius -DresultsFile=resultsFile -DtimeFile=timeFile -DorderFile=orderFile [-DmaxIterations=iters] " +
-            "[-Deta=eta] [-Ddt=dt]");
+            " -DresultsFile=resultsFile -DtimeFile=timeFile [-DmaxIterations=iters] "
+        );
     }
 }

@@ -13,6 +13,7 @@ import static java.lang.Math.*;
 
 class BrownianMotionUtils {
 
+
     static Collision getClosestCollision(final Particle currentParticle,
                                          final State currentParticleState,
                                          final Map<Particle, State> particlesState,
@@ -44,8 +45,13 @@ class BrownianMotionUtils {
 
     static Map<Particle, State> updateParticlesStates(final Collision collision,
                                                       final Set<Collision> collisions,
+                                                      final Set<Particle> collisionParticles,
                                                       final Map<Particle, State> currentStates) {
 
+        for (Collision currentCollision : collisions) {
+            collisionParticles.removeIf(p -> p.equals(currentCollision.getParticleA()) || p.equals(currentCollision.getParticleB()))
+            ;
+        }
 
         collisions.removeIf(currentCollision -> !currentCollision.isWall() &&
             (currentCollision.containsParticle(collision.getParticleA()) || currentCollision.containsParticle(collision.getParticleB()))
@@ -85,7 +91,7 @@ class BrownianMotionUtils {
         final double deltaVx = stateA.getXVelocity() - stateB.getXVelocity();
         final double deltaVy = stateA.getYVelocity() - stateB.getYVelocity();
 
-        final double vr = deltaVx * deltaX + deltaVy + deltaY;
+        final double vr = deltaVx * deltaX + deltaVy * deltaY;
 
         if (vr >= 0) {
             return Collision.NONE;
@@ -122,7 +128,6 @@ class BrownianMotionUtils {
                 closestTimeX = (particle.getRadius() - state.getPosition().getX()) / state.getXVelocity();
             }
         }
-
 
         //Check horizontal walls
         Double closestTimeY = null;
@@ -181,7 +186,7 @@ class BrownianMotionUtils {
         final Map<Particle, State> newStates = new HashMap<>();
         final Particle particleA = collision.getParticleA();
         final Particle particleB = collision.getParticleB();
-
+        final double collisionTime = collision.getCollisionTime();
 
         // Calculate operation values
         final double deltaX = particleStateA.getPosition().getX() - particleStateB.getPosition().getX();
@@ -199,21 +204,21 @@ class BrownianMotionUtils {
         final double jy = j * deltaY / sigma;
 
         // Particle A new state
-        double newVelocityXA = particleStateA.getXVelocity() + jx / collision.getParticleA().getMass();
-        double newVelocityYA = particleStateA.getYVelocity() + jy / collision.getParticleA().getMass();
+        double newVelocityXA = particleStateA.getXVelocity() + jx / particleA.getMass();
+        double newVelocityYA = particleStateA.getYVelocity() + jy / particleA.getMass();
         double speedA = Math.sqrt(Math.pow(newVelocityXA, 2) + Math.pow(newVelocityYA, 2));
         double angleA = atan2(newVelocityYA, newVelocityXA);
 
-        newStates.put(collision.getParticleA(), State.nextInstant(particleStateA, speedA, angleA, collision.getCollisionTime()));
+        newStates.put(particleA, State.nextInstant(particleStateA, speedA, angleA, collisionTime));
 
 
         // Particle B new state
-        double newVelocityXB = particleStateB.getXVelocity() - jx / collision.getParticleB().getMass();
-        double newVelocityYB = particleStateB.getYVelocity() - jy / collision.getParticleB().getMass();
-        double speedB = Math.sqrt(Math.pow(newVelocityYB, 2) + Math.pow(newVelocityYB, 2));
+        double newVelocityXB = particleStateB.getXVelocity() - jx / particleB.getMass();
+        double newVelocityYB = particleStateB.getYVelocity() - jy / particleB.getMass();
+        double speedB = Math.sqrt(Math.pow(newVelocityXB, 2) + Math.pow(newVelocityYB, 2));
         double angleB = atan2(newVelocityYB, newVelocityXB);
 
-        newStates.put(collision.getParticleB(), State.nextInstant(particleStateB, speedB, angleB, collision.getCollisionTime()));
+        newStates.put(particleB, State.nextInstant(particleStateB, speedB, angleB, collisionTime));
 
         return newStates;
     }
