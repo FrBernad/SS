@@ -5,7 +5,6 @@ import java.util.Objects;
 import static java.lang.Math.*;
 
 public class Particle implements Comparable<Particle> {
-
     private final int id;
     private final double radius;
     private final double mass;

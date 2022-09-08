@@ -18,7 +18,7 @@ class BrownianMotionUtils {
                                          final Map<Particle, State> particlesState,
                                          final int L) {
 
-        Collision closestCollision = Collision.None();
+        Collision closestCollision = Collision.NONE;
 
         // Check collision with other particles
         for (Map.Entry<Particle, State> entry : particlesState.entrySet()) {
@@ -35,7 +35,7 @@ class BrownianMotionUtils {
 
         // Check collision with walls
         final Collision wallCollision = calculateWallCollision(currentParticle, currentParticleState, L);
-        if (wallCollision.compareTo(closestCollision) < 0) {
+        if (wallCollision.getType() != NONE && wallCollision.compareTo(closestCollision) < 0) {
             closestCollision = wallCollision;
         }
 
@@ -88,7 +88,7 @@ class BrownianMotionUtils {
         final double vr = deltaVx * deltaX + deltaVy + deltaY;
 
         if (vr >= 0) {
-            return Collision.None();
+            return Collision.NONE;
         }
 
         final double rr = pow(deltaX, 2) + pow(deltaY, 2);
@@ -97,7 +97,7 @@ class BrownianMotionUtils {
 
         final double d = pow(vr, 2) - vv * (rr - pow(sigma, 2));
         if (d < 0) {
-            return Collision.None();
+            return Collision.NONE;
         }
 
         final double collisionTime = -(vr + sqrt(d)) / vv;
@@ -110,11 +110,11 @@ class BrownianMotionUtils {
                                                     final int L) {
 
         if (state.getXVelocity() == 0 && state.getYVelocity() == 0) {
-            return Collision.None();
+            return Collision.NONE;
         }
 
-        Double closestTimeX = null;
         //Check vertical walls
+        Double closestTimeX = null;
         if (state.getXVelocity() != 0) {
             if (state.getXVelocity() > 0) {
                 closestTimeX = (L - particle.getRadius() - state.getPosition().getX()) / state.getXVelocity();
@@ -125,7 +125,6 @@ class BrownianMotionUtils {
 
 
         //Check horizontal walls
-
         Double closestTimeY = null;
         if (state.getYVelocity() != 0) {
             if (state.getYVelocity() > 0) {
@@ -153,6 +152,7 @@ class BrownianMotionUtils {
     private static State wallCollisionState(Collision collision, State state) {
         double angle;
         State nextState = null;
+
         switch (collision.getType()) {
             case WALL_CORNER:
                 angle = atan2(-state.getYVelocity(), -state.getXVelocity());
@@ -160,15 +160,16 @@ class BrownianMotionUtils {
                 break;
 
             case WALL_HORIZONTAL:
-                angle = atan2(state.getYVelocity(), -state.getXVelocity());
+                angle = atan2(-state.getYVelocity(), state.getXVelocity());
                 nextState = State.nextInstant(state, state.getSpeed(), angle, collision.getCollisionTime());
                 break;
 
             case WALL_VERTICAL:
-                angle = atan2(-state.getYVelocity(), state.getXVelocity());
+                angle = atan2(state.getYVelocity(), -state.getXVelocity());
                 nextState = State.nextInstant(state, state.getSpeed(), angle, collision.getCollisionTime());
                 break;
         }
+
         return nextState;
     }
 
@@ -187,27 +188,30 @@ class BrownianMotionUtils {
         final double deltaY = particleStateA.getPosition().getY() - particleStateB.getPosition().getY();
         final double deltaVx = particleStateA.getXVelocity() - particleStateB.getXVelocity();
         final double deltaVy = particleStateA.getYVelocity() - particleStateB.getYVelocity();
-        final double vr = deltaVx * deltaX + deltaVy + deltaY;
+        final double vr = deltaVx * deltaX + deltaVy * deltaY;
 
         final double sigma = particleA.getRadius() + particleB.getRadius();
 
-        final double j = (2 * particleA.getMass() * particleB.getMass() * vr) / (sigma * (particleA.getMass() + particleB.getMass()));
+        final double massSum = particleA.getMass() + particleB.getMass();
+
+        final double j = (2 * massSum * vr) / (sigma * massSum);
         final double jx = j * deltaX / sigma;
         final double jy = j * deltaY / sigma;
 
         // Particle A new state
-        double newSpeedXA = particleStateA.getXVelocity() + jx / collision.getParticleA().getMass();
-        double newSpeedYA = particleStateA.getYVelocity() + jy / collision.getParticleA().getMass();
-        double speedA = Math.sqrt(Math.pow(newSpeedXA, 2) + Math.pow(newSpeedYA, 2));
-        double angleA = atan2(newSpeedYA, newSpeedXA);
+        double newVelocityXA = particleStateA.getXVelocity() + jx / collision.getParticleA().getMass();
+        double newVelocityYA = particleStateA.getYVelocity() + jy / collision.getParticleA().getMass();
+        double speedA = Math.sqrt(Math.pow(newVelocityXA, 2) + Math.pow(newVelocityYA, 2));
+        double angleA = atan2(newVelocityYA, newVelocityXA);
 
         newStates.put(collision.getParticleA(), State.nextInstant(particleStateA, speedA, angleA, collision.getCollisionTime()));
 
+
         // Particle B new state
-        double newSpeedXB = particleStateA.getXVelocity() - jx / collision.getParticleB().getMass();
-        double newSpeedYB = particleStateA.getYVelocity() - jy / collision.getParticleB().getMass();
-        double speedB = Math.sqrt(Math.pow(newSpeedYB, 2) + Math.pow(newSpeedYB, 2));
-        double angleB = atan2(newSpeedYB, newSpeedXB);
+        double newVelocityXB = particleStateB.getXVelocity() - jx / collision.getParticleB().getMass();
+        double newVelocityYB = particleStateB.getYVelocity() - jy / collision.getParticleB().getMass();
+        double speedB = Math.sqrt(Math.pow(newVelocityYB, 2) + Math.pow(newVelocityYB, 2));
+        double angleB = atan2(newVelocityYB, newVelocityXB);
 
         newStates.put(collision.getParticleB(), State.nextInstant(particleStateB, speedB, angleB, collision.getCollisionTime()));
 

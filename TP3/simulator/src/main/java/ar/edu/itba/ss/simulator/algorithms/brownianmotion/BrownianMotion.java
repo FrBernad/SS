@@ -37,6 +37,9 @@ public class BrownianMotion {
             });
 
             final Collision closestCollision = collisions.pollFirst();
+            if (closestCollision == null) {
+                break;
+            }
 
             particlesStates.add(updateParticlesStates(closestCollision, collisions, currentStates));
         }

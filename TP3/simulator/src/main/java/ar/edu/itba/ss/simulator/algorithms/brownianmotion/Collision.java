@@ -11,15 +11,13 @@ public class Collision implements Comparable<Collision> {
     private final Particle particleB;
     private final CollisionType type;
 
+    public final static Collision NONE = new Collision(Double.POSITIVE_INFINITY, null, null, CollisionType.NONE);
+
     public Collision(Double collisionTime, Particle particleA, Particle particleB, CollisionType type) {
         this.collisionTime = collisionTime;
         this.particleA = particleA;
         this.particleB = particleB;
         this.type = type;
-    }
-
-    public static Collision None() {
-        return new Collision(Double.POSITIVE_INFINITY, null, null, CollisionType.NONE);
     }
 
     public boolean containsParticle(final Particle particle) {
