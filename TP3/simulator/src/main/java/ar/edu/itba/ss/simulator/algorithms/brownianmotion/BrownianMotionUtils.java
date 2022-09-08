@@ -235,7 +235,6 @@ class BrownianMotionUtils {
 
         newStates.put(particleXi, State.nextInstant(particleStateXi, speedXi, angleXi, collisionTime));
 
-
         // Particle B new state
         double newVelocityXj = particleStateXj.getXVelocity() - jx / particleXj.getMass();
         double newVelocityYj = particleStateXj.getYVelocity() - jy / particleXj.getMass();

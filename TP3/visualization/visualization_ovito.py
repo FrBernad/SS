@@ -30,7 +30,7 @@ def visualization_ovito(config_file: str):
 
     export_file(pipeline, '../results/visualization.dump', 'lammps/dump',
                 columns=["Particle Identifier", "Position.X", "Position.Y", "Position.Z", "Radius", "angle",
-                         "Force.X", "Force.Y", "Force.Z"],
+                         "Force.X", "Force.Y", "Force.Z", "Type"],
                 multiple_frames=True, start_frame=0, end_frame=len(dfs) - 1)
 
 

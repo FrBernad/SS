@@ -15,7 +15,9 @@ def get_frame_particles(df: DataFrame):
                               data=np.concatenate((df.id, np.arange(len(df.x), len(df.x) + len(square_points)))))
     particles.create_property('Position',
                               data=np.concatenate((np.array((df.x, df.y, np.zeros(len(df.x)))).T, square_points)))
-    particles.create_property('Radius', data=np.concatenate((df.radius, np.full(len(square_points), 0.05))))
+    particles.create_property('Radius', data=np.concatenate((df.radius, np.full(len(square_points), 0.03))))
+    particles.create_property('Type',
+                              data=np.concatenate(([0], np.full(len(df.x) - 1, 1), np.full(len(square_points), 2))))
     particles.create_property('angle', data=np.concatenate((df.angle, np.zeros(len(square_points)))))
     particles.create_property('Force',
                               data=np.concatenate((np.array((np.cos(df.angle) * df.speed, np.sin(df.angle) * df.speed,
@@ -28,7 +30,7 @@ def get_frame_particles(df: DataFrame):
 
 def _generate_square(L: int):
     square_points = []
-    for x in np.arange(0, L + 0.1, 0.1):
+    for x in np.arange(0, L + 0.05, 0.05):
         square_points.append([x, L, 0])
         square_points.append([x, 0, 0])
         square_points.append([L, x, 0])
