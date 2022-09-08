@@ -43,33 +43,47 @@ class BrownianMotionUtils {
         return closestCollision;
     }
 
-    static Map<Particle, State> updateParticlesStates(final Collision collision,
+    static Map<Particle, State> updateParticlesStates(final Collision currentCollision,
                                                       final Set<Collision> collisions,
                                                       final Set<Particle> collisionParticles,
                                                       final Map<Particle, State> currentStates) {
 
-        for (Collision currentCollision : collisions) {
-            collisionParticles.removeIf(p -> p.equals(currentCollision.getParticleA()) || p.equals(currentCollision.getParticleB()))
-            ;
-        }
 
-        collisions.removeIf(currentCollision -> !currentCollision.isWall() &&
-            (currentCollision.containsParticle(collision.getParticleA()) || currentCollision.containsParticle(collision.getParticleB()))
+        // Remove collisions that depend on current collision and remove from collisionParticles for further calculations
+        // FIXME: podria sacarse la condicion de !wall porque si fuera wall alguna de sus particulas seria null y no hay forma de
+        // FIXME: que la segunda particula sea la misma q la de la colision porque seria la misma colision
+        collisions.removeIf(collision -> {
+                final boolean collisionContainsCurrentCollisionParticles = !collision.isWall() &&
+                    (collision.containsParticle(currentCollision.getParticleA())
+                        || collision.containsParticle(currentCollision.getParticleB()));
+
+                if (collisionContainsCurrentCollisionParticles) {
+                    if (collision.getParticleA() != null) {
+                        collisionParticles.remove(collision.getParticleA());
+                    }
+                    if (collision.getParticleB() != null) {
+                        collisionParticles.remove(collision.getParticleB());
+                    }
+                }
+
+                return collisionContainsCurrentCollisionParticles;
+            }
         );
 
+        // For each particle update its state
         Map<Particle, State> newState = new HashMap<>();
         currentStates.forEach(((particle, state) -> {
-            if (!collision.containsParticle(particle)) {
-                newState.put(particle, State.nextInstant(state, state.getSpeed(), state.getAngle(), collision.getCollisionTime()));
+            if (!currentCollision.containsParticle(particle)) {
+                newState.put(particle, State.nextInstant(state, state.getSpeed(), state.getAngle(), currentCollision.getCollisionTime()));
             } else {
-                if (collision.isWall()) {
-                    newState.put(particle, wallCollisionState(collision, state));
+                if (currentCollision.isWall()) {
+                    newState.put(particle, wallCollisionState(currentCollision, state));
                 } else {
                     if (!newState.containsKey(particle)) {
                         newState.putAll(particlesCollisionStates(
-                                collision,
-                                currentStates.get(collision.getParticleA()),
-                                currentStates.get(collision.getParticleB())
+                                currentCollision,
+                                currentStates.get(currentCollision.getParticleA()),
+                                currentStates.get(currentCollision.getParticleB())
                             )
                         );
                     }

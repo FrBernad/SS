@@ -29,10 +29,18 @@ public class BrownianMotion {
 
             currentStates.forEach((particle, state) -> {
                 if (!collisionParticles.contains(particle)) {
+
                     Collision collision = getClosestCollision(particle, state, currentStates, L);
+
                     if (collision.getType() != CollisionType.NONE) {
-                        collisionParticles.add(collision.getParticleA());
-                        collisionParticles.add(collision.getParticleB());
+
+                        if (collision.getParticleA() != null) {
+                            collisionParticles.add(collision.getParticleA());
+                        }
+                        if (collision.getParticleB() != null) {
+                            collisionParticles.add(collision.getParticleB());
+                        }
+
                         collisions.add(collision);
                     }
                 }
