@@ -7,25 +7,25 @@ import java.util.Objects;
 public class Collision implements Comparable<Collision> {
 
     private final Double collisionTime;
-    private final Particle particleA;
-    private final Particle particleB;
+    private final Particle particleXi;
+    private final Particle particleXj;
     private final CollisionType type;
 
     public final static Collision NONE = new Collision(Double.POSITIVE_INFINITY, null, null, CollisionType.NONE);
 
     public static Collision collisionWithNewTime(Collision collision, double time) {
-        return new Collision(collision.collisionTime - time, collision.particleA, collision.particleB, collision.type);
+        return new Collision(collision.collisionTime - time, collision.particleXi, collision.particleXj, collision.type);
     }
 
-    public Collision(Double collisionTime, Particle particleA, Particle particleB, CollisionType type) {
+    public Collision(Double collisionTime, Particle particleXi, Particle particleXj, CollisionType type) {
         this.collisionTime = collisionTime;
-        this.particleA = particleA;
-        this.particleB = particleB;
+        this.particleXi = particleXi;
+        this.particleXj = particleXj;
         this.type = type;
     }
 
     public boolean containsParticle(final Particle particle) {
-        return (particleA != null && particleA.equals(particle)) || (particleB != null && particleB.equals(particle));
+        return (particleXi != null && particleXi.equals(particle)) || (particleXj != null && particleXj.equals(particle));
     }
 
     public boolean isWall() {
@@ -45,9 +45,9 @@ public class Collision implements Comparable<Collision> {
     }
 
     private boolean containsSameTypeAndParticles(final Collision collision) {
-        return ((Objects.equals(particleA, collision.particleA) && Objects.equals(particleB, collision.particleB))
+        return ((Objects.equals(particleXi, collision.particleXi) && Objects.equals(particleXj, collision.particleXj))
             ||
-            (Objects.equals(particleA, collision.particleB) && Objects.equals(particleB, collision.particleA))
+            (Objects.equals(particleXi, collision.particleXj) && Objects.equals(particleXj, collision.particleXi))
         )
             && type == collision.type;
     }
@@ -62,7 +62,7 @@ public class Collision implements Comparable<Collision> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(collisionTime, particleA, particleB, type);
+        return Objects.hash(collisionTime, particleXi, particleXj, type);
     }
 
 
@@ -70,12 +70,12 @@ public class Collision implements Comparable<Collision> {
         return collisionTime;
     }
 
-    public Particle getParticleA() {
-        return particleA;
+    public Particle getParticleXi() {
+        return particleXi;
     }
 
-    public Particle getParticleB() {
-        return particleB;
+    public Particle getParticleXj() {
+        return particleXj;
     }
 
     public CollisionType getType() {

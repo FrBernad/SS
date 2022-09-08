@@ -22,6 +22,7 @@ public class BrownianMotion {
         executionTimestamps.setAlgorithmStart(LocalDateTime.now());
 
         final TreeSet<Collision> collisions = new TreeSet<>();
+        //Set que almacena todas las partículas que tienen una colisión asociada
         final Set<Particle> collisionParticles = new HashSet<>();
 
         for (int i = 0; i < maxIterations; i++) {
@@ -34,11 +35,11 @@ public class BrownianMotion {
 
                     if (collision.getType() != CollisionType.NONE) {
 
-                        if (collision.getParticleA() != null) {
-                            collisionParticles.add(collision.getParticleA());
+                        if (collision.getParticleXi() != null) {
+                            collisionParticles.add(collision.getParticleXi());
                         }
-                        if (collision.getParticleB() != null) {
-                            collisionParticles.add(collision.getParticleB());
+                        if (collision.getParticleXj() != null) {
+                            collisionParticles.add(collision.getParticleXj());
                         }
 
                         collisions.add(collision);

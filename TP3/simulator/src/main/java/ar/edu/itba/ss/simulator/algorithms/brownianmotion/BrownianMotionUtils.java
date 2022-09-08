@@ -49,8 +49,8 @@ class BrownianMotionUtils {
                                                       final Set<Particle> collisionParticles,
                                                       final Map<Particle, State> currentStates) {
 
-        collisionParticles.remove(currentCollision.getParticleA());
-        collisionParticles.remove(currentCollision.getParticleB());
+        collisionParticles.remove(currentCollision.getParticleXi());
+        collisionParticles.remove(currentCollision.getParticleXj());
 
         final Set<Collision> updatedTimeCollisions = new HashSet<>();
 
@@ -58,18 +58,18 @@ class BrownianMotionUtils {
         // FIXME: podria sacarse la condicion de !wall porque si fuera wall alguna de sus particulas seria null y no hay forma de
         // FIXME: que la segunda particula sea la misma q la de la colision porque seria la misma colision
         collisions.removeIf(collision -> {
-                final boolean collisionContainsCurrentCollisionParticles = (collision.containsParticle(currentCollision.getParticleA())
-                    || collision.containsParticle(currentCollision.getParticleB()));
+                    final boolean collisionContainsCurrentCollisionParticles = (collision.containsParticle(currentCollision.getParticleXi())
+                            || collision.containsParticle(currentCollision.getParticleXj()));
 
-                if (collisionContainsCurrentCollisionParticles) {
-                    collisionParticles.remove(collision.getParticleA());
-                    collisionParticles.remove(collision.getParticleB());
-                } else {
-                    updatedTimeCollisions.add(Collision.collisionWithNewTime(collision, currentCollision.getCollisionTime()));
+                    if (collisionContainsCurrentCollisionParticles) {
+                        collisionParticles.remove(collision.getParticleXi());
+                        collisionParticles.remove(collision.getParticleXj());
+                    } else {
+                        updatedTimeCollisions.add(Collision.collisionWithNewTime(collision, currentCollision.getCollisionTime()));
+                    }
+
+                    return collisionContainsCurrentCollisionParticles;
                 }
-
-                return collisionContainsCurrentCollisionParticles;
-            }
         );
 
         //Update collision times
@@ -88,10 +88,10 @@ class BrownianMotionUtils {
                 } else {
                     if (!newState.containsKey(particle)) {
                         newState.putAll(particlesCollisionStates(
-                                currentCollision,
-                                currentStates.get(currentCollision.getParticleA()),
-                                currentStates.get(currentCollision.getParticleB())
-                            )
+                                        currentCollision,
+                                        currentStates.get(currentCollision.getParticleXi()),
+                                        currentStates.get(currentCollision.getParticleXj())
+                                )
                         );
                     }
                 }
@@ -102,15 +102,15 @@ class BrownianMotionUtils {
         return newState;
     }
 
-    private static Collision calculateParticleCollision(final Particle particleA,
-                                                        final State stateA,
-                                                        final Particle particleB,
-                                                        final State stateB) {
+    private static Collision calculateParticleCollision(final Particle particleXi,
+                                                        final State stateXi,
+                                                        final Particle particleXj,
+                                                        final State stateXj) {
 
-        final double deltaX = stateA.getPosition().getX() - stateB.getPosition().getX();
-        final double deltaY = stateA.getPosition().getY() - stateB.getPosition().getY();
-        final double deltaVx = stateA.getXVelocity() - stateB.getXVelocity();
-        final double deltaVy = stateA.getYVelocity() - stateB.getYVelocity();
+        final double deltaX = stateXj.getPosition().getX() - stateXi.getPosition().getX();
+        final double deltaY = stateXj.getPosition().getY() - stateXi.getPosition().getY();
+        final double deltaVx = stateXj.getXVelocity() - stateXi.getXVelocity();
+        final double deltaVy = stateXj.getYVelocity() - stateXi.getYVelocity();
 
         final double vr = deltaVx * deltaX + deltaVy * deltaY;
 
@@ -120,7 +120,7 @@ class BrownianMotionUtils {
 
         final double rr = pow(deltaX, 2) + pow(deltaY, 2);
         final double vv = pow(deltaVx, 2) + pow(deltaVy, 2);
-        final double sigma = particleA.getRadius() + particleB.getRadius();
+        final double sigma = particleXi.getRadius() + particleXj.getRadius();
 
         final double d = pow(vr, 2) - vv * (rr - pow(sigma, 2));
         if (d < 0) {
@@ -129,7 +129,7 @@ class BrownianMotionUtils {
 
         final double collisionTime = -(vr + sqrt(d)) / vv;
 
-        return new Collision(collisionTime, particleA, particleB, CollisionType.PARTICLES);
+        return new Collision(collisionTime, particleXi, particleXj, CollisionType.PARTICLES);
     }
 
     private static Collision calculateWallCollision(final Particle particle,
@@ -170,9 +170,9 @@ class BrownianMotionUtils {
             return new Collision(closestTimeX, particle, null, WALL_VERTICAL);
         }
         return closestTimeX < closestTimeY ?
-            new Collision(closestTimeX, particle, null, WALL_VERTICAL)
-            :
-            new Collision(closestTimeY, particle, null, WALL_HORIZONTAL);
+                new Collision(closestTimeX, particle, null, WALL_VERTICAL)
+                :
+                new Collision(closestTimeY, particle, null, WALL_HORIZONTAL);
     }
 
     private static State wallCollisionState(Collision collision, State state) {
@@ -200,46 +200,49 @@ class BrownianMotionUtils {
     }
 
     private static Map<Particle, State> particlesCollisionStates(final Collision collision,
-                                                                 final State particleStateA,
-                                                                 final State particleStateB) {
+                                                                 final State particleStateXi,
+                                                                 final State particleStateXj) {
 
         //FIXME: Está bien calcular la velocidad nueva así y el nuevo angulo así?
         final Map<Particle, State> newStates = new HashMap<>();
-        final Particle particleA = collision.getParticleA();
-        final Particle particleB = collision.getParticleB();
+        final Particle particleXi = collision.getParticleXi();
+        final Particle particleXj = collision.getParticleXj();
         final double collisionTime = collision.getCollisionTime();
 
+        //        A=Xj
         // Calculate operation values
-        final double deltaX = particleStateA.getPosition().getX() - particleStateB.getPosition().getX();
-        final double deltaY = particleStateA.getPosition().getY() - particleStateB.getPosition().getY();
-        final double deltaVx = particleStateA.getXVelocity() - particleStateB.getXVelocity();
-        final double deltaVy = particleStateA.getYVelocity() - particleStateB.getYVelocity();
+        final double deltaX = particleStateXj.getPosition().getX() - particleStateXi.getPosition().getX();
+        final double deltaY = particleStateXj.getPosition().getY() - particleStateXi.getPosition().getY();
+        final double deltaVx = particleStateXj.getXVelocity() - particleStateXi.getXVelocity();
+        final double deltaVy = particleStateXj.getYVelocity() - particleStateXi.getYVelocity();
+
         final double vr = deltaVx * deltaX + deltaVy * deltaY;
 
-        final double sigma = particleA.getRadius() + particleB.getRadius();
 
-        final double massSum = particleA.getMass() + particleB.getMass();
+        final double sigma = particleXi.getRadius() + particleXj.getRadius();
 
-        final double j = (2 * massSum * vr) / (sigma * massSum);
+        final double massSum = particleXi.getMass() + particleXj.getMass();
+
+        final double j = (2 * particleXi.getMass() * particleXj.getMass() * vr) / (sigma * massSum);
         final double jx = j * deltaX / sigma;
         final double jy = j * deltaY / sigma;
 
         // Particle A new state
-        double newVelocityXA = particleStateA.getXVelocity() + jx / particleA.getMass();
-        double newVelocityYA = particleStateA.getYVelocity() + jy / particleA.getMass();
-        double speedA = Math.sqrt(Math.pow(newVelocityXA, 2) + Math.pow(newVelocityYA, 2));
-        double angleA = atan2(newVelocityYA, newVelocityXA);
+        double newVelocityXi = particleStateXi.getXVelocity() + jx / particleXi.getMass();
+        double newVelocityYi = particleStateXi.getYVelocity() + jy / particleXi.getMass();
+        double speedXi = sqrt(pow(newVelocityXi, 2) + pow(newVelocityYi, 2));
+        double angleXi = atan2(newVelocityYi, newVelocityXi);
 
-        newStates.put(particleA, State.nextInstant(particleStateA, speedA, angleA, collisionTime));
+        newStates.put(particleXi, State.nextInstant(particleStateXi, speedXi, angleXi, collisionTime));
 
 
         // Particle B new state
-        double newVelocityXB = particleStateB.getXVelocity() - jx / particleB.getMass();
-        double newVelocityYB = particleStateB.getYVelocity() - jy / particleB.getMass();
-        double speedB = Math.sqrt(Math.pow(newVelocityXB, 2) + Math.pow(newVelocityYB, 2));
-        double angleB = atan2(newVelocityYB, newVelocityXB);
+        double newVelocityXj = particleStateXj.getXVelocity() - jx / particleXj.getMass();
+        double newVelocityYj = particleStateXj.getYVelocity() - jy / particleXj.getMass();
+        double speedYj = sqrt(pow(newVelocityXj, 2) + pow(newVelocityYj, 2));
+        double angleYj = atan2(newVelocityYj, newVelocityXj);
 
-        newStates.put(particleB, State.nextInstant(particleStateB, speedB, angleB, collisionTime));
+        newStates.put(particleXj, State.nextInstant(particleStateXj, speedYj, angleYj, collisionTime));
 
         return newStates;
     }
