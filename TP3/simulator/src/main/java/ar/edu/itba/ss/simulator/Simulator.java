@@ -72,7 +72,7 @@ public class Simulator {
                     pw.printf("%d %f %f %f %f\n",
                         particle.getId(),
                         state.getPosition().getX(), state.getPosition().getY(),
-                        state.getSpeed(), state.getAngle())
+                        state.getVelocityX(), state.getVelocityY())
                 );
             }
         }

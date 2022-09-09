@@ -15,7 +15,7 @@ import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrFail;
 import static ar.edu.itba.ss.simulator.utils.Particle.Position;
 import static ar.edu.itba.ss.simulator.utils.Particle.State;
 import static java.lang.Integer.parseInt;
-import static java.lang.Math.pow;
+import static java.lang.Math.*;
 
 public class ParticlesGenerator {
     private static final Logger LOGGER = LoggerFactory.getLogger(ParticlesGenerator.class);
@@ -78,14 +78,14 @@ public class ParticlesGenerator {
 
             //Generate Big Particle
             final Position bigParticlePosition = new Position((double) L / 2, (double) L / 2);
-            final State bigParticleState = new State(bigParticlePosition, 0, random.nextDouble() * (MAX_ANGLE));
-            //FIXME: Tiene angulo inicial ???
+            final State bigParticleState = new State(bigParticlePosition, 0, 0);
+
             particles.put(particlesArray.get(particleId), bigParticleState);
 
             // Write Big Particle
             pw.println(0);
             pw.printf("%f %f %f %f\n", bigParticleState.getPosition().getX(), bigParticleState.getPosition().getY(),
-                bigParticleState.getSpeed(), bigParticleState.getAngle());
+                bigParticleState.getVelocityX(), bigParticleState.getVelocityY());
 
             // Generate small particles positions
             for (int j = 0; j < fileArguments.getN(); j++) {
@@ -94,14 +94,16 @@ public class ParticlesGenerator {
 
                 final double speed = particleMinSpeed + Math.random() * (particleMaxSpeed - particleMinSpeed);
                 final double angle = random.nextDouble() * (MAX_ANGLE);
+                final double velocityX = speed * cos(angle);
+                final double velocityY = speed * sin(angle);
                 State newState = null;
                 while (!success) {
                     success = true;
 
                     // Avoid borders interception
-                    double x = smallParticleR + random.nextDouble() * (L - 2*smallParticleR);
-                    double y = smallParticleR + random.nextDouble() * (L - 2*smallParticleR);
-                    newState = new State(new Position(x, y), speed, angle);
+                    double x = smallParticleR + random.nextDouble() * (L - 2 * smallParticleR);
+                    double y = smallParticleR + random.nextDouble() * (L - 2 * smallParticleR);
+                    newState = new State(new Position(x, y), velocityX, velocityY);
 
                     for (Map.Entry<Particle, State> entry : particles.entrySet()) {
                         final Particle otherParticle = entry.getKey();
@@ -116,7 +118,8 @@ public class ParticlesGenerator {
                     }
                 }
                 particles.put(particlesArray.get(particleId), newState);
-                pw.printf("%f %f %f %f\n", newState.getPosition().getX(), newState.getPosition().getY(), newState.getSpeed(), newState.getAngle());
+                pw.printf("%f %f %f %f\n", newState.getPosition().getX(), newState.getPosition().getY(),
+                    newState.getVelocityX(), newState.getVelocityY());
             }
         }
 

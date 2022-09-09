@@ -35,11 +35,11 @@ public class BrownianMotion {
 
                     if (collision.getType() != CollisionType.NONE) {
 
-                        if (collision.getParticleXi() != null) {
-                            collisionParticles.add(collision.getParticleXi());
+                        if (collision.getParticleI() != null) {
+                            collisionParticles.add(collision.getParticleI());
                         }
-                        if (collision.getParticleXj() != null) {
-                            collisionParticles.add(collision.getParticleXj());
+                        if (collision.getParticleJ() != null) {
+                            collisionParticles.add(collision.getParticleJ());
                         }
 
                         collisions.add(collision);

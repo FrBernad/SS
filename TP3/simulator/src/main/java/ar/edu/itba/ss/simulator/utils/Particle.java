@@ -47,42 +47,34 @@ public class Particle implements Comparable<Particle> {
 
     public static class State {
         private final Position position;
-        private final double speed;
-        private final double angle; //velocity angle in radians
+        private final double velocityX; //velocity angle in radians
+        private final double velocityY; //velocity angle in radians
 
-        public State(Position position, double speed, double angle) {
+        public State(Position position, double velocityX, double velocityY) {
             this.position = position;
-            this.speed = speed;
-            this.angle = angle;
+            this.velocityX = velocityX;
+            this.velocityY = velocityY;
         }
 
         public Position getPosition() {
             return position;
         }
 
-        public double getAngle() {
-            return angle;
+        public double getVelocityX() {
+            return velocityX;
         }
 
-        public double getSpeed() {
-            return speed;
+        public double getVelocityY() {
+            return velocityY;
         }
 
-        public double getXVelocity() {
-            return cos(angle) * speed;
-        }
-
-        public double getYVelocity() {
-            return sin(angle) * speed;
-        }
-
-        public static State nextInstant(State currentState, double speed, double angle, double time) {
+        public static State nextInstant(State currentState, double velocityX, double velocityY, double time) {
             Position position = new Position(
-                currentState.position.getX() + currentState.getXVelocity() * time,
-                currentState.position.getY() + currentState.getYVelocity() * time
+                currentState.position.getX() + currentState.getVelocityX() * time,
+                currentState.position.getY() + currentState.getVelocityY() * time
             );
 
-            return new State(position, speed, angle);
+            return new State(position, velocityX, velocityY);
         }
 
     }

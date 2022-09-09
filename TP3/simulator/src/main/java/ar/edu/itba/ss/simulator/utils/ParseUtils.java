@@ -54,8 +54,8 @@ public class ParseUtils {
                     parseDouble(dynamicArray.get(DynamicFields.X.getValue())),
                     parseDouble(dynamicArray.get(DynamicFields.Y.getValue()))
                 ),
-                parseDouble(dynamicArray.get(DynamicFields.SPEED.getValue())),
-                parseDouble(dynamicArray.get(DynamicFields.ANGLE.getValue()))
+                parseDouble(dynamicArray.get(DynamicFields.VELOCITY_X.getValue())),
+                parseDouble(dynamicArray.get(DynamicFields.VELOCITY_Y.getValue()))
             );
 
             currentParticlesPerTime.put(currentParticle, currentParticleState);
@@ -107,7 +107,7 @@ public class ParseUtils {
     }
 
     public enum DynamicFields {
-        X(0), Y(1), SPEED(2), ANGLE(3);
+        X(0), Y(1), VELOCITY_X(2), VELOCITY_Y(3);
 
         private final int value;
 
