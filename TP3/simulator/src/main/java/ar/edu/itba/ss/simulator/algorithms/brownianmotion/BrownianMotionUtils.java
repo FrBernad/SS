@@ -2,6 +2,7 @@ package ar.edu.itba.ss.simulator.algorithms.brownianmotion;
 
 import ar.edu.itba.ss.simulator.algorithms.brownianmotion.Collision.CollisionType;
 import ar.edu.itba.ss.simulator.utils.Particle;
+import ar.edu.itba.ss.simulator.utils.Particle.Position;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -57,7 +58,7 @@ class BrownianMotionUtils {
         // Remove collisions that depend on current collision and remove from collisionParticles for further calculations
         // FIXME: podria sacarse la condicion de !wall porque si fuera wall alguna de sus particulas seria null y no hay forma de
         // FIXME: que la segunda particula sea la misma q la de la colision porque seria la misma colision
-        collisions.removeIf(collision -> {
+        collisions.forEach(collision -> {
                 final boolean collisionContainsCurrentCollisionParticles = (collision.containsParticle(currentCollision.getParticleI())
                     || collision.containsParticle(currentCollision.getParticleJ()));
 
@@ -67,8 +68,6 @@ class BrownianMotionUtils {
                 } else {
                     updatedTimeCollisions.add(Collision.collisionWithNewTime(collision, currentCollision.getCollisionTime()));
                 }
-
-                return collisionContainsCurrentCollisionParticles;
             }
         );
 
@@ -76,16 +75,23 @@ class BrownianMotionUtils {
         collisions.clear();
         collisions.addAll(updatedTimeCollisions);
 
-
         // For each particle update its state
         Map<Particle, State> newState = new HashMap<>();
         currentStates.forEach(((particle, state) -> {
+            // Update state of particles not part of collision
             if (!currentCollision.containsParticle(particle)) {
-                newState.put(particle, State.nextInstant(state, currentCollision.getCollisionTime()));
+                final State s = State.nextInstant(state, currentCollision.getCollisionTime());
+                newState.put(particle, s);
+                //FIXME: ERRORRR!!! Pareceria q se estan moviendo mas tiempo del q deberian y se salen del recinto
+                if (s.getPosition().getX() < 0 + 0.2 || s.getPosition().getX() > 6 - 0.2 || s.getPosition().getY() < 0 + 0.2 || s.getPosition().getY() > 6 - 0.2) {
+                    throw new RuntimeException();
+                }
             } else {
+                // Update state of particle if collision is of type wall
                 if (currentCollision.isWall()) {
                     newState.put(particle, wallCollisionState(currentCollision, state));
                 } else {
+                    // Update state of particle if collision is of type particle, only for one of the two particles
                     if (!newState.containsKey(particle)) {
                         newState.putAll(particlesCollisionStates(
                                 currentCollision,
@@ -97,7 +103,6 @@ class BrownianMotionUtils {
                 }
             }
         }));
-
 
         return newState;
     }
@@ -196,6 +201,8 @@ class BrownianMotionUtils {
                 nextState.setVelocityX(-state.getVelocityX());
                 nextState.setVelocityY(state.getVelocityY());
                 break;
+            default:
+                throw new RuntimeException("Something went wrong on wall collision");
         }
 
         return nextState;
@@ -205,7 +212,6 @@ class BrownianMotionUtils {
                                                                  final State particleStateI,
                                                                  final State particleStateJ) {
 
-        //FIXME: Está bien calcular la velocidad nueva así y el nuevo angulo así?
         final Map<Particle, State> newStates = new HashMap<>();
         final Particle particleI = collision.getParticleI();
         final Particle particleJ = collision.getParticleJ();
@@ -218,7 +224,6 @@ class BrownianMotionUtils {
 
         final double vr = deltaVx * deltaX + deltaVy * deltaY;
 
-
         final double sigma = particleI.getRadius() + particleJ.getRadius();
 
         final double massSum = particleI.getMass() + particleJ.getMass();
@@ -230,18 +235,15 @@ class BrownianMotionUtils {
         // Particle A new state
         double newVelocityXi = particleStateI.getVelocityX() + jx / particleI.getMass();
         double newVelocityYi = particleStateI.getVelocityY() + jy / particleI.getMass();
-
         particleStateI.setVelocityX(newVelocityXi);
         particleStateI.setVelocityY(newVelocityYi);
+        newStates.put(particleI, particleStateI);
 
         // Particle B new state
         double newVelocityXj = particleStateJ.getVelocityX() - jx / particleJ.getMass();
         double newVelocityYj = particleStateJ.getVelocityY() - jy / particleJ.getMass();
-
         particleStateJ.setVelocityX(newVelocityXj);
         particleStateJ.setVelocityY(newVelocityYj);
-
-        newStates.put(particleI, particleStateI);
         newStates.put(particleJ, particleStateJ);
 
         return newStates;

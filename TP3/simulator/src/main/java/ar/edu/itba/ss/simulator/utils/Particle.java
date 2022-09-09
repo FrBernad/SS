@@ -93,6 +93,10 @@ public class Particle implements Comparable<Particle> {
         private final double y;
 
         public Position(double x, double y) {
+            //FIXME: sacar
+//            if (x < 0 || x > 6 || y < 0 || y > 6) {
+//                throw new RuntimeException();
+//            }
             this.x = x;
             this.y = y;
         }
@@ -104,11 +108,6 @@ public class Particle implements Comparable<Particle> {
         public double getY() {
             return y;
         }
-
-        public static double calculateDistance(Position p1, Position p2) {
-            return sqrt(pow(p1.getX() - p2.getX(), 2) + pow(p1.getY() - p2.getY(), 2));
-        }
-
 
     }
 }

@@ -101,8 +101,9 @@ public class ParticlesGenerator {
                     success = true;
 
                     // Avoid borders interception
-                    double x = smallParticleR + random.nextDouble() * (L - 2 * smallParticleR);
-                    double y = smallParticleR + random.nextDouble() * (L - 2 * smallParticleR);
+                    double rand = random.nextDouble();
+                    double x = smallParticleR + rand + random.nextDouble() * (L - smallParticleR - rand);
+                    double y = smallParticleR + rand + random.nextDouble() * (L - smallParticleR - rand);
                     newState = new State(new Position(x, y), velocityX, velocityY);
 
                     for (Map.Entry<Particle, State> entry : particles.entrySet()) {
