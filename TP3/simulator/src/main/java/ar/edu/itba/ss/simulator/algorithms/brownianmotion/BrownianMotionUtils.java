@@ -81,7 +81,7 @@ class BrownianMotionUtils {
         Map<Particle, State> newState = new HashMap<>();
         currentStates.forEach(((particle, state) -> {
             if (!currentCollision.containsParticle(particle)) {
-                newState.put(particle, State.nextInstant(state, state.getVelocityX(), state.getVelocityY(), currentCollision.getCollisionTime()));
+                newState.put(particle, State.nextInstant(state, currentCollision.getCollisionTime()));
             } else {
                 if (currentCollision.isWall()) {
                     newState.put(particle, wallCollisionState(currentCollision, state));
@@ -89,8 +89,8 @@ class BrownianMotionUtils {
                     if (!newState.containsKey(particle)) {
                         newState.putAll(particlesCollisionStates(
                                 currentCollision,
-                                currentStates.get(currentCollision.getParticleI()),
-                                currentStates.get(currentCollision.getParticleJ())
+                                State.nextInstant(currentStates.get(currentCollision.getParticleI()), currentCollision.getCollisionTime()),
+                                State.nextInstant(currentStates.get(currentCollision.getParticleJ()), currentCollision.getCollisionTime())
                             )
                         );
                     }
@@ -180,15 +180,21 @@ class BrownianMotionUtils {
 
         switch (collision.getType()) {
             case WALL_CORNER:
-                nextState = State.nextInstant(state, -state.getVelocityX(), -state.getVelocityY(), collision.getCollisionTime());
+                nextState = State.nextInstant(state, collision.getCollisionTime());
+                nextState.setVelocityX(-state.getVelocityX());
+                nextState.setVelocityY(-state.getVelocityY());
                 break;
 
             case WALL_HORIZONTAL:
-                nextState = State.nextInstant(state, state.getVelocityX(), -state.getVelocityY(), collision.getCollisionTime());
+                nextState = State.nextInstant(state, collision.getCollisionTime());
+                nextState.setVelocityX(state.getVelocityX());
+                nextState.setVelocityY(-state.getVelocityY());
                 break;
 
             case WALL_VERTICAL:
-                nextState = State.nextInstant(state, -state.getVelocityX(), state.getVelocityY(), collision.getCollisionTime());
+                nextState = State.nextInstant(state, collision.getCollisionTime());
+                nextState.setVelocityX(-state.getVelocityX());
+                nextState.setVelocityY(state.getVelocityY());
                 break;
         }
 
@@ -203,7 +209,6 @@ class BrownianMotionUtils {
         final Map<Particle, State> newStates = new HashMap<>();
         final Particle particleI = collision.getParticleI();
         final Particle particleJ = collision.getParticleJ();
-        final double collisionTime = collision.getCollisionTime();
 
         // Calculate operation values
         final double deltaX = particleStateJ.getPosition().getX() - particleStateI.getPosition().getX();
@@ -226,13 +231,18 @@ class BrownianMotionUtils {
         double newVelocityXi = particleStateI.getVelocityX() + jx / particleI.getMass();
         double newVelocityYi = particleStateI.getVelocityY() + jy / particleI.getMass();
 
-        newStates.put(particleI, State.nextInstant(particleStateI, newVelocityXi, newVelocityYi, collisionTime));
+        particleStateI.setVelocityX(newVelocityXi);
+        particleStateI.setVelocityY(newVelocityYi);
 
         // Particle B new state
         double newVelocityXj = particleStateJ.getVelocityX() - jx / particleJ.getMass();
         double newVelocityYj = particleStateJ.getVelocityY() - jy / particleJ.getMass();
 
-        newStates.put(particleJ, State.nextInstant(particleStateJ, newVelocityXj, newVelocityYj, collisionTime));
+        particleStateJ.setVelocityX(newVelocityXj);
+        particleStateJ.setVelocityY(newVelocityYj);
+
+        newStates.put(particleI, particleStateI);
+        newStates.put(particleJ, particleStateJ);
 
         return newStates;
     }
