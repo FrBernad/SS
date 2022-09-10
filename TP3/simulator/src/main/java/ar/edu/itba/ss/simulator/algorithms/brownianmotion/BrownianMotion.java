@@ -14,42 +14,38 @@ import static ar.edu.itba.ss.simulator.utils.Particle.State;
 
 public class BrownianMotion {
 
+
     public static BrownianMotionAlgorithmResults execute(final Map<Particle, State> initialParticlesStates, int L, int maxIterations) {
 
-        final List<Map<Particle, State>> particlesStates = new ArrayList<>(List.of(initialParticlesStates));
+        final List<Map<Particle, State>> particlesStates = new LinkedList<>(List.of(initialParticlesStates));
 
         final ExecutionTimestamps executionTimestamps = new ExecutionTimestamps();
         executionTimestamps.setAlgorithmStart(LocalDateTime.now());
 
-        final TreeSet<Collision> collisions = new TreeSet<>();
-        //Set que almacena todas las partículas que tienen una colisión asociada
-        final Set<Particle> collisionParticles = new HashSet<>();
-
         for (int i = 0; i < maxIterations; i++) {
             final Map<Particle, State> currentStates = particlesStates.get(i);
 
-            currentStates.forEach((particle, state) -> {
-                if (!collisionParticles.contains(particle)) {
+            Collision closestCollision = Collision.NONE;
 
-                    Collision collision = getClosestCollision(particle, state, currentStates, L);
+            // Calculate collisions
+            for (Map.Entry<Particle, State> entry : currentStates.entrySet()) {
 
-                    if (collision.getType() != CollisionType.NONE) {
+                Particle particle = entry.getKey();
+                State state = entry.getValue();
 
-                        if (collision.getParticleI() != null) {
-                            collisionParticles.add(collision.getParticleI());
-                        }
-                        if (collision.getParticleJ() != null) {
-                            collisionParticles.add(collision.getParticleJ());
-                        }
+                // Calculate collision only for particle without associated collision
+                Collision collision = getClosestCollision(particle, state, currentStates, L);
 
-                        collisions.add(collision);
+                if (collision.getType() != CollisionType.NONE) {
+                    if (collision.compareTime(closestCollision) < 0) {
+                        closestCollision = collision;
                     }
+
                 }
-            });
+            }
 
-            final Collision closestCollision = collisions.pollFirst();
-
-            particlesStates.add(updateParticlesStates(closestCollision, collisions, collisionParticles, currentStates));
+            // Evolve and update particles states
+            particlesStates.add(updateParticlesStates(closestCollision, currentStates));
         }
 
         executionTimestamps.setAlgorithmEnd(LocalDateTime.now());

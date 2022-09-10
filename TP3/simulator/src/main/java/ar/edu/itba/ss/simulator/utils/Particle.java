@@ -93,10 +93,6 @@ public class Particle implements Comparable<Particle> {
         private final double y;
 
         public Position(double x, double y) {
-            //FIXME: sacar
-//            if (x < 0 || x > 6 || y < 0 || y > 6) {
-//                throw new RuntimeException();
-//            }
             this.x = x;
             this.y = y;
         }

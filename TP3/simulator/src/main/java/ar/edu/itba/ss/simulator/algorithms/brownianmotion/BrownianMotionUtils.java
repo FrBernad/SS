@@ -4,10 +4,7 @@ import ar.edu.itba.ss.simulator.algorithms.brownianmotion.Collision.CollisionTyp
 import ar.edu.itba.ss.simulator.utils.Particle;
 import ar.edu.itba.ss.simulator.utils.Particle.Position;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static ar.edu.itba.ss.simulator.algorithms.brownianmotion.Collision.CollisionType.*;
 import static ar.edu.itba.ss.simulator.utils.Particle.State;
@@ -30,7 +27,7 @@ class BrownianMotionUtils {
 
             if (particle != currentParticle) {
                 final Collision collision = calculateParticleCollision(currentParticle, currentParticleState, particle, state);
-                if (collision.getType() != NONE && collision.compareTo(closestCollision) < 0) {
+                if (collision.getType() != NONE && collision.compareTime(closestCollision) < 0) {
                     closestCollision = collision;
                 }
             }
@@ -38,7 +35,7 @@ class BrownianMotionUtils {
 
         // Check collision with walls
         final Collision wallCollision = calculateWallCollision(currentParticle, currentParticleState, L);
-        if (wallCollision.getType() != NONE && wallCollision.compareTo(closestCollision) < 0) {
+        if (wallCollision.getType() != NONE && wallCollision.compareTime(closestCollision) < 0) {
             closestCollision = wallCollision;
         }
 
@@ -46,65 +43,43 @@ class BrownianMotionUtils {
     }
 
     static Map<Particle, State> updateParticlesStates(final Collision currentCollision,
-                                                      final Set<Collision> collisions,
-                                                      final Set<Particle> collisionParticles,
                                                       final Map<Particle, State> currentStates) {
 
-        collisionParticles.remove(currentCollision.getParticleI());
-        collisionParticles.remove(currentCollision.getParticleJ());
+        // For each particle update its state
+        Map<Particle, State> newStates = new TreeMap<>();
 
-        final Set<Collision> updatedTimeCollisions = new HashSet<>();
+        // Update particles positions
+        currentStates.forEach((particle, state) -> {
 
-        // Remove collisions that depend on current collision and remove from collisionParticles for further calculations
-        // FIXME: podria sacarse la condicion de !wall porque si fuera wall alguna de sus particulas seria null y no hay forma de
-        // FIXME: que la segunda particula sea la misma q la de la colision porque seria la misma colision
-        collisions.forEach(collision -> {
-                final boolean collisionContainsCurrentCollisionParticles = (collision.containsParticle(currentCollision.getParticleI())
-                    || collision.containsParticle(currentCollision.getParticleJ()));
+                final State s = State.nextInstant(state, currentCollision.getCollisionTime());
+                newStates.put(particle, s);
 
-                if (collisionContainsCurrentCollisionParticles) {
-                    collisionParticles.remove(collision.getParticleI());
-                    collisionParticles.remove(collision.getParticleJ());
-                } else {
-                    updatedTimeCollisions.add(Collision.collisionWithNewTime(collision, currentCollision.getCollisionTime()));
+                //FIXME: ERRORRR!!!
+                if (s.getPosition().getX() < 0 || s.getPosition().getX() > 6 || s.getPosition().getY() < 0 || s.getPosition().getY() > 6) {
+                    throw new RuntimeException();
                 }
+
             }
         );
 
-        //Update collision times
-        collisions.clear();
-        collisions.addAll(updatedTimeCollisions);
+        updateCollisionParticlesVelocity(currentCollision, newStates);
 
-        // For each particle update its state
-        Map<Particle, State> newState = new HashMap<>();
-        currentStates.forEach(((particle, state) -> {
-            // Update state of particles not part of collision
-            if (!currentCollision.containsParticle(particle)) {
-                final State s = State.nextInstant(state, currentCollision.getCollisionTime());
-                newState.put(particle, s);
-                //FIXME: ERRORRR!!! Pareceria q se estan moviendo mas tiempo del q deberian y se salen del recinto
-                if (s.getPosition().getX() < 0 + 0.2 || s.getPosition().getX() > 6 - 0.2 || s.getPosition().getY() < 0 + 0.2 || s.getPosition().getY() > 6 - 0.2) {
-                    throw new RuntimeException();
-                }
+        return newStates;
+    }
+
+    private static void updateCollisionParticlesVelocity(Collision collision, Map<Particle, State> newStates) {
+        final Particle particleI = collision.getParticleI();
+        final Particle particleJ = collision.getParticleJ();
+
+        if (collision.isWall()) {
+            if (particleI != null) {
+                wallCollisionState(collision, newStates.get(particleI));
             } else {
-                // Update state of particle if collision is of type wall
-                if (currentCollision.isWall()) {
-                    newState.put(particle, wallCollisionState(currentCollision, state));
-                } else {
-                    // Update state of particle if collision is of type particle, only for one of the two particles
-                    if (!newState.containsKey(particle)) {
-                        newState.putAll(particlesCollisionStates(
-                                currentCollision,
-                                State.nextInstant(currentStates.get(currentCollision.getParticleI()), currentCollision.getCollisionTime()),
-                                State.nextInstant(currentStates.get(currentCollision.getParticleJ()), currentCollision.getCollisionTime())
-                            )
-                        );
-                    }
-                }
+                wallCollisionState(collision, newStates.get(particleJ));
             }
-        }));
-
-        return newState;
+        } else {
+            particlesCollisionStates(collision, newStates.get(particleI), newStates.get(particleJ));
+        }
     }
 
     private static Collision calculateParticleCollision(final Particle particleXi,
@@ -133,6 +108,14 @@ class BrownianMotionUtils {
         }
 
         final double collisionTime = -(vr + sqrt(d)) / vv;
+        //FIXME:
+        if (collisionTime < 0) {
+            throw new RuntimeException();
+        }
+
+        if (Double.compare(collisionTime, 0) == 0) {
+            return Collision.NONE;
+        }
 
         return new Collision(collisionTime, particleXi, particleXj, CollisionType.PARTICLES);
     }
@@ -154,6 +137,10 @@ class BrownianMotionUtils {
                 closestTimeX = (particle.getRadius() - state.getPosition().getX()) / state.getVelocityX();
             }
         }
+        //FIXME:
+        if (closestTimeX != null && closestTimeX < 0) {
+            throw new RuntimeException();
+        }
 
         //Check horizontal walls
         Double closestTimeY = null;
@@ -164,55 +151,74 @@ class BrownianMotionUtils {
                 closestTimeY = (particle.getRadius() - state.getPosition().getY()) / state.getVelocityY();
             }
         }
+        //FIXME:
+        if (closestTimeY != null && closestTimeY < 0) {
+            throw new RuntimeException();
+        }
 
+        // Check wall corner
         if (closestTimeX != null && closestTimeX.equals(closestTimeY)) {
+            if (Double.compare(closestTimeX, 0) == 0 && Double.compare(closestTimeY, 0) == 0) {
+                return Collision.NONE;
+            }
             return new Collision(closestTimeX, particle, null, WALL_CORNER);
         }
 
+        // If no vertical intersection then horizontal
         if (closestTimeX == null) {
+            if (Double.compare(closestTimeY, 0) == 0) {
+                return Collision.NONE;
+            }
             return new Collision(closestTimeY, particle, null, WALL_HORIZONTAL);
-        } else if (closestTimeY == null) {
+        }
+
+        // If no horizontal intersection then vertical
+        else if (closestTimeY == null) {
+            if (Double.compare(closestTimeX, 0) == 0) {
+                return Collision.NONE;
+            }
             return new Collision(closestTimeX, particle, null, WALL_VERTICAL);
         }
+
+        if (Double.compare(closestTimeX, 0) == 0) {
+            closestTimeX = Double.POSITIVE_INFINITY;
+        }
+
+        if (Double.compare(closestTimeY, 0) == 0) {
+            closestTimeY = Double.POSITIVE_INFINITY;
+        }
+
         return closestTimeX < closestTimeY ?
             new Collision(closestTimeX, particle, null, WALL_VERTICAL)
             :
             new Collision(closestTimeY, particle, null, WALL_HORIZONTAL);
     }
 
-    private static State wallCollisionState(Collision collision, State state) {
-        State nextState = null;
-
+    private static void wallCollisionState(Collision collision, State state) {
         switch (collision.getType()) {
             case WALL_CORNER:
-                nextState = State.nextInstant(state, collision.getCollisionTime());
-                nextState.setVelocityX(-state.getVelocityX());
-                nextState.setVelocityY(-state.getVelocityY());
+                state.setVelocityX(-state.getVelocityX());
+                state.setVelocityY(-state.getVelocityY());
                 break;
 
             case WALL_HORIZONTAL:
-                nextState = State.nextInstant(state, collision.getCollisionTime());
-                nextState.setVelocityX(state.getVelocityX());
-                nextState.setVelocityY(-state.getVelocityY());
+                state.setVelocityX(state.getVelocityX());
+                state.setVelocityY(-state.getVelocityY());
                 break;
 
             case WALL_VERTICAL:
-                nextState = State.nextInstant(state, collision.getCollisionTime());
-                nextState.setVelocityX(-state.getVelocityX());
-                nextState.setVelocityY(state.getVelocityY());
+                state.setVelocityX(-state.getVelocityX());
+                state.setVelocityY(state.getVelocityY());
                 break;
             default:
-                throw new RuntimeException("Something went wrong on wall collision");
+                throw new RuntimeException("Something went wrong on wall collision state calculation");
         }
-
-        return nextState;
     }
 
-    private static Map<Particle, State> particlesCollisionStates(final Collision collision,
-                                                                 final State particleStateI,
-                                                                 final State particleStateJ) {
+    private static void particlesCollisionStates(final Collision collision,
+                                                 final State particleStateI,
+                                                 final State particleStateJ) {
 
-        final Map<Particle, State> newStates = new HashMap<>();
         final Particle particleI = collision.getParticleI();
         final Particle particleJ = collision.getParticleJ();
 
@@ -237,17 +243,12 @@ class BrownianMotionUtils {
         double newVelocityYi = particleStateI.getVelocityY() + jy / particleI.getMass();
         particleStateI.setVelocityX(newVelocityXi);
         particleStateI.setVelocityY(newVelocityYi);
-        newStates.put(particleI, particleStateI);
 
         // Particle B new state
         double newVelocityXj = particleStateJ.getVelocityX() - jx / particleJ.getMass();
         double newVelocityYj = particleStateJ.getVelocityY() - jy / particleJ.getMass();
         particleStateJ.setVelocityX(newVelocityXj);
         particleStateJ.setVelocityY(newVelocityYj);
-        newStates.put(particleJ, particleStateJ);
-
-        return newStates;
     }
-
 
 }
