@@ -56,3 +56,10 @@ def get_particles_data(static_file: str, results_file: str) -> List[DataFrame]:
         dfs.append(pd.concat([df, static_df], axis=1))
 
     return dfs
+
+
+def get_particles_initial_data(static_file: str, dynamic_file: str) -> List[DataFrame]:
+    dynamic_df = pd.read_csv(dynamic_file, skiprows=1, sep=" ", names=["x", "y", "vx", "vy"])
+    static_df = pd.read_csv(static_file, skiprows=2, sep=" ", names=["radius", "mass"])
+
+    return pd.concat([dynamic_df, static_df], axis=1)

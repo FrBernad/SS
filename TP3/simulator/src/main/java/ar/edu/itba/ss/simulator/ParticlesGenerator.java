@@ -68,7 +68,6 @@ public class ParticlesGenerator {
             }
         }
 
-
         try (PrintWriter pw = new PrintWriter(fileArguments.getDynamicFile())) {
             final Random random = new Random();
 
@@ -76,7 +75,7 @@ public class ParticlesGenerator {
 
             final Map<Particle, State> particles = new HashMap<>();
 
-            //Generate Big Particle
+            // Generate Big Particle
             final Position bigParticlePosition = new Position((double) L / 2, (double) L / 2);
             final State bigParticleState = new State(bigParticlePosition, 0, 0);
 
@@ -96,14 +95,16 @@ public class ParticlesGenerator {
                 final double angle = random.nextDouble() * (MAX_ANGLE);
                 final double velocityX = speed * cos(angle);
                 final double velocityY = speed * sin(angle);
+
                 State newState = null;
                 while (!success) {
                     success = true;
 
-                    // Avoid borders interception
-                    double rand = random.nextDouble();
-                    double x = smallParticleR + rand + random.nextDouble() * (L - smallParticleR - rand);
-                    double y = smallParticleR + rand + random.nextDouble() * (L - smallParticleR - rand);
+                    final double offset = random.nextDouble();
+
+                    final double x = smallParticleR + offset + random.nextDouble() * (L - 2 * smallParticleR - offset);
+                    final double y = smallParticleR + offset + random.nextDouble() * (L - 2 * smallParticleR - offset);
+
                     newState = new State(new Position(x, y), velocityX, velocityY);
 
                     for (Map.Entry<Particle, State> entry : particles.entrySet()) {

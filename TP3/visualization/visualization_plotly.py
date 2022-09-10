@@ -3,14 +3,14 @@ import sys
 from plots.particles_plot import make_particles_plot
 from utils.argument_parser import parse_arguments
 from utils.config import get_config
-from utils.parser_utils import get_particles_data
+from utils.parser_utils import get_particles_initial_data
 
 
 def visualization_plotly(config_file: str):
     config = get_config(config_file)
 
-    df = get_particles_data(config.static_file, config.results_file)
-    make_particles_plot(df[0])
+    df = get_particles_initial_data(config.static_file, config.dynamic_file)
+    make_particles_plot(df)
 
 
 if __name__ == "__main__":

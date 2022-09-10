@@ -2,5 +2,6 @@
 # --- Visualization plotly config ---
 config:
   results_file: "../results/results.txt"
+  dynamic_file: "../assets/Dynamic.txt"
   static_file: "../assets/Static.txt"
 ...
