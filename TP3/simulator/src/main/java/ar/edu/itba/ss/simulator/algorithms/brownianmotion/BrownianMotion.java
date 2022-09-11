@@ -4,6 +4,7 @@ import ar.edu.itba.ss.simulator.algorithms.brownianmotion.Collision.CollisionTyp
 import ar.edu.itba.ss.simulator.utils.BrownianMotionAlgorithmResults;
 import ar.edu.itba.ss.simulator.utils.ExecutionTimestamps;
 import ar.edu.itba.ss.simulator.utils.Particle;
+import ar.edu.itba.ss.simulator.utils.Particle.Position;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -28,7 +29,10 @@ public class BrownianMotion {
         // Particles collisions ordered by collision time
         final TreeSet<Collision> closestCollisions = new TreeSet<>();
 
-        for (int i = 0; i < maxIterations; i++) {
+        boolean bigParticleTouchedBorder = false;
+        final Particle bigParticle = initialParticlesStates.keySet().stream().min(Comparator.comparingDouble(Particle::getRadius)).orElseThrow();
+
+        for (int i = 0; i < maxIterations && !bigParticleTouchedBorder; i++) {
             final Map<Particle, State> currentStates = particlesStates.get(i);
 
             // Calculate collisions
@@ -51,12 +55,19 @@ public class BrownianMotion {
             final Collision closestCollision = closestCollisions.pollFirst();
 
             // Evolve and update particles states
-            particlesStates.add(updateParticlesStates(closestCollision, particlesWithCollision, closestCollisions, currentStates));
+            final Map<Particle, State> newState = updateParticlesStates(closestCollision, particlesWithCollision, closestCollisions, currentStates);
+            particlesStates.add(newState);
+
+            bigParticleTouchedBorder = checkBigParticlePosition(newState.get(bigParticle).getPosition(), bigParticle.getRadius(), L);
         }
 
         executionTimestamps.setAlgorithmEnd(LocalDateTime.now());
 
         return new BrownianMotionAlgorithmResults(executionTimestamps, particlesStates);
+    }
+
+    private static boolean checkBigParticlePosition(Position position, double radius, int L) {
+        return position.getX() <= radius || position.getX() >= L - radius || position.getY() <= radius || position.getY() >= L - radius;
     }
 
 }

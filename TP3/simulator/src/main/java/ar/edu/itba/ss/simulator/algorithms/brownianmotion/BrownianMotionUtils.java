@@ -140,6 +140,7 @@ class BrownianMotionUtils {
         }
 
         final double collisionTime = -(vr + sqrt(d)) / vv;
+
         //FIXME:
         if (collisionTime < 0) {
             throw new RuntimeException();

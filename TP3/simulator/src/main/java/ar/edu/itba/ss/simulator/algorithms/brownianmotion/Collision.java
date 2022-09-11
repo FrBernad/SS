@@ -22,6 +22,7 @@ public class Collision implements Comparable<Collision> {
 
     public static Collision withUpdatedTime(Collision collision, double newTime) {
         final double time = collision.getCollisionTime() - newTime;
+        //FIXME:
         if (time <= 0) {
             throw new RuntimeException();
         }
