@@ -53,13 +53,13 @@ public class Simulator {
             DEFAULT_DELIMITER);
 
         LOGGER.info("Executing Brownian Motion ...");
-
         BrownianMotionAlgorithmResults methodResults = BrownianMotion.execute(
             particlesParserResult.getParticlesPerTime().get(0),
             particlesParserResult.getL(),
             baseArguments.getMaxIterations()
         );
 
+        LOGGER.info(String.format("Finished Brownian Motion In %d Iterations!", methodResults.getIterations()));
 
         LOGGER.info("Writing Results ...");
         final File outResultsFile = new File(baseArguments.getOutResultsFilePath());

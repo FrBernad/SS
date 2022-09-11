@@ -30,10 +30,11 @@ public class BrownianMotion {
         final TreeSet<Collision> closestCollisions = new TreeSet<>();
 
         boolean bigParticleTouchedBorder = false;
-        final Particle bigParticle = initialParticlesStates.keySet().stream().min(Comparator.comparingDouble(Particle::getRadius)).orElseThrow();
+        final Particle bigParticle = initialParticlesStates.keySet().stream().max(Comparator.comparingDouble(Particle::getRadius)).orElseThrow();
 
-        for (int i = 0; i < maxIterations && !bigParticleTouchedBorder; i++) {
-            final Map<Particle, State> currentStates = particlesStates.get(i);
+        int iteration;
+        for (iteration = 0; iteration < maxIterations && !bigParticleTouchedBorder; iteration++) {
+            final Map<Particle, State> currentStates = particlesStates.get(iteration);
 
             // Calculate collisions
             for (Map.Entry<Particle, State> entry : currentStates.entrySet()) {
@@ -63,7 +64,7 @@ public class BrownianMotion {
 
         executionTimestamps.setAlgorithmEnd(LocalDateTime.now());
 
-        return new BrownianMotionAlgorithmResults(executionTimestamps, particlesStates);
+        return new BrownianMotionAlgorithmResults(executionTimestamps, particlesStates, iteration);
     }
 
     private static boolean checkBigParticlePosition(Position position, double radius, int L) {

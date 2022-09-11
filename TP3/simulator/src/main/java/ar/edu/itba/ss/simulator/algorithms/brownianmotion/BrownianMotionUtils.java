@@ -60,7 +60,7 @@ class BrownianMotionUtils {
                 newStates.put(particle, s);
 
                 //FIXME: ERRORRR!!!
-                if (s.getPosition().getX() < 0 || s.getPosition().getX() > 6 || s.getPosition().getY() < 0 || s.getPosition().getY() > 6) {
+                if (s.getPosition().getX() < 0 + 0.19 || s.getPosition().getX() > 6 - 0.19 || s.getPosition().getY() < 0 + 0.19 || s.getPosition().getY() > 6 - 0.19) {
                     throw new RuntimeException();
                 }
 

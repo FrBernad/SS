@@ -9,10 +9,12 @@ public class BrownianMotionAlgorithmResults {
 
     private final ExecutionTimestamps executionTimestamps;
     private final List<Map<Particle, State>> particlesStates;
+    private final int iterations;
 
-    public BrownianMotionAlgorithmResults(ExecutionTimestamps executionTimestamps, List<Map<Particle, State>> particlesStates) {
+    public BrownianMotionAlgorithmResults(ExecutionTimestamps executionTimestamps, List<Map<Particle, State>> particlesStates, int iterations) {
         this.executionTimestamps = executionTimestamps;
         this.particlesStates = particlesStates;
+        this.iterations = iterations;
     }
 
     public ExecutionTimestamps getExecutionTimestamps() {
@@ -23,4 +25,7 @@ public class BrownianMotionAlgorithmResults {
         return particlesStates;
     }
 
+    public int getIterations() {
+        return iterations;
+    }
 }
