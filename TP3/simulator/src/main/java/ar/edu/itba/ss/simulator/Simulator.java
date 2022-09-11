@@ -20,7 +20,6 @@ import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrFail;
 import static ar.edu.itba.ss.simulator.utils.ParseUtils.ParticlesParserResult;
 import static ar.edu.itba.ss.simulator.utils.ParseUtils.parseParticlesList;
 import static ar.edu.itba.ss.simulator.utils.Particle.State;
-import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
 
 public class Simulator {

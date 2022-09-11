@@ -22,10 +22,14 @@ public class BrownianMotion {
         final ExecutionTimestamps executionTimestamps = new ExecutionTimestamps();
         executionTimestamps.setAlgorithmStart(LocalDateTime.now());
 
+        // Particles with an associated collision
+        final Set<Particle> particlesWithCollision = new HashSet<>();
+
+        // Particles collisions ordered by collision time
+        final TreeSet<Collision> closestCollisions = new TreeSet<>();
+
         for (int i = 0; i < maxIterations; i++) {
             final Map<Particle, State> currentStates = particlesStates.get(i);
-
-            Collision closestCollision = Collision.NONE;
 
             // Calculate collisions
             for (Map.Entry<Particle, State> entry : currentStates.entrySet()) {
@@ -34,18 +38,20 @@ public class BrownianMotion {
                 State state = entry.getValue();
 
                 // Calculate collision only for particle without associated collision
-                Collision collision = getClosestCollision(particle, state, currentStates, L);
+                if (!particlesWithCollision.contains(particle)) {
+                    Collision collision = getClosestCollision(particle, state, currentStates, L);
 
-                if (collision.getType() != CollisionType.NONE) {
-                    if (collision.compareTime(closestCollision) < 0) {
-                        closestCollision = collision;
+                    if (collision.getType() != CollisionType.NONE) {
+                        closestCollisions.add(collision);
+                        particlesWithCollision.add(collision.getParticleI());
                     }
-
                 }
             }
 
+            final Collision closestCollision = closestCollisions.pollFirst();
+
             // Evolve and update particles states
-            particlesStates.add(updateParticlesStates(closestCollision, currentStates));
+            particlesStates.add(updateParticlesStates(closestCollision, particlesWithCollision, closestCollisions, currentStates));
         }
 
         executionTimestamps.setAlgorithmEnd(LocalDateTime.now());

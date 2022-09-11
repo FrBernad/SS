@@ -2,13 +2,16 @@ package ar.edu.itba.ss.simulator.algorithms.brownianmotion;
 
 import ar.edu.itba.ss.simulator.algorithms.brownianmotion.Collision.CollisionType;
 import ar.edu.itba.ss.simulator.utils.Particle;
-import ar.edu.itba.ss.simulator.utils.Particle.Position;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 import static ar.edu.itba.ss.simulator.algorithms.brownianmotion.Collision.CollisionType.*;
 import static ar.edu.itba.ss.simulator.utils.Particle.State;
-import static java.lang.Math.*;
+import static java.lang.Math.pow;
+import static java.lang.Math.sqrt;
 
 class BrownianMotionUtils {
 
@@ -27,7 +30,7 @@ class BrownianMotionUtils {
 
             if (particle != currentParticle) {
                 final Collision collision = calculateParticleCollision(currentParticle, currentParticleState, particle, state);
-                if (collision.getType() != NONE && collision.compareTime(closestCollision) < 0) {
+                if (collision.getType() != NONE && collision.compareTo(closestCollision) < 0) {
                     closestCollision = collision;
                 }
             }
@@ -35,7 +38,7 @@ class BrownianMotionUtils {
 
         // Check collision with walls
         final Collision wallCollision = calculateWallCollision(currentParticle, currentParticleState, L);
-        if (wallCollision.getType() != NONE && wallCollision.compareTime(closestCollision) < 0) {
+        if (wallCollision.getType() != NONE && wallCollision.compareTo(closestCollision) < 0) {
             closestCollision = wallCollision;
         }
 
@@ -43,6 +46,8 @@ class BrownianMotionUtils {
     }
 
     static Map<Particle, State> updateParticlesStates(final Collision currentCollision,
+                                                      final Set<Particle> particlesWithCollision,
+                                                      final Set<Collision> closestCollisions,
                                                       final Map<Particle, State> currentStates) {
 
         // For each particle update its state
@@ -62,9 +67,36 @@ class BrownianMotionUtils {
             }
         );
 
+        // Update collision particles velocity
         updateCollisionParticlesVelocity(currentCollision, newStates);
 
+        updateClosestCollisions(currentCollision, particlesWithCollision, closestCollisions);
+
         return newStates;
+    }
+
+    private static void updateClosestCollisions(final Collision currentCollision,
+                                                final Set<Particle> particlesWithCollision,
+                                                final Set<Collision> closestCollisions) {
+        final Particle particleI = currentCollision.getParticleI();
+        final Particle particleJ = currentCollision.getParticleJ();
+
+        particlesWithCollision.remove(particleI);
+        particlesWithCollision.remove(particleJ);
+
+        final Set<Collision> updatedCollisions = new HashSet<>();
+
+        closestCollisions.forEach(collision -> {
+            if (!collision.containsParticle(particleI) && !collision.containsParticle(particleJ)) {
+                updatedCollisions.add(Collision.withUpdatedTime(collision, currentCollision.getCollisionTime()));
+            } else {
+                particlesWithCollision.remove(collision.getParticleI());
+                particlesWithCollision.remove(collision.getParticleJ());
+            }
+        });
+
+        closestCollisions.clear();
+        closestCollisions.addAll(updatedCollisions);
     }
 
     private static void updateCollisionParticlesVelocity(Collision collision, Map<Particle, State> newStates) {
@@ -113,6 +145,7 @@ class BrownianMotionUtils {
             throw new RuntimeException();
         }
 
+        // Discard previous collision
         if (Double.compare(collisionTime, 0) == 0) {
             return Collision.NONE;
         }
@@ -166,6 +199,7 @@ class BrownianMotionUtils {
 
         // If no vertical intersection then horizontal
         if (closestTimeX == null) {
+            // Discard previous collision
             if (Double.compare(closestTimeY, 0) == 0) {
                 return Collision.NONE;
             }
@@ -174,16 +208,19 @@ class BrownianMotionUtils {
 
         // If no horizontal intersection then vertical
         else if (closestTimeY == null) {
+            // Discard previous collision
             if (Double.compare(closestTimeX, 0) == 0) {
                 return Collision.NONE;
             }
             return new Collision(closestTimeX, particle, null, WALL_VERTICAL);
         }
 
+        // Discard previous collision
         if (Double.compare(closestTimeX, 0) == 0) {
             closestTimeX = Double.POSITIVE_INFINITY;
         }
 
+        // Discard previous collision
         if (Double.compare(closestTimeY, 0) == 0) {
             closestTimeY = Double.POSITIVE_INFINITY;
         }

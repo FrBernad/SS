@@ -4,7 +4,7 @@ import ar.edu.itba.ss.simulator.utils.Particle;
 
 import java.util.Objects;
 
-public class Collision {
+public class Collision implements Comparable<Collision> {
 
     private final Double collisionTime;
     private final Particle particleI;
@@ -20,6 +20,14 @@ public class Collision {
         this.type = type;
     }
 
+    public static Collision withUpdatedTime(Collision collision, double newTime) {
+        final double time = collision.getCollisionTime() - newTime;
+        if (time <= 0) {
+            throw new RuntimeException();
+        }
+        return new Collision(time, collision.getParticleI(), collision.getParticleJ(), collision.getType());
+    }
+
     //FIXME: SI NO USAMOS SACARLO
     public boolean containsParticle(final Particle particle) {
         return (particleI != null && particleI.equals(particle)) || (particleJ != null && particleJ.equals(particle));
@@ -27,10 +35,6 @@ public class Collision {
 
     public boolean isWall() {
         return type == CollisionType.WALL_CORNER || type == CollisionType.WALL_HORIZONTAL || type == CollisionType.WALL_VERTICAL;
-    }
-
-    public int compareTime(Collision o) {
-        return Double.compare(collisionTime, o.collisionTime);
     }
 
     private boolean containsSameTypeAndParticles(final Collision collision) {
@@ -45,7 +49,8 @@ public class Collision {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        return containsSameTypeAndParticles((Collision) o);
+        Collision collision = (Collision) o;
+        return containsSameTypeAndParticles(collision);
     }
 
     @Override
@@ -68,6 +73,15 @@ public class Collision {
 
     public CollisionType getType() {
         return type;
+    }
+
+    @Override
+    public int compareTo(Collision o) {
+        int ret = Double.compare(collisionTime, o.collisionTime);
+        if (ret == 0) {
+            return containsSameTypeAndParticles(o) ? 0 : 1;
+        }
+        return ret;
     }
 
     public enum CollisionType {

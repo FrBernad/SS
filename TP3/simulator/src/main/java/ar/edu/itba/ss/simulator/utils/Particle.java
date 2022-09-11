@@ -2,8 +2,6 @@ package ar.edu.itba.ss.simulator.utils;
 
 import java.util.Objects;
 
-import static java.lang.Math.*;
-
 public class Particle implements Comparable<Particle> {
     private final int id;
     private final double radius;
