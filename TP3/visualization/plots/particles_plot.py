@@ -23,8 +23,7 @@ def make_particles_plot(df: DataFrame):
                       xref="x", yref="y",
                       x0=x0, y0=y0, x1=x1, y1=y1,
                       fillcolor=colors[i - 1],
-                      line=dict(width=0),
-                      )
+                      line=dict(width=0))
 
     fig.update_yaxes(tick0=0, dtick=0.5, range=[0, 6])
     fig.update_xaxes(tick0=0, dtick=0.5, range=[0, 6])

@@ -18,7 +18,7 @@ public class BrownianMotion {
 
     public static BrownianMotionAlgorithmResults execute(final Map<Particle, State> initialParticlesStates, int L, int maxIterations) {
 
-        final List<Map<Particle, State>> particlesStates = new LinkedList<>(List.of(initialParticlesStates));
+        final Map<Double, Map<Particle, State>> particlesStates = new TreeMap<>(Map.of(0.0, initialParticlesStates));
 
         final ExecutionTimestamps executionTimestamps = new ExecutionTimestamps();
         executionTimestamps.setAlgorithmStart(LocalDateTime.now());
@@ -33,8 +33,9 @@ public class BrownianMotion {
         final Particle bigParticle = initialParticlesStates.keySet().stream().max(Comparator.comparingDouble(Particle::getRadius)).orElseThrow();
 
         int iteration;
+        double simulationTime = 0;
         for (iteration = 0; iteration < maxIterations && !bigParticleTouchedBorder; iteration++) {
-            final Map<Particle, State> currentStates = particlesStates.get(iteration);
+            final Map<Particle, State> currentStates = particlesStates.get(simulationTime);
 
             // Calculate collisions
             for (Map.Entry<Particle, State> entry : currentStates.entrySet()) {
@@ -54,17 +55,23 @@ public class BrownianMotion {
             }
 
             final Collision closestCollision = closestCollisions.pollFirst();
+            if (closestCollision == null) {
+                throw new RuntimeException("Missing closest collision");
+            }
 
             // Evolve and update particles states
             final Map<Particle, State> newState = updateParticlesStates(closestCollision, particlesWithCollision, closestCollisions, currentStates);
-            particlesStates.add(newState);
+
+            simulationTime += closestCollision.getCollisionTime();
+
+            particlesStates.put(simulationTime, newState);
 
             bigParticleTouchedBorder = checkBigParticlePosition(newState.get(bigParticle).getPosition(), bigParticle.getRadius(), L);
         }
 
         executionTimestamps.setAlgorithmEnd(LocalDateTime.now());
 
-        return new BrownianMotionAlgorithmResults(executionTimestamps, particlesStates, iteration);
+        return new BrownianMotionAlgorithmResults(executionTimestamps, particlesStates, iteration, simulationTime);
     }
 
     private static boolean checkBigParticlePosition(Position position, double radius, int L) {

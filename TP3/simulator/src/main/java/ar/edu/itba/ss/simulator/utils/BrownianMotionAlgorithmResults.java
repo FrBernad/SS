@@ -1,6 +1,5 @@
 package ar.edu.itba.ss.simulator.utils;
 
-import java.util.List;
 import java.util.Map;
 
 import static ar.edu.itba.ss.simulator.utils.Particle.State;
@@ -8,24 +7,30 @@ import static ar.edu.itba.ss.simulator.utils.Particle.State;
 public class BrownianMotionAlgorithmResults {
 
     private final ExecutionTimestamps executionTimestamps;
-    private final List<Map<Particle, State>> particlesStates;
+    private final Map<Double, Map<Particle, State>> particlesStates;
     private final int iterations;
+    private final double simulationTime;
 
-    public BrownianMotionAlgorithmResults(ExecutionTimestamps executionTimestamps, List<Map<Particle, State>> particlesStates, int iterations) {
+    public BrownianMotionAlgorithmResults(ExecutionTimestamps executionTimestamps, Map<Double, Map<Particle, State>> particlesStates, int iterations, double simulationTime) {
         this.executionTimestamps = executionTimestamps;
         this.particlesStates = particlesStates;
         this.iterations = iterations;
+        this.simulationTime = simulationTime;
     }
 
     public ExecutionTimestamps getExecutionTimestamps() {
         return executionTimestamps;
     }
 
-    public List<Map<Particle, State>> getParticlesStates() {
+    public Map<Double, Map<Particle, State>> getParticlesStates() {
         return particlesStates;
     }
 
     public int getIterations() {
         return iterations;
+    }
+
+    public double getSimulationTime() {
+        return simulationTime;
     }
 }

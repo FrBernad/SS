@@ -4,7 +4,6 @@ import ar.edu.itba.ss.simulator.algorithms.brownianmotion.BrownianMotion;
 import ar.edu.itba.ss.simulator.utils.ActionLogger;
 import ar.edu.itba.ss.simulator.utils.BaseArguments;
 import ar.edu.itba.ss.simulator.utils.BrownianMotionAlgorithmResults;
-import ar.edu.itba.ss.simulator.utils.Particle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,14 +11,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Paths;
-import java.util.Map;
 import java.util.Properties;
 
 import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrDefault;
 import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrFail;
 import static ar.edu.itba.ss.simulator.utils.ParseUtils.ParticlesParserResult;
 import static ar.edu.itba.ss.simulator.utils.ParseUtils.parseParticlesList;
-import static ar.edu.itba.ss.simulator.utils.Particle.State;
 import static java.lang.Integer.parseInt;
 
 public class Simulator {
@@ -59,21 +56,21 @@ public class Simulator {
             baseArguments.getMaxIterations()
         );
 
-        LOGGER.info(String.format("Finished Brownian Motion In %d Iterations!", methodResults.getIterations()));
+        LOGGER.info(String.format("Finished Brownian Motion In %d Iterations / %.3f Seconds!",
+            methodResults.getIterations(), methodResults.getSimulationTime()));
 
         LOGGER.info("Writing Results ...");
         final File outResultsFile = new File(baseArguments.getOutResultsFilePath());
         try (PrintWriter pw = new PrintWriter(outResultsFile)) {
-            for (int i = 0; i < methodResults.getParticlesStates().size(); i++) {
-                pw.append(String.format("%d\n", i));
-                final Map<Particle, State> currentStates = methodResults.getParticlesStates().get(i);
-                currentStates.forEach((particle, state) ->
-                    pw.printf("%d %f %f %f %f\n",
-                        particle.getId(),
-                        state.getPosition().getX(), state.getPosition().getY(),
-                        state.getVelocityX(), state.getVelocityY())
-                );
-            }
+            methodResults.getParticlesStates()
+                .forEach((time, states) -> {
+                    pw.append(String.format("%f\n", time));
+                    states.forEach((particle, state) ->
+                        pw.printf("%d %f %f %f %f\n",
+                            particle.getId(),
+                            state.getPosition().getX(), state.getPosition().getY(),
+                            state.getVelocityX(), state.getVelocityY()));
+                });
         }
 
         final File outTimeFile = new File(baseArguments.getOutTimeFilePath());

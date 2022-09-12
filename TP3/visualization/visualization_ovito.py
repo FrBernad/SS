@@ -11,7 +11,11 @@ from utils.parser_utils import get_particles_data
 
 
 def visualization_ovito(config_file: str):
+    print("Visualization Starting ...")
+
     config = get_config(config_file)
+
+    print("Getting Particles Data ...")
     dfs = get_particles_data(config.static_file, config.results_file)
 
     pipeline = Pipeline(source=StaticSource(data=DataCollection()))
@@ -23,15 +27,18 @@ def visualization_ovito(config_file: str):
         cell[:, 2] = (0, 0, 2)
         data.objects.append(cell)
 
-        particles = get_frame_particles(dfs[frame])
+        particles = get_frame_particles(dfs[frame].data)
         data.objects.append(particles)
 
     pipeline.modifiers.append(create_particle_pos)
 
+    print("Exporting File ...")
     export_file(pipeline, '../results/visualization.dump', 'lammps/dump',
                 columns=["Particle Identifier", "Position.X", "Position.Y", "Position.Z", "Radius",
                          "Force.X", "Force.Y", "Force.Z", "Type"],
                 multiple_frames=True, start_frame=0, end_frame=len(dfs) - 1)
+
+    print("Done!")
 
 
 if __name__ == "__main__":

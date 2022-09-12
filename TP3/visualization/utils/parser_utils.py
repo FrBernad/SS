@@ -1,9 +1,12 @@
+from collections import namedtuple
 from typing import List
 
 import numpy as np
 import ovito.data as od
 import pandas as pd
 from pandas import DataFrame
+
+EventData = namedtuple('EventData', ['time', 'data'])
 
 
 def get_frame_particles(df: DataFrame):
@@ -19,7 +22,7 @@ def get_frame_particles(df: DataFrame):
     particles.create_property('Type',
                               data=np.concatenate(([0], np.full(len(df.x) - 1, 1), np.full(len(square_points), 2))))
     particles.create_property('Force',
-                              data=np.concatenate((np.array((df.velocity_x, df.velocity_y, np.zeros(len(df.x)))).T,
+                              data=np.concatenate((np.array((df.vx, df.vy, np.zeros(len(df.x)))).T,
                                                    np.zeros((len(square_points), 3))))
                               )
 
@@ -37,23 +40,24 @@ def _generate_square(L: int):
     return np.array(square_points)
 
 
-def get_particles_data(static_file: str, results_file: str) -> List[DataFrame]:
+def get_particles_data(static_file: str, results_file: str) -> List[EventData]:
     static_df = pd.read_csv(static_file, skiprows=2, sep=" ", names=["radius", "mass"])
 
     dfs = []
     with open(results_file, "r") as results:
-        next(results)
+        current_frame_time = float(next(results))
         current_frame = []
         for line in results:
             float_vals = list(map(lambda v: float(v), line.split()))
             if len(float_vals) > 1:
                 current_frame.append(float_vals)
             elif len(float_vals) == 1:
-                df = pd.DataFrame(np.array(current_frame), columns=["id", "x", "y", "velocity_x", "velocity_y"])
-                dfs.append(pd.concat([df, static_df], axis=1))
+                df = pd.DataFrame(np.array(current_frame), columns=["id", "x", "y", "vx", "vy"])
+                dfs.append(EventData(current_frame_time, pd.concat([df, static_df], axis=1)))
                 current_frame = []
-        df = pd.DataFrame(np.array(current_frame), columns=["id", "x", "y", "velocity_x", "velocity_y"])
-        dfs.append(pd.concat([df, static_df], axis=1))
+                current_frame_time = float_vals[0]
+        df = pd.DataFrame(np.array(current_frame), columns=["id", "x", "y", "vx", "vy"])
+        dfs.append(EventData(current_frame_time, pd.concat([df, static_df], axis=1)))
 
     return dfs
 
