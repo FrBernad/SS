@@ -2,6 +2,7 @@ import glob
 
 import numpy as np
 import plotly.graph_objects as go
+from sklearn.linear_model import LinearRegression
 
 from utils.parser_utils import get_particles_data
 
@@ -45,18 +46,38 @@ def big_particle_DCM(static_file: str, results_dir: str):
         DCs.append(np.linalg.norm(big_particle_positions[:min_len] - big_particle_initial_position, axis=1))
 
     DCM = np.mean(DCs, axis=0)
+    x_values = np.arange(0, min_time, time_step)
     error = np.std(DCs, axis=0)
 
+    model = LinearRegression().fit(x_values.reshape(-1, 1), DCM.reshape(-1, 1))
+
     fig = go.Figure(
-        data=go.Scatter(
-            x=np.arange(0, min_time, time_step),
-            y=DCM,
-            mode='markers+lines',
-            error_y=dict(array=error)
-        ),
+        data=[
+            go.Scatter(
+                x=x_values,
+                y=DCM,
+                mode='lines',
+                showlegend=False
+            ),
+            go.Scatter(
+                x=np.concatenate((x_values, x_values[::-1])),
+                y=np.concatenate((DCM + error, (DCM - error)[::-1])),
+                fill='toself',
+                fillcolor='rgba(0,100,80,0.2)',
+                line=dict(color='rgba(255,255,255,0)'),
+                hoverinfo="skip",
+                showlegend=False
+            ),
+            go.Scatter(
+                x=x_values,
+                y=x_values * model.coef_[0] + model.intercept_[0],
+                mode='lines',
+                showlegend=False
+            )
+        ],
         layout=go.Layout(
             title=dict(text=f'Big Particle DCM', x=0.5),
-            xaxis=dict(title='Tiempo (s)'),
+            xaxis=dict(title='Tiempo (s)', dtick=10, tick0=0),
             yaxis=dict(title='DCM'),
             font=dict(
                 family="Arial",
@@ -66,7 +87,7 @@ def big_particle_DCM(static_file: str, results_dir: str):
     )
 
     # Set figure size
-    fig.update_layout(width=1000, height=1000)
+    fig.update_layout(width=1800, height=1000)
 
     fig.show()
 

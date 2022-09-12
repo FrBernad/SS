@@ -1,5 +1,7 @@
 import numpy as np
 import plotly.graph_objects as go
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
 
 from utils.parser_utils import get_particles_data
 
@@ -39,33 +41,34 @@ def big_particle_DCM(static_file: str, results_file: str):
     DCs = np.linalg.norm(small_particles_positions - small_particles_initial_positions, axis=2)
 
     DCM = np.mean(DCs, axis=1)
+    x_values = np.arange(0, min_time, time_step)
     error = np.std(DCs, axis=1)
 
-    # x_ = PolynomialFeatures(degree=1, include_bias=False).fit_transform(np.arange(0, min_time, time_step))
-    # model = LinearRegression().fit(x_, DCM)
-    # y_pred = model.predict(x_)
+    model = LinearRegression().fit(x_values.reshape(-1, 1), DCM.reshape(-1, 1))
 
     fig = go.Figure(
-        data=[go.Scatter(
-            x=np.arange(0, min_time, time_step),
-            y=DCM,
-            mode='markers+lines',
-            showlegend=False
-        ),
+        data=[
             go.Scatter(
-                x=np.concatenate((np.arange(0, min_time, time_step), np.arange(0, min_time, time_step)[::-1])),
-                # x, then x reversed
-                y=np.concatenate((DCM + error, (DCM - error)[::-1])),  # upper, then lower reversed
+                x=np.arange(0, min_time, time_step),
+                y=DCM,
+                mode='lines',
+                showlegend=False
+            ),
+            go.Scatter(
+                x=np.concatenate((x_values, x_values[::-1])),
+                y=np.concatenate((DCM + error, (DCM - error)[::-1])),
                 fill='toself',
                 fillcolor='rgba(0,100,80,0.2)',
                 line=dict(color='rgba(255,255,255,0)'),
                 hoverinfo="skip",
                 showlegend=False
             ),
-            # go.Scatter(
-            #     x=x_,
-            #     y=y_pred,
-            #     mode='markers+lines')
+            go.Scatter(
+                x=x_values,
+                y=x_values * model.coef_[0] + model.intercept_[0],
+                mode='lines',
+                showlegend=False
+            )
         ],
         layout=go.Layout(
             title=dict(text=f'Small Particle DCM', x=0.5),

@@ -34,7 +34,7 @@ def average_collision(static_file: str, results_file: str):
         ),
         layout=go.Layout(
             title=dict(text=f'Collision Times - N={len(dfs[0].data) - 1}', x=0.5),
-            xaxis=dict(title='Tiempo (s)', exponentformat='e', showexponent="all"),
+            xaxis=dict(title='Tiempo (s)', exponentformat="power"),
             yaxis=dict(title='PDF'),
             font=dict(
                 family="Arial",
