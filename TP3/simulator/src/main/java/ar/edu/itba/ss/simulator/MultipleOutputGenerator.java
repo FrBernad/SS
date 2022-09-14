@@ -52,23 +52,42 @@ public class MultipleOutputGenerator {
             return;
         }
 
+        boolean staticFileGenerated = false;
+
         for (int i = 0; i <= runs; i++) {
 
-            LOGGER.info("Generating particles for run {}", i);
+            LOGGER.info("Generating particles for run {}", i + 1);
 
 
             Map<Particle, State> particles = ParticlesGenerator.generateParticles(N,
                     L, BIG_PARTICLE_R, BIG_PARTICLE_MASS, SMALL_PARTICLE_R, SMALL_PARTICLE_MASS,
                     PARTICLE_MAX_SPEED, PARTICLE_MIN_SPEED);
 
-            LOGGER.info("Simulating run {}", i);
+            if (!staticFileGenerated) {
+                staticFileGenerated = true;
+                //Static File
+                final String directory = String.format("%sStatic.txt", resultsDirectoryPath);
+                final File staticFile = new File(directory);
+                try (PrintWriter pw = new PrintWriter(staticFile)) {
+
+                    pw.println(N);
+                    pw.println(L);
+
+                    for (Map.Entry<Particle, State> entry : particles.entrySet()) {
+                        pw.printf("%f %f\n", entry.getKey().getRadius(), entry.getKey().getMass());
+                    }
+                }
+
+            }
+
+            LOGGER.info("Simulating run {}", i + 1);
             BrownianMotionAlgorithmResults methodResults = BrownianMotion.execute(
                     particles,
                     L,
                     maxIterations);
 
-            LOGGER.info(String.format("Finished Brownian Motion In %d Iterations / %.3f Seconds!",
-                    methodResults.getIterations(), methodResults.getSimulationTime()));
+            LOGGER.info(String.format("Finished run %d Brownian Motion In %d Iterations / %.3f Seconds!",
+                    i + 1, methodResults.getIterations(), methodResults.getSimulationTime()));
 
 
             LOGGER.info("Writing Results ...");
@@ -89,6 +108,7 @@ public class MultipleOutputGenerator {
         }
 
     }
+
     private static void printClientUsage() {
         System.out.println("Invalid generator invocation.\n" +
                 "Usage: ./files_generator -DresultsDirectory='path/to/results/directory' " +
