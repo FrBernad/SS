@@ -51,77 +51,27 @@ public class ParticlesGenerator {
         final double smallParticleMass = 0.9;
         final double bigParticleMass = 2;
 
-        List<Particle> particlesArray = new ArrayList<>();
+        Map<Particle, State> particles = generateParticles(fileArguments.getN(), L, bigParticleR,
+                bigParticleMass, smallParticleR, smallParticleMass, particleMaxSpeed, particleMinSpeed);
+
+        //Static File
         try (PrintWriter pw = new PrintWriter(fileArguments.getStaticFile())) {
-            int id = 0;
 
             pw.println(fileArguments.getN());
             pw.println(L);
 
-            particlesArray.add(new Particle(id++, bigParticleR, bigParticleMass));
-
-            pw.printf("%f %f\n", bigParticleR, bigParticleMass);
-
-            for (int i = 0; i < fileArguments.getN(); i++) {
-                particlesArray.add(new Particle(id++, smallParticleR, smallParticleMass));
-                pw.printf("%f %f\n", smallParticleR, smallParticleMass);
+            for (Map.Entry<Particle, State> entry : particles.entrySet()) {
+                pw.printf("%f %f\n", entry.getKey().getRadius(), entry.getKey().getMass());
             }
         }
 
+        //Dynamic File
+
         try (PrintWriter pw = new PrintWriter(fileArguments.getDynamicFile())) {
-            final Random random = new Random();
-
-            int particleId = 0;
-
-            final Map<Particle, State> particles = new HashMap<>();
-
-            // Generate Big Particle
-            final Position bigParticlePosition = new Position((double) L / 2, (double) L / 2);
-            final State bigParticleState = new State(bigParticlePosition, 0, 0);
-
-            particles.put(particlesArray.get(particleId), bigParticleState);
-
-            // Write Big Particle
             pw.println(0);
-            pw.printf("%f %f %f %f\n", bigParticleState.getPosition().getX(), bigParticleState.getPosition().getY(),
-                    bigParticleState.getVelocityX(), bigParticleState.getVelocityY());
-
-            // Generate small particles positions
-            for (int j = 0; j < fileArguments.getN(); j++) {
-                boolean success = false;
-                particleId++;
-
-                final double speed = particleMinSpeed + Math.random() * (particleMaxSpeed - particleMinSpeed);
-                final double angle = random.nextDouble() * (MAX_ANGLE);
-                final double velocityX = speed * cos(angle);
-                final double velocityY = speed * sin(angle);
-
-                State newState = null;
-                while (!success) {
-                    success = true;
-
-                    final double offset = random.nextDouble();
-
-                    final double x = smallParticleR + offset + random.nextDouble() * (L - 2 * smallParticleR - offset);
-                    final double y = smallParticleR + offset + random.nextDouble() * (L - 2 * smallParticleR - offset);
-
-                    newState = new State(new Position(x, y), velocityX, velocityY);
-
-                    for (Map.Entry<Particle, State> entry : particles.entrySet()) {
-                        final Particle otherParticle = entry.getKey();
-                        final Position otherPosition = entry.getValue().getPosition();
-                        final double radiusDistance = pow(otherParticle.getRadius() + particlesArray.get(particleId).getRadius(), 2);
-                        final double particlesDistance = pow(otherPosition.getX() - x, 2) + pow(otherPosition.getY() - y, 2);
-
-                        if (particlesDistance <= radiusDistance) {
-                            success = false;
-                            break;
-                        }
-                    }
-                }
-                particles.put(particlesArray.get(particleId), newState);
-                pw.printf("%f %f %f %f\n", newState.getPosition().getX(), newState.getPosition().getY(),
-                        newState.getVelocityX(), newState.getVelocityY());
+            for (Map.Entry<Particle, State> entry : particles.entrySet()) {
+                pw.printf("%f %f %f %f\n", entry.getValue().getPosition().getX(), entry.getValue().getPosition().getY(),
+                        entry.getValue().getVelocityX(), entry.getValue().getVelocityX());
             }
         }
 
@@ -162,7 +112,7 @@ public class ParticlesGenerator {
             particlesArray.add(new Particle(id++, smallParticleR, smallParticleMass));
         }
 
-        final Map<Particle, State> particles = new HashMap<>();
+        final Map<Particle, State> particles = new TreeMap<>((Comparator.comparingInt(Particle::getId)));
         final Random random = new Random();
 
 
