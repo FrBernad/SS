@@ -84,7 +84,7 @@ public class ParticlesGenerator {
             // Write Big Particle
             pw.println(0);
             pw.printf("%f %f %f %f\n", bigParticleState.getPosition().getX(), bigParticleState.getPosition().getY(),
-                bigParticleState.getVelocityX(), bigParticleState.getVelocityY());
+                    bigParticleState.getVelocityX(), bigParticleState.getVelocityY());
 
             // Generate small particles positions
             for (int j = 0; j < fileArguments.getN(); j++) {
@@ -121,7 +121,7 @@ public class ParticlesGenerator {
                 }
                 particles.put(particlesArray.get(particleId), newState);
                 pw.printf("%f %f %f %f\n", newState.getPosition().getX(), newState.getPosition().getY(),
-                    newState.getVelocityX(), newState.getVelocityY());
+                        newState.getVelocityX(), newState.getVelocityY());
             }
         }
 
@@ -145,28 +145,77 @@ public class ParticlesGenerator {
 
     public static Map<Particle, State> generateParticles(final int N,
                                                          final int L,
-                                                         final double particleRadius,
-                                                         final double particleMass,
+                                                         final double bigParticleR,
+                                                         final double bigParticleMass,
+                                                         final double smallParticleR,
+                                                         final double smallParticleMass,
                                                          final double particleMaxSpeed,
-                                                         final double particleMinSpeed,
-                                                         final int startId) {
-        Map<Particle, State> particles = new HashMap<>();
-        final Random random = new Random();
+                                                         final double particleMinSpeed) {
+
+        // Particle info
+        List<Particle> particlesArray = new ArrayList<>();
+        int id = 0;
+
+        particlesArray.add(new Particle(id++, bigParticleR, bigParticleMass));
 
         for (int i = 0; i < N; i++) {
-            Position position = new Position(random.nextDouble() * L, random.nextDouble() * L);
-            double angle = random.nextDouble() * (MAX_ANGLE);
-            particles.put(
-                new Particle(startId + i, particleRadius, particleMass),
-                new State(position, particleMinSpeed + Math.random() * (particleMaxSpeed - particleMinSpeed), angle)
-            );
+            particlesArray.add(new Particle(id++, smallParticleR, smallParticleMass));
+        }
+
+        final Map<Particle, State> particles = new HashMap<>();
+        final Random random = new Random();
+
+
+        // Particle state
+        int particleId = 0;
+
+        // Generate Big Particle
+        final Position bigParticlePosition = new Position((double) L / 2, (double) L / 2);
+        final State bigParticleState = new State(bigParticlePosition, 0, 0);
+
+        particles.put(particlesArray.get(particleId), bigParticleState);
+
+        // Generate small particles positions
+        for (int j = 0; j < N; j++) {
+            boolean success = false;
+            particleId++;
+
+            final double speed = particleMinSpeed + Math.random() * (particleMaxSpeed - particleMinSpeed);
+            final double angle = random.nextDouble() * (MAX_ANGLE);
+            final double velocityX = speed * cos(angle);
+            final double velocityY = speed * sin(angle);
+
+            State newState = null;
+            while (!success) {
+                success = true;
+
+                final double offset = random.nextDouble();
+
+                final double x = smallParticleR + offset + random.nextDouble() * (L - 2 * smallParticleR - offset);
+                final double y = smallParticleR + offset + random.nextDouble() * (L - 2 * smallParticleR - offset);
+
+                newState = new State(new Position(x, y), velocityX, velocityY);
+
+                for (Map.Entry<Particle, State> entry : particles.entrySet()) {
+                    final Particle otherParticle = entry.getKey();
+                    final Position otherPosition = entry.getValue().getPosition();
+                    final double radiusDistance = pow(otherParticle.getRadius() + particlesArray.get(particleId).getRadius(), 2);
+                    final double particlesDistance = pow(otherPosition.getX() - x, 2) + pow(otherPosition.getY() - y, 2);
+
+                    if (particlesDistance <= radiusDistance) {
+                        success = false;
+                        break;
+                    }
+                }
+            }
+            particles.put(particlesArray.get(particleId), newState);
         }
         return particles;
     }
 
     private static void printClientUsage() {
         System.out.println("Invalid generator invocation.\n" +
-            "Usage: ./files_generator -DstaticFile='path/to/static/file' -DdynamicFile='path/to/dynamic/file' " +
-            "-DN=N");
+                "Usage: ./files_generator -DstaticFile='path/to/static/file' -DdynamicFile='path/to/dynamic/file' " +
+                "-DN=N");
     }
 }
