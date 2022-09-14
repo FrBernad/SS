@@ -37,11 +37,20 @@ public class MultipleOutputGenerator {
 
     public static void main(String[] args) throws FileNotFoundException {
         final Properties properties = System.getProperties();
-        final String resultsDirectoryPath = getPropertyOrFail(properties, RESULTS_OUT_PATH_P);
-        final int maxIterations = parseInt(getPropertyOrDefault(properties, MAX_ITERATIONS_P, "20000"));
-        final int N = parseInt(getPropertyOrDefault(properties, N_P, "120"));
-        final int runs = parseInt(getPropertyOrDefault(properties, RUNS_P, "50"));
+        final String resultsDirectoryPath;
+        final int maxIterations;
+        final int N;
+        final int runs;
 
+        try {
+            resultsDirectoryPath = getPropertyOrFail(properties, RESULTS_OUT_PATH_P);
+            maxIterations = parseInt(getPropertyOrDefault(properties, MAX_ITERATIONS_P, "20000"));
+            N = parseInt(getPropertyOrDefault(properties, N_P, "120"));
+            runs = parseInt(getPropertyOrDefault(properties, RUNS_P, "50"));
+        } catch (IllegalArgumentException e) {
+            printClientUsage();
+            return;
+        }
 
         for (int i = 0; i <= runs; i++) {
 
@@ -79,5 +88,10 @@ public class MultipleOutputGenerator {
 
         }
 
+    }
+    private static void printClientUsage() {
+        System.out.println("Invalid generator invocation.\n" +
+                "Usage: ./files_generator -DresultsDirectory='path/to/results/directory' " +
+                "-DN=N -Druns=50 -DmaxIterations=maxIterations");
     }
 }
