@@ -1,7 +1,6 @@
 import numpy as np
 import plotly.graph_objects as go
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error
 
 from utils.parser_utils import get_particles_data
 
@@ -28,7 +27,7 @@ def big_particle_DCM(static_file: str, results_file: str):
 
     min_time = clock_dfs[-1].time
 
-    size = 120
+    size = 140
     selected_particles_ids = np.random.choice(np.arange(1, len(dfs[0].data)), size=size, replace=False)
 
     small_particles_initial_positions = np.array(
@@ -88,6 +87,6 @@ def big_particle_DCM(static_file: str, results_file: str):
 
 
 if __name__ == "__main__":
-    static_file = '../../assets/Static.txt'
-    results_file = '../../results/results.txt'
+    static_file = '../../assets/Static140.txt'
+    results_file = '../../results/results140.txt'
     big_particle_DCM(static_file, results_file)

@@ -1,7 +1,6 @@
 package ar.edu.itba.ss.simulator;
 
 import ar.edu.itba.ss.simulator.algorithms.brownianmotion.BrownianMotion;
-import ar.edu.itba.ss.simulator.utils.ActionLogger;
 import ar.edu.itba.ss.simulator.utils.BrownianMotionAlgorithmResults;
 import ar.edu.itba.ss.simulator.utils.Particle;
 import ar.edu.itba.ss.simulator.utils.Particle.State;
@@ -11,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Properties;
 
@@ -28,8 +26,8 @@ public class MultipleOutputGenerator {
     private static final double BIG_PARTICLE_MASS = 2;
     private static final double SMALL_PARTICLE_R = 0.2;
     private static final double SMALL_PARTICLE_MASS = 0.9;
-    private static final double PARTICLE_MAX_SPEED = 0;
-    private static final double PARTICLE_MIN_SPEED = 2;
+    private static final double PARTICLE_MAX_SPEED = 2;
+    private static final double PARTICLE_MIN_SPEED = 0;
     private static final String MAX_ITERATIONS_P = "maxIterations";
     private static final String RESULTS_OUT_PATH_P = "resultsDirectory";
     private final static String RUNS_P = "runs";
@@ -44,8 +42,8 @@ public class MultipleOutputGenerator {
 
         try {
             resultsDirectoryPath = getPropertyOrFail(properties, RESULTS_OUT_PATH_P);
-            maxIterations = parseInt(getPropertyOrDefault(properties, MAX_ITERATIONS_P, "20000"));
-            N = parseInt(getPropertyOrDefault(properties, N_P, "120"));
+            maxIterations = parseInt(getPropertyOrDefault(properties, MAX_ITERATIONS_P, "50000"));
+            N = parseInt(getPropertyOrDefault(properties, N_P, "135"));
             runs = parseInt(getPropertyOrDefault(properties, RUNS_P, "50"));
         } catch (IllegalArgumentException e) {
             printClientUsage();

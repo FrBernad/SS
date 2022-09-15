@@ -93,6 +93,6 @@ def big_particle_DCM(static_file: str, results_dir: str):
 
 
 if __name__ == "__main__":
-    static_file = '../../assets/Static.txt'
+    static_file = '../../assets/results4BIG/static.txt'
     results_dir = '../../results/results4BIG/'
     big_particle_DCM(static_file, results_dir)
