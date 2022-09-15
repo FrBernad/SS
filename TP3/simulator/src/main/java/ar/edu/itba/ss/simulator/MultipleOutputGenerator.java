@@ -54,7 +54,7 @@ public class MultipleOutputGenerator {
 
         boolean staticFileGenerated = false;
 
-        for (int i = 0; i <= runs; i++) {
+        for (int i = 0; i < runs; i++) {
 
             LOGGER.info("Generating particles for run {}", i + 1);
 
@@ -104,6 +104,8 @@ public class MultipleOutputGenerator {
                                             state.getVelocityX(), state.getVelocityY()));
                         });
             }
+            LOGGER.info("Done ");
+
 
         }
 
