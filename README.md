@@ -8,5 +8,8 @@
 ## [TP1 - CELL INDEX METHOD](https://github.com/FrBernad/SS/tree/main/TP1)
 Implementation of the [Cell Index Method](http://www.pas.rochester.edu/~wangyt/algorithms/cell/index.html) with visualization of neighbors.
 
-## [TP2 - OFF-LATTICE CELLULAR AUTOMATON](https://github.com/FrBernad/SS/tree/main/TP2)
+## [TP2 - CELLULAR AUTOMATON: OFF-LATTICE](https://github.com/FrBernad/SS/tree/main/TP2)
 Implementation of the Off Lattice [Celular Automaton](https://en.wikipedia.org/wiki/Cellular_automaton) with visualization.
+
+## [TP3 - MOLECULAR DYNAMICS: BROWNIAN MOTION](https://github.com/FrBernad/SS/tree/main/TP3)
+Implementation of [Brownian Motion](https://en.wikipedia.org/wiki/Brownian_motion) Event-Driven Molecular Dynamics.

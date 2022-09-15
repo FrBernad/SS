@@ -17,15 +17,15 @@ from utils.parser_utils import get_particles_data
 # teniendo en cuenta que la misma solo es válida hasta que choque con alguna de las paredes.
 def big_particle_DCM(static_file: str, results_dir: str):
     runs = []
-    for file in glob.glob(f'''{results_dir}*.txt'''):
+    for i, file in enumerate(glob.glob(f'''{results_dir}run*''')):
+        print(f'''Parsing run {i}''')
         runs.append(get_particles_data(static_file, file))
 
-    time_step = 1
+    time_step = 0.2
     clock_dfs = []
     for dfs in runs:
         current_time = 0
         clock_df = []
-        # 0 2.53 2.78 3.01 3.30 3.64
         for df in dfs:
             if current_time <= df.time:
                 clock_df.append(df)
@@ -76,7 +76,7 @@ def big_particle_DCM(static_file: str, results_dir: str):
             )
         ],
         layout=go.Layout(
-            title=dict(text=f'Big Particle DCM', x=0.5),
+            title=dict(text=f'Big Particle DCM - y = {model.coef_[0][0]}x + {model.intercept_[0]}', x=0.5),
             xaxis=dict(title='Tiempo (s)', dtick=10, tick0=0),
             yaxis=dict(title='DCM'),
             font=dict(
@@ -93,6 +93,6 @@ def big_particle_DCM(static_file: str, results_dir: str):
 
 
 if __name__ == "__main__":
-    static_file = '../../assets/results4BIG/static.txt'
+    static_file = '../../results/results4BIG/Static.txt'
     results_dir = '../../results/results4BIG/'
     big_particle_DCM(static_file, results_dir)

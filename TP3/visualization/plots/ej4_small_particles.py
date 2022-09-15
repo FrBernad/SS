@@ -70,7 +70,7 @@ def big_particle_DCM(static_file: str, results_file: str):
             )
         ],
         layout=go.Layout(
-            title=dict(text=f'Small Particle DCM', x=0.5),
+            title=dict(text=f'Small Particle DCM - y = {model.coef_[0][0]}x + {model.intercept_[0]}', x=0.5),
             xaxis=dict(title='Tiempo (s)', dtick=10, tick0=0),
             yaxis=dict(title='DCM'),
             font=dict(
