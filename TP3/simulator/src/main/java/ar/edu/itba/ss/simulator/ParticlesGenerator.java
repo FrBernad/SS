@@ -14,6 +14,7 @@ import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrDefault
 import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrFail;
 import static ar.edu.itba.ss.simulator.utils.Particle.Position;
 import static ar.edu.itba.ss.simulator.utils.Particle.State;
+import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
 import static java.lang.Math.*;
 
@@ -24,6 +25,8 @@ public class ParticlesGenerator {
     private static final String N_P = "N";
     private static final String DELIMITER_P = "delimiter";
     private static final String DEFAULT_DELIMITER = " ";
+    private static final String PARTICLE_MIN_SPEED_P = "particleMinSpeed";
+    private static final String PARTICLE_MAX_SPEED_P = "particleMaxSpeed";
     private static final Double MAX_ANGLE = 2 * Math.PI;
 
     public static void main(String[] args) throws IOException {
@@ -44,8 +47,8 @@ public class ParticlesGenerator {
         LOGGER.info("Generating files ...");
 
         final int L = 6;
-        final int particleMinSpeed = 0;
-        final int particleMaxSpeed = 2;
+        final int particleMinSpeed = fileArguments.getParticleMinSpeed();
+        final int particleMaxSpeed = fileArguments.getParticleMaxSpeed();
         final double smallParticleR = 0.2;
         final double bigParticleR = 0.7;
         final double smallParticleMass = 0.9;
@@ -86,11 +89,13 @@ public class ParticlesGenerator {
         final String delimiter = getPropertyOrDefault(properties, DELIMITER_P, DEFAULT_DELIMITER);
 
         final int N = parseInt(getPropertyOrDefault(properties, N_P, "100"));
+        final int particleMinSpeed = parseInt(getPropertyOrDefault(properties, PARTICLE_MIN_SPEED_P, "0"));
+        final int particleMaxSpeed = parseInt(getPropertyOrDefault(properties, PARTICLE_MAX_SPEED_P, "2"));
 
         final File staticFile = new File(staticFilePath);
         final File dynamicFile = new File(dynamicFilePath);
 
-        return new FileGeneratorArguments(staticFile, dynamicFile, N, delimiter);
+        return new FileGeneratorArguments(staticFile, dynamicFile, N, delimiter, particleMinSpeed, particleMaxSpeed);
     }
 
     public static Map<Particle, State> generateParticles(final int N,
@@ -166,6 +171,6 @@ public class ParticlesGenerator {
     private static void printClientUsage() {
         System.out.println("Invalid generator invocation.\n" +
                 "Usage: ./files_generator -DstaticFile='path/to/static/file' -DdynamicFile='path/to/dynamic/file' " +
-                "-DN=N");
+                "-DN=N -DparticleMinSpeed=minSpeed -DparticleMaxSpeed=maxSpeed");
     }
 }

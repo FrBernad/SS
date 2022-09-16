@@ -8,11 +8,17 @@ public class FileGeneratorArguments {
     private final int N;
     private final String delimiter;
 
-    public FileGeneratorArguments(File staticFile, File dynamicFile, int n, String delimiter) {
+    private final int particleMinSpeed;
+    private final int particleMaxSpeed;
+
+
+    public FileGeneratorArguments(File staticFile, File dynamicFile, int n, String delimiter, int particleMinSpeed, int particleMaxSpeed) {
         this.staticFile = staticFile;
         this.dynamicFile = dynamicFile;
-        N = n;
+        this.N = n;
         this.delimiter = delimiter;
+        this.particleMinSpeed = particleMinSpeed;
+        this.particleMaxSpeed = particleMaxSpeed;
     }
 
     public File getStaticFile() {
@@ -29,6 +35,14 @@ public class FileGeneratorArguments {
 
     public String getDelimiter() {
         return delimiter;
+    }
+
+    public int getParticleMinSpeed() {
+        return particleMinSpeed;
+    }
+
+    public int getParticleMaxSpeed() {
+        return particleMaxSpeed;
     }
 }
 
