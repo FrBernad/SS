@@ -45,7 +45,7 @@ def average_collision(run_files: List[Tuple]):
             layout=go.Layout(
                 title=dict(text=f'N={len(dfs[0].data) - 1}', x=0.5),
                 font=dict(
-                    family="Arial",
+                    family="Computer Modern",
                     size=22)
             )
         )
@@ -57,12 +57,12 @@ def average_collision(run_files: List[Tuple]):
         data=data,
         layout=go.Layout(
             title=dict(text=f'Collision Times', x=0.5),
-            xaxis=dict(title='Tiempo de colisión (s)', exponentformat="power",
+            xaxis=dict(title=r'$\large{\text{Tiempo de colisión (s)}}$', exponentformat="power",
                        linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
-            yaxis=dict(title='PDF', exponentformat="power",
+            yaxis=dict(title=r'$\large{\text{PDF}}$', exponentformat="power",
                        linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
             font=dict(
-                family="Arial",
+                family="Computer Modern",
                 size=22,
             ),
             plot_bgcolor='rgba(0,0,0,0)',
@@ -81,12 +81,12 @@ def average_collision(run_files: List[Tuple]):
         data=data,
         layout=go.Layout(
             title=dict(text=f'Collision Times', x=0.5),
-            xaxis=dict(title='Tiempo de colisión (s)', exponentformat="power",
+            xaxis=dict(title=r'$\large{\text{Tiempo de colisión (s)}}$', exponentformat="power",
                        linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
-            yaxis=dict(title='PDF', exponentformat="power", type="log",
+            yaxis=dict(title=r'$\large{\text{PDF}}$', exponentformat="power", type="log",
                        linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
             font=dict(
-                family="Arial",
+                family="Computer Modern",
                 size=22,
             ),
             plot_bgcolor='rgba(0,0,0,0)',

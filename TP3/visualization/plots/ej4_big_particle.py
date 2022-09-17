@@ -99,7 +99,7 @@ def big_particle_DCM(static_file: str, results_dir: str):
                        tickwidth=2, tickcolor='black', ticklen=10),
             plot_bgcolor='rgba(0,0,0,0)',
             font=dict(
-                family="Arial",
+                family="Computer Modern",
                 size=22,
             )
         )
@@ -129,7 +129,7 @@ def big_particle_DCM(static_file: str, results_dir: str):
                        tickwidth=2, tickcolor='black', ticklen=10),
             plot_bgcolor='rgba(0,0,0,0)',
             font=dict(
-                family="Arial",
+                family="Computer Modern",
                 size=22,
             )
         )

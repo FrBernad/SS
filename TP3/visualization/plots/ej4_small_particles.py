@@ -81,13 +81,13 @@ def big_particle_DCM(static_file: str, results_file: str):
             )
         ],
         layout=go.Layout(
-            xaxis=dict(title='Tiempo (s)', dtick=5, tick0=0, linecolor="#000000", ticks="outside",
+            xaxis=dict(title=r'$\large{\text{Tiempo (s)}}$', dtick=5, tick0=0, linecolor="#000000", ticks="outside",
                        tickwidth=2, tickcolor='black', ticklen=10),
-            yaxis=dict(title='DCM (mˆ2)', linecolor="#000000", ticks="outside",
+            yaxis=dict(title=r'$\large{\text{DCM } (\text{m}^{\text{2}})}$', linecolor="#000000", ticks="outside",
                        tickwidth=2, tickcolor='black', ticklen=10),
             plot_bgcolor='rgba(0,0,0,0)',
             font=dict(
-                family="Arial",
+                family="Computer Modern",
                 size=22,
             )
         )
@@ -109,15 +109,15 @@ def big_particle_DCM(static_file: str, results_file: str):
         ],
         layout=go.Layout(
             title=dict(text=f'Error - Best M = {best_m}', x=0.5),
-            xaxis=dict(title='Pendiente (mˆ2/s)',
+            xaxis=dict(title=r'$\large{\text{Pendiente }(\frac{\text{m}^{\text{2}}}{\text{s}})}$',
                        linecolor="#000000", ticks="outside",
                        tickwidth=2, tickcolor='black', ticklen=10),
-            yaxis=dict(title='Error Cuadrático (mˆ2)', exponentformat="power",
+            yaxis=dict(title=r'$\large{\text{Error }(\text{m}^{\text{2}})}$', exponentformat="power",
                        linecolor="#000000", ticks="outside",
                        tickwidth=2, tickcolor='black', ticklen=10),
             plot_bgcolor='rgba(0,0,0,0)',
             font=dict(
-                family="Arial",
+                family="Computer Modern",
                 size=22,
             )
         )
@@ -168,13 +168,13 @@ def big_particle_DCM(static_file: str, results_file: str):
         ],
         layout=go.Layout(
             title=dict(text=f'Big Particle DCM - Lowest error = {lowest_error}', x=0.5),
-            xaxis=dict(title='Tiempo (s)', dtick=5, tick0=0, linecolor="#000000", ticks="outside",
+            xaxis=dict(title=r'$\large{\text{Tiempo (s)}}$', dtick=5, tick0=0, linecolor="#000000", ticks="outside",
                        tickwidth=2, tickcolor='black', ticklen=10),
-            yaxis=dict(title='DCM (mˆ2)', linecolor="#000000", ticks="outside",
+            yaxis=dict(title=r'$\large{\text{DCM } (\text{m}^{\text{2}})}$', linecolor="#000000", ticks="outside",
                        tickwidth=2, tickcolor='black', ticklen=10),
             plot_bgcolor='rgba(0,0,0,0)',
             font=dict(
-                family="Arial",
+                family="Computer Modern",
                 size=22,
             )
         )
