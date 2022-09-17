@@ -50,16 +50,16 @@ def average_collision(run_files: List[Tuple]):
             )
         )
         fig.update_layout(width=1000, height=1000)
-        # fig.show()
+        fig.show()
 
     # Graficar la distribución de probabilidades de dichos tiempos
     fig = go.Figure(
         data=data,
         layout=go.Layout(
             title=dict(text=f'Collision Times', x=0.5),
-            xaxis=dict(title=r'$\large{\text{Tiempo de colisión (s)}}$', exponentformat="power",
+            xaxis=dict(title=r'$\Large{\text{Tiempo de colisión (s)}}$', exponentformat="power",
                        linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
-            yaxis=dict(title=r'$\large{\text{PDF}}$', exponentformat="power",
+            yaxis=dict(title=r'$\Large{\text{PDF}}$', exponentformat="power",
                        linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
             font=dict(
                 family="Computer Modern",
@@ -81,9 +81,9 @@ def average_collision(run_files: List[Tuple]):
         data=data,
         layout=go.Layout(
             title=dict(text=f'Collision Times', x=0.5),
-            xaxis=dict(title=r'$\large{\text{Tiempo de colisión (s)}}$', exponentformat="power",
+            xaxis=dict(title=r'$\Large{\text{Tiempo de colisión (s)}}$', exponentformat="power",
                        linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
-            yaxis=dict(title=r'$\large{\text{PDF}}$', exponentformat="power", type="log",
+            yaxis=dict(title=r'$\Large{\text{PDF}}$', exponentformat="power", type="log",
                        linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
             font=dict(
                 family="Computer Modern",

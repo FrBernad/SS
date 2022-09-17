@@ -18,8 +18,6 @@ from utils.parser_utils import get_particles_data
 def big_particle_DCM(static_file: str, results_dir: str):
     runs = []
     for i, file in enumerate(glob.glob(f'''{results_dir}run*''')):
-        if i == 1:
-            break
         print(f'''Parsing run {i}''')
         runs.append(get_particles_data(static_file, file))
 
@@ -91,10 +89,10 @@ def big_particle_DCM(static_file: str, results_dir: str):
         ],
         layout=go.Layout(
             title=dict(text=f'Big Particle DCM - y = ', x=0.5),
-            xaxis=dict(title=r'$\large{\text{Tiempo (s)}}$', dtick=2, tick0=0,
+            xaxis=dict(title=r'$\Large{\text{Tiempo (s)}}$', dtick=2, tick0=0,
                        linecolor="#000000", ticks="outside",
                        tickwidth=2, tickcolor='black', ticklen=10),
-            yaxis=dict(title=r'$\large{\text{DCM }(\text{m}^{\text{2}})}$',
+            yaxis=dict(title=r'$\Large{\text{DCM }(\text{m}^{\text{2}})}$',
                        linecolor="#000000", ticks="outside",
                        tickwidth=2, tickcolor='black', ticklen=10),
             plot_bgcolor='rgba(0,0,0,0)',
@@ -121,10 +119,10 @@ def big_particle_DCM(static_file: str, results_dir: str):
         ],
         layout=go.Layout(
             title=dict(text=f'Error - Best M = {best_m}', x=0.5),
-            xaxis=dict(title=r'$\large{\text{Pendiente }(\frac{\text{m}^{\text{2}}}{\text{s}})}$',
+            xaxis=dict(title=r'$\Large{\text{Pendiente }(\frac{\text{m}^{\text{2}}}{\text{s}})}$',
                        linecolor="#000000", ticks="outside",
                        tickwidth=2, tickcolor='black', ticklen=10),
-            yaxis=dict(title=r'$\large{\text{Error }(\text{m}^{\text{2}})}$', exponentformat="power",
+            yaxis=dict(title=r'$\Large{\text{Error }(\text{m}^{\text{2}})}$', exponentformat="power",
                        linecolor="#000000", ticks="outside",
                        tickwidth=2, tickcolor='black', ticklen=10),
             plot_bgcolor='rgba(0,0,0,0)',
@@ -180,9 +178,9 @@ def big_particle_DCM(static_file: str, results_dir: str):
         ],
         layout=go.Layout(
             title=dict(text=f'Big Particle DCM - Lowest error = {lowest_error}', x=0.5),
-            xaxis=dict(title=r'$\large{\text{Tiempo (s)}}$', dtick=2, tick0=0, linecolor="#000000",
+            xaxis=dict(title=r'$\Large{\text{Tiempo (s)}}$', dtick=2, tick0=0, linecolor="#000000",
                        ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
-            yaxis=dict(title=r'$\large{\text{DCM } (\text{m}^{\text{2}})}$', linecolor="#000000",
+            yaxis=dict(title=r'$\Large{\text{DCM } (\text{m}^{\text{2}})}$', linecolor="#000000",
                        ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
             plot_bgcolor='rgba(0,0,0,0)',
             font=dict(

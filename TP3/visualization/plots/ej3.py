@@ -14,10 +14,10 @@ from utils.parser_utils import get_particles_data
 def big_particle_trajectory(run_files: List[Tuple]):
     fig = go.Figure(
         layout=go.Layout(
-            xaxis=dict(title=r'$\large{\text{X (m)}}$', range=[0, 6], linecolor="#000000", ticks="outside", tickwidth=2,
+            xaxis=dict(title=r'$\Large{\text{X (m)}}$', range=[0, 6], linecolor="#000000", ticks="outside", tickwidth=2,
                        tickcolor='black',
                        ticklen=10),
-            yaxis=dict(title=r'$\large{\text{Y (m)}}$', range=[0, 6], linecolor="#000000", ticks="outside", tickwidth=2,
+            yaxis=dict(title=r'$\Large{\text{Y (m)}}$', range=[0, 6], linecolor="#000000", ticks="outside", tickwidth=2,
                        tickcolor='black',
                        ticklen=10),
             plot_bgcolor='rgba(0,0,0,0)',

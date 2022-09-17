@@ -66,9 +66,9 @@ def speed_distribution(run_files: List[Tuple]):
             data=data,
             layout=go.Layout(
                 title=dict(text=f'Velocity', x=0.5),
-                xaxis=dict(title=r'$\large{\text{Rapidez }(\frac{\text{m}}{\text{s}})}$', linecolor="#000000", ticks="outside",
+                xaxis=dict(title=r'$\Large{\text{Rapidez }(\frac{\text{m}}{\text{s}})}$', linecolor="#000000", ticks="outside",
                            tickwidth=2, tickcolor='black', ticklen=10),
-                yaxis=dict(title=r'$\large{\text{PDF}}$', linecolor="#000000", ticks="outside",
+                yaxis=dict(title=r'$\Large{\text{PDF}}$', linecolor="#000000", ticks="outside",
                            tickwidth=2, tickcolor='black', ticklen=10),
                 font=dict(
                     family="Computer Modern",
