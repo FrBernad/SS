@@ -14,8 +14,13 @@ from utils.parser_utils import get_particles_data
 def big_particle_trajectory(run_files: List[Tuple]):
     fig = go.Figure(
         layout=go.Layout(
-            xaxis=dict(title='X', range=[0, 6]),
-            yaxis=dict(title='Y', range=[0, 6]),
+            xaxis=dict(title='X (m)', range=[0, 6], linecolor="#000000", ticks="outside", tickwidth=2,
+                       tickcolor='black',
+                       ticklen=10),
+            yaxis=dict(title='Y (m)', range=[0, 6], linecolor="#000000", ticks="outside", tickwidth=2,
+                       tickcolor='black',
+                       ticklen=10),
+            plot_bgcolor='rgba(0,0,0,0)',
             font=dict(
                 family="Arial",
                 size=22,
@@ -29,28 +34,31 @@ def big_particle_trajectory(run_files: List[Tuple]):
         )
     )
     speeds = ["v=[0, 1] m/s", "v=[1, 2] m/s", "v=[2, 4] m/s"]
-    colors = plotly.colors.n_colors("rgb(0,0,205)", "rgb(135,206,235)", len(run_files), colortype="rgb")
+    colors = ["#faaa30", "#6ad477", "#22ace0"]
 
+    dfs_array = []
     for i, files in enumerate(run_files):
-        dfs = get_particles_data(files[0], files[1])
+        dfs_array.append(get_particles_data(files[0], files[1]))
 
+    min_len_events = len(min(dfs_array, key=lambda df: len(df)))
+
+    for i, dfs in enumerate(dfs_array):
         big_particle_positions = np.array(list(map(lambda df: (
             df.data[df.data['mass'] == 2][["x", "y"]].values.flatten()
         ), dfs)))
-
         kinetic_energy = np.sum(
             (1 / 2) * dfs[0].data["mass"] * (np.linalg.norm(dfs[0].data[["vx", "vy"]], axis=1) ** 2))
 
         fig.add_trace(go.Scatter(
-            x=big_particle_positions[:, 0],
-            y=big_particle_positions[:, 1],
+            x=big_particle_positions[0:min_len_events, 0],
+            y=big_particle_positions[0:min_len_events, 1],
             name=speeds[i],
             mode="lines",
-            line=dict(color=colors[i - 1])
+            line=dict(color=colors[i])
         ))
 
-        x = big_particle_positions[-1, 0]
-        y = big_particle_positions[-1, 1]
+        x = big_particle_positions[min_len_events - 1, 0]
+        y = big_particle_positions[min_len_events - 1, 1]
         radius = dfs[0].data["radius"][0]
         x0 = x - radius
         x1 = x + radius
@@ -60,7 +68,7 @@ def big_particle_trajectory(run_files: List[Tuple]):
         fig.add_shape(type="circle",
                       xref="x", yref="y",
                       x0=x0, y0=y0, x1=x1, y1=y1,
-                      fillcolor=colors[i - 1],
+                      fillcolor=colors[i],
                       opacity=0.2,
                       line=dict(width=0))
 

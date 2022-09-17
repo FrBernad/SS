@@ -36,12 +36,6 @@ def average_collision(run_files: List[Tuple]):
             name=f'''N={len(dfs[0].data) - 1}'''
         ))
 
-        # data.append(go.Histogram(
-        #     x=collision_times,
-        #     nbinsx=40,
-        #     histnorm="probability density"
-        # ))
-
         fig = go.Figure(
             data=go.Table(
                 header=dict(values=['Average Collision Frequency', 'Average Collision Time', 'STD Collision Time'],
@@ -56,19 +50,22 @@ def average_collision(run_files: List[Tuple]):
             )
         )
         fig.update_layout(width=1000, height=1000)
-        fig.show()
+        # fig.show()
 
     # Graficar la distribución de probabilidades de dichos tiempos
     fig = go.Figure(
         data=data,
         layout=go.Layout(
             title=dict(text=f'Collision Times', x=0.5),
-            xaxis=dict(title='Tiempo (s)', exponentformat="power"),
-            yaxis=dict(title='PDF', exponentformat="power"),
+            xaxis=dict(title='Tiempo de colisión (s)', exponentformat="power",
+                       linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
+            yaxis=dict(title='PDF', exponentformat="power",
+                       linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
             font=dict(
                 family="Arial",
                 size=22,
             ),
+            plot_bgcolor='rgba(0,0,0,0)',
             legend=dict(
                 yanchor="top",
                 y=0.99,
@@ -76,6 +73,31 @@ def average_collision(run_files: List[Tuple]):
                 x=0.99
             )
         )
+    )
+    fig.update_layout(width=1000, height=1000)
+    fig.show()
+
+    fig = go.Figure(
+        data=data,
+        layout=go.Layout(
+            title=dict(text=f'Collision Times', x=0.5),
+            xaxis=dict(title='Tiempo de colisión (s)', exponentformat="power",
+                       linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
+            yaxis=dict(title='PDF', exponentformat="power", type="log",
+                       linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
+            font=dict(
+                family="Arial",
+                size=22,
+            ),
+            plot_bgcolor='rgba(0,0,0,0)',
+            legend=dict(
+                yanchor="top",
+                y=0.99,
+                xanchor="right",
+                x=0.99
+            )
+        )
+
     )
 
     # Set figure size

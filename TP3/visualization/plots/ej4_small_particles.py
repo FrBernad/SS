@@ -27,7 +27,7 @@ def big_particle_DCM(static_file: str, results_file: str):
 
     min_time = clock_dfs[-1].time
 
-    size = 140
+    size = 60
     selected_particles_ids = np.random.choice(np.arange(1, len(dfs[0].data)), size=size, replace=False)
 
     small_particles_initial_positions = np.array(
@@ -41,9 +41,26 @@ def big_particle_DCM(static_file: str, results_file: str):
 
     DCM = np.mean(DCs, axis=1)
     x_values = np.arange(0, min_time, time_step)
+    start_time = 10
+    start_index = int(start_time/time_step)
     error = np.std(DCs, axis=1)
 
-    model = LinearRegression().fit(x_values.reshape(-1, 1), DCM.reshape(-1, 1))
+    initial_m = (DCM[-1] - DCM[start_index]) / (x_values[-1] - x_values[start_index])
+    step = 0.00005
+    offset = 0.01
+    m_values = np.arange(initial_m - offset, initial_m + offset + step, step)
+    bs = []
+
+    e = []
+    for index, m_val in enumerate(m_values):
+        mx = m_val * x_values[start_index:]
+        b = -m_val * start_time + DCM[start_index]
+        bs.append(b)
+        e.append((index, sum((DCM[start_index:] - (mx + b)) ** 2)))
+
+    best_m_tuple = min(e, key=lambda t: t[1])
+    lowest_error = best_m_tuple[1]
+    best_m = m_values[best_m_tuple[0]]
 
     fig = go.Figure(
         data=[
@@ -61,18 +78,101 @@ def big_particle_DCM(static_file: str, results_file: str):
                 line=dict(color='rgba(255,255,255,0)'),
                 hoverinfo="skip",
                 showlegend=False
-            ),
-            go.Scatter(
-                x=x_values,
-                y=x_values * model.coef_[0] + model.intercept_[0],
-                mode='lines',
-                showlegend=False
             )
         ],
         layout=go.Layout(
-            title=dict(text=f'Small Particle DCM - y = {model.coef_[0][0]}x + {model.intercept_[0]}', x=0.5),
-            xaxis=dict(title='Tiempo (s)', dtick=10, tick0=0),
-            yaxis=dict(title='DCM'),
+            xaxis=dict(title='Tiempo (s)', dtick=5, tick0=0, linecolor="#000000", ticks="outside",
+                       tickwidth=2, tickcolor='black', ticklen=10),
+            yaxis=dict(title='DCM (mˆ2)', linecolor="#000000", ticks="outside",
+                       tickwidth=2, tickcolor='black', ticklen=10),
+            plot_bgcolor='rgba(0,0,0,0)',
+            font=dict(
+                family="Arial",
+                size=22,
+            )
+        )
+    )
+
+    # Set figure size
+    fig.update_layout(width=1800, height=1000)
+
+    fig.show()
+
+    fig = go.Figure(
+        data=[
+            go.Scatter(
+                x=m_values,
+                y=list(map(lambda t: t[1], e)),
+                mode='lines',
+                showlegend=False
+            ),
+        ],
+        layout=go.Layout(
+            title=dict(text=f'Error - Best M = {best_m}', x=0.5),
+            xaxis=dict(title='Pendiente (mˆ2/s)',
+                       linecolor="#000000", ticks="outside",
+                       tickwidth=2, tickcolor='black', ticklen=10),
+            yaxis=dict(title='Error Cuadrático (mˆ2)', exponentformat="power",
+                       linecolor="#000000", ticks="outside",
+                       tickwidth=2, tickcolor='black', ticklen=10),
+            plot_bgcolor='rgba(0,0,0,0)',
+            font=dict(
+                family="Arial",
+                size=22,
+            )
+        )
+    )
+    # Set figure size
+    fig.update_layout(width=1400, height=1000)
+
+    fig.show()
+
+    fig = go.Figure(
+        data=[
+            go.Scatter(
+                x=x_values,
+                y=DCM,
+                mode='lines',
+                showlegend=False
+            ),
+            go.Scatter(
+                x=np.concatenate((x_values, x_values[::-1])),
+                y=np.concatenate((DCM + error, (DCM - error)[::-1])),
+                fill='toself',
+                fillcolor='rgba(0,100,80,0.2)',
+                line=dict(color='rgba(255,255,255,0)'),
+                hoverinfo="skip",
+                showlegend=False
+            ),
+            go.Scatter(
+                x=x_values[start_index:],
+                y=x_values[start_index:] * best_m + bs[best_m_tuple[0]],
+                line=dict(color='red'),
+                mode='lines',
+                showlegend=False
+            ),
+            # go.Scatter(
+            #     x=x_values[start_index:],
+            #     y=x_values[start_index:] * m_values[20] + bs[20],
+            #     line=dict(color='red'),
+            #     mode='lines',
+            #     showlegend=False
+            # ),
+            # go.Scatter(
+            #     x=x_values[start_index:],
+            #     y=x_values[start_index:] * m_values[-20] + bs[-20],
+            #     line=dict(color='red'),
+            #     mode='lines',
+            #     showlegend=False
+            # ),
+        ],
+        layout=go.Layout(
+            title=dict(text=f'Big Particle DCM - Lowest error = {lowest_error}', x=0.5),
+            xaxis=dict(title='Tiempo (s)', dtick=5, tick0=0, linecolor="#000000", ticks="outside",
+                       tickwidth=2, tickcolor='black', ticklen=10),
+            yaxis=dict(title='DCM (mˆ2)', linecolor="#000000", ticks="outside",
+                       tickwidth=2, tickcolor='black', ticklen=10),
+            plot_bgcolor='rgba(0,0,0,0)',
             font=dict(
                 family="Arial",
                 size=22,

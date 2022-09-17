@@ -21,57 +21,60 @@ def speed_distribution(run_files: List[Tuple]):
 
         initial_speed = particles_speed[0]
 
-        # counts, bin_edges = np.histogram(initial_speed, 10, density=True)
-        # bin_centres = (bin_edges[:-1] + bin_edges[1:]) / 2.
-        #
-        # data.append(go.Scatter(
-        #     x=bin_centres,
-        #     y=counts,
-        #     mode='lines',
-        #     name=f'''N={len(dfs[0].data) - 1} - Valores Iniciales'''
-        # ))
+        counts, bin_edges = np.histogram(initial_speed, 10, density=True)
+        bin_centres = (bin_edges[:-1] + bin_edges[1:]) / 2.
 
-        data.append(
-            go.Histogram(
-                x=initial_speed,
-                nbinsx=10,
-                opacity=0.75,
-                name=f'''N={len(dfs[0].data) - 1} - Valores Iniciales''',
-                histnorm="probability density"
-            )
-        )
+        data.append(go.Scatter(
+            x=bin_centres,
+            mode="lines+markers",
+            y=counts,
+            name=f'''Valores Iniciales'''
+        ))
+
+        # data.append(
+        #     go.Histogram(
+        #         x=initial_speed,
+        #         nbinsx=10,
+        #         opacity=0.75,
+        #         name=f'''N={len(dfs[0].data) - 1} - Valores Iniciales''',
+        #         histnorm="probability density"
+        #     )
+        # )
         last_third_speed = particles_speed[-int(len(particles_speed) / 3):].flatten()
 
-        # counts, bin_edges = np.histogram(last_third_speed, 40, density=True)
-        # bin_centres = (bin_edges[:-1] + bin_edges[1:]) / 2.
-        #
-        # data.append(go.Scatter(
-        #     x=bin_centres,
-        #     y=counts,
-        #     mode='lines',
-        #     name=f'''N={len(dfs[0].data) - 1} -'''
-        # ))
-        data.append(
-            go.Histogram(
-                x=last_third_speed,
-                nbinsx=40,
-                opacity=0.75,
-                name=f'''N={len(dfs[0].data) - 1} - Último Tercio''',
-                histnorm="probability density"
-            )
-        )
+        counts, bin_edges = np.histogram(last_third_speed, 40, density=True)
+        bin_centres = (bin_edges[:-1] + bin_edges[1:]) / 2.
 
+        data.append(go.Scatter(
+            x=bin_centres,
+            mode="lines+markers",
+            y=counts,
+            name=f'''Último Tercio'''
+        ))
+        # data.append(
+        #     go.Histogram(
+        #         x=last_third_speed,
+        #         nbinsx=40,
+        #         opacity=0.75,
+        #         name=f'''N={len(dfs[0].data) - 1} - Último Tercio''',
+        #         histnorm="probability density"
+        #     )
+        # )
+        #
         # Graficar la distribución de probabilidades de dichos tiempos
         fig = go.Figure(
             data=data,
             layout=go.Layout(
                 title=dict(text=f'Velocity', x=0.5),
-                xaxis=dict(title='Rapidez (m/s)'),
-                yaxis=dict(title='PDF'),
+                xaxis=dict(title='Rapidez (m/s)', linecolor="#000000", ticks="outside",
+                           tickwidth=2, tickcolor='black', ticklen=10),
+                yaxis=dict(title='PDF', linecolor="#000000", ticks="outside",
+                           tickwidth=2, tickcolor='black', ticklen=10),
                 font=dict(
                     family="Arial",
                     size=22,
                 ),
+                plot_bgcolor='rgba(0,0,0,0)',
                 barmode='overlay',
                 legend=dict(
                     yanchor="top",
