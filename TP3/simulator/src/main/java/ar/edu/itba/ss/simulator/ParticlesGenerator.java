@@ -14,7 +14,6 @@ import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrDefault
 import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrFail;
 import static ar.edu.itba.ss.simulator.utils.Particle.Position;
 import static ar.edu.itba.ss.simulator.utils.Particle.State;
-import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
 import static java.lang.Math.*;
 
