@@ -59,7 +59,6 @@ class BrownianMotionUtils {
                 final State s = State.nextInstant(state, currentCollision.getCollisionTime());
                 newStates.put(particle, s);
 
-                //FIXME: ERRORRR!!!
                 if (s.getPosition().getX() < 0 + 0.19 || s.getPosition().getX() > 6 - 0.19 || s.getPosition().getY() < 0 + 0.19 || s.getPosition().getY() > 6 - 0.19) {
                     throw new RuntimeException();
                 }
@@ -141,7 +140,6 @@ class BrownianMotionUtils {
 
         final double collisionTime = -(vr + sqrt(d)) / vv;
 
-        //FIXME:
         if (collisionTime < 0) {
             throw new RuntimeException();
         }
@@ -171,7 +169,7 @@ class BrownianMotionUtils {
                 closestTimeX = (particle.getRadius() - state.getPosition().getX()) / state.getVelocityX();
             }
         }
-        //FIXME:
+
         if (closestTimeX != null && closestTimeX < 0) {
             throw new RuntimeException();
         }
@@ -185,7 +183,7 @@ class BrownianMotionUtils {
                 closestTimeY = (particle.getRadius() - state.getPosition().getY()) / state.getVelocityY();
             }
         }
-        //FIXME:
+
         if (closestTimeY != null && closestTimeY < 0) {
             throw new RuntimeException();
         }

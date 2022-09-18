@@ -22,14 +22,12 @@ public class Collision implements Comparable<Collision> {
 
     public static Collision withUpdatedTime(Collision collision, double newTime) {
         final double time = collision.getCollisionTime() - newTime;
-        //FIXME:
         if (time <= 0) {
             throw new RuntimeException();
         }
         return new Collision(time, collision.getParticleI(), collision.getParticleJ(), collision.getType());
     }
 
-    //FIXME: SI NO USAMOS SACARLO
     public boolean containsParticle(final Particle particle) {
         return (particleI != null && particleI.equals(particle)) || (particleJ != null && particleJ.equals(particle));
     }
