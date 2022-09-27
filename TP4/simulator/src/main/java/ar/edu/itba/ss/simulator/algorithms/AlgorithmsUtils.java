@@ -7,8 +7,9 @@ import ar.edu.itba.ss.simulator.utils.R;
 import static ar.edu.itba.ss.simulator.utils.R.values.*;
 
 public class AlgorithmsUtils {
-    public static Pair calculateForce(final double mass, final Pair r0,
-                                      final Pair r1, final double k, final double gamma) {
+
+    public static Pair calculateAcceleration(final double mass, final Pair r0,
+                                             final Pair r1, final double k, final double gamma) {
         final double r2x = (-k * r0.getX() - gamma * r1.getX()) / mass;
         final double r2y = (-k * r0.getY() - gamma * r1.getY()) / mass;
 
@@ -23,7 +24,7 @@ public class AlgorithmsUtils {
         //r1
         initialR.add(state.getVelocityX(), state.getVelocityY());
         //r2
-        final Pair r2 = calculateForce(mass, initialR.get(R0.ordinal()), initialR.get(R1.ordinal()), k, gamma);
+        final Pair r2 = calculateAcceleration(mass, initialR.get(R0.ordinal()), initialR.get(R1.ordinal()), k, gamma);
         initialR.add(r2.getX(), r2.getY());
         //r3
         initialR.add(0, 0);

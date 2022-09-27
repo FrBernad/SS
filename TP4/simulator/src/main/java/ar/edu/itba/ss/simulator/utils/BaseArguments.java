@@ -12,9 +12,9 @@ public class BaseArguments {
     private final double maxTime;
     private final double dt;
 
-    private final String algorithm;
+    private final Algorithm algorithm;
 
-    public BaseArguments(File staticFile, File dynamicFile, String outResultsFilePath, String outTimeFilePath, String delimiter, double maxTime, double dt, String algorithm) {
+    public BaseArguments(File staticFile, File dynamicFile, String outResultsFilePath, String outTimeFilePath, String delimiter, double maxTime, double dt, Algorithm algorithm) {
         this.staticFile = staticFile;
         this.dynamicFile = dynamicFile;
         this.outResultsFilePath = outResultsFilePath;
@@ -53,7 +53,7 @@ public class BaseArguments {
         return dt;
     }
 
-    public String getAlgorithm() {
+    public Algorithm getAlgorithm() {
         return algorithm;
     }
 }

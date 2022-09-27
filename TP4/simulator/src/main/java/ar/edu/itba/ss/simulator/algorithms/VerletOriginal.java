@@ -7,7 +7,7 @@ import ar.edu.itba.ss.simulator.utils.Particle.State;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static ar.edu.itba.ss.simulator.algorithms.AlgorithmsUtils.calculateForce;
+import static ar.edu.itba.ss.simulator.algorithms.AlgorithmsUtils.calculateAcceleration;
 import static ar.edu.itba.ss.simulator.algorithms.AlgorithmsUtils.calculateInitialR;
 import static ar.edu.itba.ss.simulator.utils.R.values.*;
 import static java.lang.Math.pow;
@@ -67,7 +67,7 @@ public class VerletOriginal {
 
         final R nextR = new R();
 
-        final Pair currentForce = calculateForce(mass, currentR.get(R0.ordinal()), new Pair(0.0, 0.0), k, gamma);
+        final Pair currentForce = calculateAcceleration(mass, currentR.get(R0.ordinal()), new Pair(0.0, 0.0), k, gamma);
 
         final double r0x = 2 * currentR.get(R0.ordinal()).getX() - prevR.get(R0.ordinal()).getX() + (pow(dt, 2) / mass) * currentForce.getX();
         final double r0y = 2 * currentR.get(R0.ordinal()).getY() - prevR.get(R0.ordinal()).getY() + (pow(dt, 2) / mass) * currentForce.getY();

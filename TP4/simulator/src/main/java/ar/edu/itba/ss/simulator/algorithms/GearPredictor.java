@@ -4,9 +4,7 @@ import ar.edu.itba.ss.simulator.utils.*;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
-import static ar.edu.itba.ss.simulator.algorithms.AlgorithmsUtils.calculateForce;
 import static ar.edu.itba.ss.simulator.algorithms.AlgorithmsUtils.calculateInitialR;
 import static ar.edu.itba.ss.simulator.utils.MathUtils.fact;
 import static ar.edu.itba.ss.simulator.utils.Particle.*;
