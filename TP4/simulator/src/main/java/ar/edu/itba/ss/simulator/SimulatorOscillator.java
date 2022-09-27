@@ -59,51 +59,55 @@ public class SimulatorOscillator {
         switch (baseArguments.getAlgorithm()) {
             case GEAR_PREDICTOR:
                 methodResults = GearPredictor.execute(
-                        oscillatorParticle,
-                        new State(new Position(X_0, 0), V_0, 0),
-                        K,
-                        GAMMA,
-                        baseArguments.getDt(),
-                        baseArguments.getMaxTime()
+                    oscillatorParticle,
+                    new State(new Position(X_0, 0), V_0, 0),
+                    K,
+                    GAMMA,
+                    baseArguments.getDt(),
+                    baseArguments.getMaxTime()
                 );
-
-
+                break;
             case BEEMAN:
                 methodResults = Beeman.execute(
-                        oscillatorParticle,
-                        new State(new Position(X_0, 0), V_0, 0),
-                        K,
-                        GAMMA,
-                        baseArguments.getDt(),
-                        baseArguments.getMaxTime()
+                    oscillatorParticle,
+                    new State(new Position(X_0, 0), V_0, 0),
+                    K,
+                    GAMMA,
+                    baseArguments.getDt(),
+                    baseArguments.getMaxTime()
                 );
-            default:
+                break;
+            case VERLET_ORIGINAL:
                 methodResults = VerletOriginal.execute(
-                        oscillatorParticle,
-                        new State(new Position(X_0, 0), V_0, 0),
-                        K,
-                        GAMMA,
-                        baseArguments.getDt(),
-                        baseArguments.getMaxTime()
+                    oscillatorParticle,
+                    new State(new Position(X_0, 0), V_0, 0),
+                    K,
+                    GAMMA,
+                    baseArguments.getDt(),
+                    baseArguments.getMaxTime()
                 );
+                break;
+            default:
+                System.out.println("Invalid algorithm");
+                return;
         }
 
 
         LOGGER.info(String.format("Finished Oscillation In %d Iterations",
-                methodResults.getIterations()));
+            methodResults.getIterations()));
 
         LOGGER.info("Writing Results ...");
         final File outResultsFile = new File(baseArguments.getOutResultsFilePath());
         try (PrintWriter pw = new PrintWriter(outResultsFile)) {
             methodResults.getParticlesStates()
-                    .forEach((time, states) -> {
-                        pw.append(String.format("%f\n", time));
-                        states.forEach((particle, state) ->
-                                pw.printf("%d %f %f %f %f\n",
-                                        particle.getId(),
-                                        state.getPosition().getX(), state.getPosition().getY(),
-                                        state.getVelocityX(), state.getVelocityY()));
-                    });
+                .forEach((time, states) -> {
+                    pw.append(String.format("%f\n", time));
+                    states.forEach((particle, state) ->
+                        pw.printf("%d %f %f %f %f\n",
+                            particle.getId(),
+                            state.getPosition().getX(), state.getPosition().getY(),
+                            state.getVelocityX(), state.getVelocityY()));
+                });
         }
 
         final File outTimeFile = new File(baseArguments.getOutTimeFilePath());
@@ -128,7 +132,7 @@ public class SimulatorOscillator {
 
     private static void printClientUsage() {
         System.out.println("Invalid simulator invocation.\n" +
-                "Usage: ./simulator -DresultsFile=resultsFile -DtimeFile=timeFile -algorithm=algorithm  -Ddt=dt -Dtf=tf "
+            "Usage: ./simulator -DresultsFile=resultsFile -DtimeFile=timeFile -Dalgorithm=algorithm  -Ddt=dt -Dtf=tf "
         );
     }
 }

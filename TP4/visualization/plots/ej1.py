@@ -8,7 +8,8 @@ from utils.parser_utils import get_particles_data
 
 def plot_oscillator(run_files: List[Tuple]):
     data = []
-    for files in run_files:
+    names = ['Gear Predictor-Corrector Orden 5', 'Beeman', 'Verlet Original']
+    for i, files in enumerate(run_files):
         dfs = get_particles_data(files[0], files[1])
 
         event_times = np.array(list(map(lambda df: df.time, dfs)))
@@ -18,9 +19,10 @@ def plot_oscillator(run_files: List[Tuple]):
             go.Scatter(
                 x=event_times,
                 y=particle_df,
-                name='Gear Predictor-Corrector Orden 5'
+                name=names[i]
             )
         )
+
     dt = 0.01
     A = 1
     gamma = 100
@@ -68,12 +70,14 @@ def plot_oscillator(run_files: List[Tuple]):
 
 if __name__ == "__main__":
     static_file = '../../assets/Static.txt'
-    results_gear_predictor = '../../results/resultsGearPredictor.txt'
+    results_gear_predictor = '../../results/ejer1/resultsGearPredictor.txt'
+    results_beeman = '../../results/ejer1/resultsBeeman.txt'
+    results_verlet_original = '../../results/ejer1/resultsVerletOriginal.txt'
     plot_oscillator(
         [
             (static_file, results_gear_predictor),
-            # (static_file, results_beeman_predictor),
-            # (static_file, results_verlet_predictor),
+            (static_file, results_beeman),
+            (static_file, results_verlet_original),
 
         ]
     )
