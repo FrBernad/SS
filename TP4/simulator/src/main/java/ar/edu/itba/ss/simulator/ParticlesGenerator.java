@@ -68,6 +68,7 @@ public class ParticlesGenerator {
         }
 
         //Dynamic File
+
         try (PrintWriter pw = new PrintWriter(fileArguments.getDynamicFile())) {
             pw.println(0);
             for (Map.Entry<Particle, State> entry : particles.entrySet()) {
