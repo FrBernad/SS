@@ -32,6 +32,7 @@ public class SimulatorPlanets {
     private static final String ALGORITHM_P = "algorithm";
     private static final String DT_P = "dt";
     private static final String TF_P = "tf";
+    private static final double DISTANCE_TO_SPACESHIP = 1500;
     private static final Double G = 6.693 * pow(10, -11);
 
     private static final String DELIMITER_P = "delimiter";
@@ -60,10 +61,11 @@ public class SimulatorPlanets {
         double sunx = 0.0;
         double suny = 0.0;
         double earthx = Double.parseDouble("1.501409394622880E+08");
-        double earthy = Double.parseDouble("-9.238096308876731E+0");;
+        double earthy = Double.parseDouble("-9.238096308876731E+0");
 
-        double d = (A2-A5)^2+(B2-B5)^2)^1/2
-        spaceshipx=
+        double d = Math.sqrt((Math.pow((sunx - earthx), 2) + Math.pow((suny - earthy), 2)));
+        double spaceshipx = DISTANCE_TO_SPACESHIP * (sunx - earthx) / d + earthx;
+        double spaceshipy = DISTANCE_TO_SPACESHIP * (suny - earthy) / d + earthy;
 
         LOGGER.info("Executing Venus Mision ...");
 
