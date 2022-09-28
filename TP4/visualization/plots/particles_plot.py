@@ -25,9 +25,6 @@ def make_particles_plot(df: DataFrame):
                       fillcolor=colors[i - 1],
                       line=dict(width=0))
 
-    fig.update_yaxes(tick0=0, dtick=0.5, range=[0, 6])
-    fig.update_xaxes(tick0=0, dtick=0.5, range=[0, 6])
-
     # Set figure size
     fig.update_layout(width=1000, height=1000)
 
