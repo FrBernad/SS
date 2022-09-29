@@ -2,9 +2,11 @@ package ar.edu.itba.ss.simulator.algorithms;
 
 import ar.edu.itba.ss.simulator.utils.Pair;
 import ar.edu.itba.ss.simulator.utils.Particle;
+import ar.edu.itba.ss.simulator.utils.Particle.State;
 import ar.edu.itba.ss.simulator.utils.R;
 
 import static ar.edu.itba.ss.simulator.utils.R.values.*;
+import static java.lang.Math.pow;
 
 public class AlgorithmsUtils {
 
@@ -16,7 +18,7 @@ public class AlgorithmsUtils {
         return new Pair(r2x, r2y);
     }
 
-    public static R calculateInitialR(final double mass, final Particle.State state,
+    public static R calculateInitialR(final double mass, final State state,
                                       final double k, final double gamma) {
         final R initialR = new R();
         //r0
@@ -36,5 +38,27 @@ public class AlgorithmsUtils {
         return initialR;
     }
 
+    public static R euler(final R r, final double dt, final double mass, final double k, final double gamma) {
+
+        final R eulerR = new R();
+        final Pair r0 = r.get(R0.ordinal());
+        final Pair r1 = r.get(R1.ordinal());
+        final Pair r2 = r.get(R2.ordinal());
+
+        // r0
+        double r0x = r0.getX() + dt * r1.getX() + (pow(dt, 2) / (2 * mass)) * r2.getX() * mass;
+        double r0y = r0.getY() + dt * r1.getY() + (pow(dt, 2) / (2 * mass)) * r2.getY() * mass;
+        eulerR.add(r0x, r0y);
+
+        // r1
+        double r1x = r1.getX() + (dt / mass) * r2.getX() * mass;
+        double r1y = r1.getY() + (dt / mass) * r2.getY() * mass;
+        eulerR.add(r1x, r1y);
+
+        final Pair eulerR2 = calculateAcceleration(mass, eulerR.get(R0.ordinal()), eulerR.get(R1.ordinal()), k, gamma);
+        eulerR.add(eulerR2.getX(), eulerR2.getY());
+
+        return eulerR;
+    }
 
 }

@@ -78,6 +78,5 @@ if __name__ == "__main__":
             (static_file, results_gear_predictor),
             (static_file, results_beeman),
             (static_file, results_verlet_original),
-
         ]
     )

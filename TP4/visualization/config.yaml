@@ -1,7 +1,7 @@
 ---
 # --- Visualization plotly config ---
 config:
-  results_file: "../results/results3/results24_120.txt"
+  results_file: "../results/results.txt"
   dynamic_file: "../assets/DynamicPlanets.txt"
   static_file: "../assets/StaticPlanets.txt"
 ...

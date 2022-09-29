@@ -12,18 +12,13 @@ EventData = namedtuple('EventData', ['time', 'data'])
 def get_frame_particles(df: DataFrame):
     particles = od.Particles()
 
-    square_points = _generate_square(6)
-
     particles.create_property('Particle Identifier',
-                              data=np.concatenate((df.id, np.arange(len(df.x), len(df.x) + len(square_points)))))
+                              data=np.concatenate((df.id, np.arange(len(df.x), len(df.x)))))
     particles.create_property('Position',
-                              data=np.concatenate((np.array((df.x, df.y, np.zeros(len(df.x)))).T, square_points)))
-    particles.create_property('Radius', data=np.concatenate((df.radius, np.full(len(square_points), 0.03))))
-    particles.create_property('Type',
-                              data=np.concatenate(([0], np.full(len(df.x) - 1, 1), np.full(len(square_points), 2))))
+                              data=np.array((df.x, df.y, np.zeros(len(df.x)))).T)
+    particles.create_property('Radius', data=df.radius  )
     particles.create_property('Force',
-                              data=np.concatenate((np.array((df.vx, df.vy, np.zeros(len(df.x)))).T,
-                                                   np.zeros((len(square_points), 3))))
+                              data=np.array((df.vx, df.vy, np.zeros(len(df.x)))).T
                               )
 
     return particles

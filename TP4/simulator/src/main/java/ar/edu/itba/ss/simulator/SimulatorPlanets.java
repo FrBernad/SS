@@ -21,6 +21,7 @@ import static ar.edu.itba.ss.simulator.utils.ParseUtils.parseParticlesList;
 import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
 import static java.lang.Math.pow;
+import static java.lang.Math.sqrt;
 
 public class SimulatorPlanets {
     private static final Logger LOGGER = LoggerFactory.getLogger(SimulatorPlanets.class);
@@ -33,7 +34,7 @@ public class SimulatorPlanets {
     private static final String DT_P = "dt";
     private static final String TF_P = "tf";
     private static final double DISTANCE_TO_SPACESHIP = 1500;
-    private static final Double G = 6.693 * pow(10, -11);
+    private static final Double G = 6.693 * pow(10, -11) / 1000; //Divido por 1000, para pasarla a km
 
     private static final String DELIMITER_P = "delimiter";
     private static final String DEFAULT_DELIMITER = " ";
@@ -61,11 +62,27 @@ public class SimulatorPlanets {
         double sunx = 0.0;
         double suny = 0.0;
         double earthx = Double.parseDouble("1.501409394622880E+08");
-        double earthy = Double.parseDouble("-9.238096308876731E+0");
+        double earthy = Double.parseDouble("-9.238096308876731E+05");
+        double earthvx = Double.parseDouble("-2.949925999285836E-01");
+        double earthvy = Double.parseDouble("2.968579130065282E+01");
+        double earthR = Double.parseDouble("6371.01");
 
-        double d = Math.sqrt((Math.pow((sunx - earthx), 2) + Math.pow((suny - earthy), 2)));
-        double spaceshipx = DISTANCE_TO_SPACESHIP * (sunx - earthx) / d + earthx;
-        double spaceshipy = DISTANCE_TO_SPACESHIP * (suny - earthy) / d + earthy;
+        //https://math.stackexchange.com/questions/2045174/how-to-find-a-point-between-two-points-with-given-distance
+        double d = sqrt((pow((sunx - earthx), 2) + pow((suny - earthy), 2)));
+        // Componente del versor que une el sol con la tierra:
+        double ux = (sunx - earthx) / d;
+        double uy = (suny - earthy) / d;
+
+        //Position
+        double spaceshipx = DISTANCE_TO_SPACESHIP * ux + earthx + earthR;
+        double spaceshipy = DISTANCE_TO_SPACESHIP * uy + earthy + earthR;
+        System.out.printf("x=%1.20E,y=%1.20E\n", spaceshipx, spaceshipy);
+
+        //Velocity
+        double v0 = 8 + 7.12 + sqrt(pow(earthvx, 2) + pow(earthvy, 2));
+        double spaceshipvx = -uy * v0;
+        double spaceshipvy = -ux * v0;
+        System.out.printf("vx=%1.20E,vy=%1.20E\n", spaceshipvx, spaceshipvy);
 
         LOGGER.info("Executing Venus Mision ...");
 

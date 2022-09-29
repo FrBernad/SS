@@ -30,7 +30,7 @@ public class SimulatorOscillator {
     // INITIAL CONDITIONS
     private static final double X_0 = 1;
     private static final double A = 1;
-    private static final double V_0 = -A * GAMMA / 2;
+    private static final double V_0 = -A * GAMMA / (2 * MASS);
 
     private static final String ALGORITHM_P = "algorithm";
     private static final String DT_P = "dt";

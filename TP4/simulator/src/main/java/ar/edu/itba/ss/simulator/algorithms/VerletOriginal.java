@@ -7,8 +7,7 @@ import ar.edu.itba.ss.simulator.utils.Particle.State;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static ar.edu.itba.ss.simulator.algorithms.AlgorithmsUtils.calculateAcceleration;
-import static ar.edu.itba.ss.simulator.algorithms.AlgorithmsUtils.calculateInitialR;
+import static ar.edu.itba.ss.simulator.algorithms.AlgorithmsUtils.*;
 import static ar.edu.itba.ss.simulator.utils.R.values.*;
 import static java.lang.Math.pow;
 
@@ -24,35 +23,26 @@ public class VerletOriginal {
         final Map<Double, Map<Particle, State>> particlesStates = new TreeMap<>();
 
         final R initialR = calculateInitialR(particle.getMass(), initialState, k, gamma);
+        final List<R> RStates = new ArrayList<>();
+        RStates.add(initialR);
+
         final Pair initialr0 = initialR.get(R0.ordinal());
         final Pair initialr1 = initialR.get(R1.ordinal());
         particlesStates.put(0.0, Map.of(particle, new State(new Position(initialr0.getX(), initialr0.getY()), initialr1.getX(), initialr1.getY())));
 
-        final List<R> RStates = new ArrayList<>();
-        RStates.add(initialR);
-
+        R prevR = euler(initialR, -dt, particle.getMass(), k, gamma);
         int iterations = 0;
         for (double t = dt; t <= tf; t += dt, iterations += 1) {
-            final R prevR = RStates.get(Math.max(iterations - 1, 0));
             final R currentR = RStates.get(iterations);
 
             final R nextR = calculateNextR(prevR, currentR, particle.getMass(), k, gamma, dt);
+
+            final Pair r0 = nextR.get(R0.ordinal());
+            final Pair r1 = nextR.get(R1.ordinal());
+            particlesStates.put(t, Map.of(particle, new State(new Position(r0.getX(), r0.getY()), r1.getX(), r1.getY())));
+
             RStates.add(nextR);
-        }
-
-        R currentR = RStates.get(RStates.size() - 1);
-        final R prevR = RStates.get(RStates.size() - 2);
-        // Se updatea la última velocidad
-        calculateNextR(prevR, currentR, particle.getMass(), k, gamma, dt);
-
-        iterations = 0;
-        for (double t = dt; t <= tf; t += dt, iterations += 1) {
-            currentR = RStates.get(iterations);
-
-            final Pair r0 = currentR.get(R0.ordinal());
-//            final Pair r1 = currentR.get(R1.ordinal());
-
-            particlesStates.put(t, Map.of(particle, new State(new Position(r0.getX(), r0.getY()), r0.getX(), r0.getY())));
+            prevR = currentR;
         }
 
         executionTimestamps.setAlgorithmEnd(LocalDateTime.now());
@@ -67,11 +57,15 @@ public class VerletOriginal {
 
         final R nextR = new R();
 
-        final Pair currentForce = calculateAcceleration(mass, currentR.get(R0.ordinal()), new Pair(0.0, 0.0), k, gamma);
+        final Pair r2 = calculateAcceleration(mass, currentR.get(R0.ordinal()), currentR.get(R1.ordinal()), k, gamma);
 
-        final double r0x = 2 * currentR.get(R0.ordinal()).getX() - prevR.get(R0.ordinal()).getX() + (pow(dt, 2) / mass) * currentForce.getX();
-        final double r0y = 2 * currentR.get(R0.ordinal()).getY() - prevR.get(R0.ordinal()).getY() + (pow(dt, 2) / mass) * currentForce.getY();
+        final double r0x = 2 * currentR.get(R0.ordinal()).getX() - prevR.get(R0.ordinal()).getX() + (pow(dt, 2) / mass) * mass * r2.getX();
+        final double r0y = 2 * currentR.get(R0.ordinal()).getY() - prevR.get(R0.ordinal()).getY() + (pow(dt, 2) / mass) * mass * r2.getY();
         nextR.add(r0x, r0y);
+
+        final double r1x = (r0x - prevR.get(R0.ordinal()).getX()) / (2 * dt);
+        final double r1y = (r0y - prevR.get(R0.ordinal()).getY()) / (2 * dt);
+        nextR.add(r1x, r1y);
 
         return nextR;
     }
