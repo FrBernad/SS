@@ -16,7 +16,7 @@ def visualization_ovito(config_file: str):
     config = get_config(config_file)
 
     print("Getting Particles Data ...")
-    dfs = get_particles_data(config.static_file, config.results_file)
+    dfs = get_particles_data(config.static_file, config.results_file, step=int(12 * 60 * 60 / 300))
 
     pipeline = Pipeline(source=StaticSource(data=DataCollection()))
 

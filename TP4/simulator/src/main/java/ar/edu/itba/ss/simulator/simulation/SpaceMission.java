@@ -20,7 +20,7 @@ public class SpaceMission {
         entry(4, Arrays.asList(19.0 / 120, 3.0 / 4, 1.0, 1.0 / 2, 1.0 / 12)),
         entry(5, Arrays.asList(3.0 / 20, 251.0 / 360, 1.0, 11.0 / 18, 1.0 / 6, 1.0 / 60)));
 
-    private static final Double G = 6.693 * pow(10, -11) / 1000; //Divido por 1000, para pasarla a km
+    private static final Double G = 6.693 * pow(10, -11) / pow(10, 9); //Divido por 1000, para pasarla a km
     private static final int TOTAL_PREDICTIONS = 6;
 
     public static AlgorithmResults execute(final Map<Particle, State> initialStates,

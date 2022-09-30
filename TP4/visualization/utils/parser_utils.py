@@ -24,7 +24,7 @@ def get_frame_particles(df: DataFrame):
     return particles
 
 
-def get_particles_data(static_file: str, results_file: str) -> List[EventData]:
+def get_particles_data(static_file: str, results_file: str, step: int = 1) -> List[EventData]:
     static_df = pd.read_csv(static_file, skiprows=2, sep=" ", names=["radius", "mass"])
     static_df.radius[0] = 3000
     static_df.radius[1] = 1000
@@ -47,7 +47,7 @@ def get_particles_data(static_file: str, results_file: str) -> List[EventData]:
         df = pd.DataFrame(np.array(current_frame), columns=["id", "x", "y", "vx", "vy"])
         dfs.append(EventData(current_frame_time, pd.concat([df, static_df], axis=1)))
 
-    return dfs
+    return dfs[0::step]
 
 
 def get_particles_initial_data(static_file: str, dynamic_file: str) -> List[DataFrame]:
