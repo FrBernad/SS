@@ -1,8 +1,6 @@
 package ar.edu.itba.ss.simulator;
 
-import ar.edu.itba.ss.simulator.algorithms.Beeman;
-import ar.edu.itba.ss.simulator.algorithms.GearPredictor;
-import ar.edu.itba.ss.simulator.algorithms.VerletOriginal;
+import ar.edu.itba.ss.simulator.simulation.SpaceMission;
 import ar.edu.itba.ss.simulator.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +9,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Paths;
-import java.util.Map;
 import java.util.Properties;
 
 import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrDefault;
@@ -29,13 +26,10 @@ public class SimulatorPlanets {
     private static final String DYNAMIC_FILE_PATH_P = "dynamicFile";
     private static final String RESULTS_OUT_PATH_P = "resultsFile";
     private static final String TIME_OUT_PATH_P = "timeFile";
-    private static final String MAX_ITERATIONS_P = "maxIterations";
     private static final String ALGORITHM_P = "algorithm";
     private static final String DT_P = "dt";
     private static final String TF_P = "tf";
     private static final double DISTANCE_TO_SPACESHIP = 1500;
-    private static final Double G = 6.693 * pow(10, -11) / 1000; //Divido por 1000, para pasarla a km
-
     private static final String DELIMITER_P = "delimiter";
     private static final String DEFAULT_DELIMITER = " ";
 
@@ -68,85 +62,56 @@ public class SimulatorPlanets {
         double earthR = Double.parseDouble("6371.01");
 
         //https://math.stackexchange.com/questions/2045174/how-to-find-a-point-between-two-points-with-given-distance
-        double d = sqrt((pow((sunx - earthx), 2) + pow((suny - earthy), 2)));
-        // Componente del versor que une el sol con la tierra:
-        double ux = (sunx - earthx) / d;
-        double uy = (suny - earthy) / d;
+        double d = sqrt((pow((earthx - sunx), 2) + pow((earthy - suny), 2)));
+        // Componentes del versor que une el sol con la tierra (normal a la orbita)
+        double rx = (earthx - sunx) / d;
+        double ry = (earthy - suny) / d;
+
+        // Componentes del versor tangencial a la orbita
+        double ox = -ry;
+        double oy = rx;
 
         //Position
-        double spaceshipx = DISTANCE_TO_SPACESHIP * ux + earthx + earthR;
-        double spaceshipy = DISTANCE_TO_SPACESHIP * uy + earthy + earthR;
+        double spaceshipx = DISTANCE_TO_SPACESHIP * -rx + earthx + earthR;
+        double spaceshipy = DISTANCE_TO_SPACESHIP * -ry + earthy + earthR;
         System.out.printf("x=%1.20E,y=%1.20E\n", spaceshipx, spaceshipy);
 
         //Velocity
-        double v0 = 8 + 7.12 + sqrt(pow(earthvx, 2) + pow(earthvy, 2));
-        double spaceshipvx = -uy * v0;
-        double spaceshipvy = -ux * v0;
+        double vt = -7.12 - 8 + earthvx * ox + earthvy * oy;
+        double spaceshipvx = ox * vt;
+        double spaceshipvy = oy * vt;
         System.out.printf("vx=%1.20E,vy=%1.20E\n", spaceshipvx, spaceshipvy);
 
         LOGGER.info("Executing Venus Mision ...");
 
-        AlgorithmResults methodResults;
+        final AlgorithmResults methodResults = SpaceMission.execute(
+            particlesParserResult.getParticlesPerTime().get(0),
+            baseArguments.getDt(),
+            baseArguments.getMaxTime()
+        );
 
-//        switch (baseArguments.getAlgorithm()) {
-//            case GEAR_PREDICTOR:
-//                methodResults = GearPredictor.execute(
-//                    oscillatorParticle,
-//                    new Particle.State(new Particle.Position(X_0, 0), V_0, 0),
-//                    K,
-//                    GAMMA,
-//                    baseArguments.getDt(),
-//                    baseArguments.getMaxTime()
-//                );
-//                break;
-//            case BEEMAN:
-//                methodResults = Beeman.execute(
-//                    oscillatorParticle,
-//                    new Particle.State(new Particle.Position(X_0, 0), V_0, 0),
-//                    K,
-//                    GAMMA,
-//                    baseArguments.getDt(),
-//                    baseArguments.getMaxTime()
-//                );
-//                break;
-//            case VERLET_ORIGINAL:
-//                methodResults = VerletOriginal.execute(
-//                    oscillatorParticle,
-//                    new Particle.State(new Particle.Position(X_0, 0), V_0, 0),
-//                    K,
-//                    GAMMA,
-//                    baseArguments.getDt(),
-//                    baseArguments.getMaxTime()
-//                );
-//                break;
-//            default:
-//                System.out.println("Invalid algorithm");
-//                return;
-//        }
-//
-//
-//        LOGGER.info(String.format("Finished Venus Mision In %d Iterations",
-//            methodResults.getIterations()));
-//        LOGGER.info("Writing Results ...");
-//        final File outResultsFile = new File(baseArguments.getOutResultsFilePath());
-//        try (PrintWriter pw = new PrintWriter(outResultsFile)) {
-//            methodResults.getParticlesStates()
-//                .forEach((time, states) -> {
-//                    pw.append(String.format("%f\n", time));
-//                    states.forEach((particle, state) ->
-//                        pw.printf("%d %f %f %f %f\n",
-//                            particle.getId(),
-//                            state.getPosition().getX(), state.getPosition().getY(),
-//                            state.getVelocityX(), state.getVelocityY()));
-//                });
-//        }
-//
-//        final File outTimeFile = new File(baseArguments.getOutTimeFilePath());
-//        try (PrintWriter pw = new PrintWriter(outTimeFile)) {
-//            ActionLogger.logTimestamps(pw, methodResults.getExecutionTimestamps());
-//        }
-//
-//        LOGGER.info("Done!");
+        LOGGER.info(String.format("Finished Venus Mision In %d Iterations",
+            methodResults.getIterations()));
+        LOGGER.info("Writing Results ...");
+        final File outResultsFile = new File(baseArguments.getOutResultsFilePath());
+        try (PrintWriter pw = new PrintWriter(outResultsFile)) {
+            methodResults.getParticlesStates()
+                .forEach((time, states) -> {
+                    pw.append(String.format("%f\n", time));
+                    states.forEach((particle, state) ->
+                        pw.printf("%d %f %f %f %f\n",
+                            particle.getId(),
+                            state.getPosition().getX(), state.getPosition().getY(),
+                            state.getVelocityX(), state.getVelocityY()));
+                });
+        }
+
+        final File outTimeFile = new File(baseArguments.getOutTimeFilePath());
+        try (PrintWriter pw = new PrintWriter(outTimeFile)) {
+            ActionLogger.logTimestamps(pw, methodResults.getExecutionTimestamps());
+        }
+
+        LOGGER.info("Done!");
 
     }
 

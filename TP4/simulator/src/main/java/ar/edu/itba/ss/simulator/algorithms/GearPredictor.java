@@ -71,7 +71,7 @@ public class GearPredictor {
         return new AlgorithmResults(executionTimestamps, iterations, particlesStates);
     }
 
-    private static R predict(final R currentR, final double dt) {
+    public static R predict(final R currentR, final double dt) {
 
         final R newPredictions = new R();
 
@@ -94,9 +94,11 @@ public class GearPredictor {
     private static Pair getDeltaR2(final double mass, final double k, final double gamma,
                                    final Pair r0p, final Pair r1p,
                                    final Pair r2p, final double dt) {
+        //Evalúo la aceleracion con la posicion y velocidad predecida
         final double r2x = (-k * r0p.getX() - gamma * r1p.getX()) / mass;
         final double r2y = (-k * r0p.getY() - gamma * r1p.getY()) / mass;
 
+        //Aceleración predecida
         final double r2px = r2p.getX();
         final double r2py = r2p.getY();
 
@@ -109,14 +111,15 @@ public class GearPredictor {
         return new Pair(deltaR2x, deltaR2y);
     }
 
-    private static R correct(final R predictions, final Pair deltaR2, final double dt) {
+    private static R correct(final R predictions,
+                             final Pair deltaR2, final double dt) {
         final R corrections = new R();
 
         for (int i = 0; i < TOTAL_PREDICTIONS; i++) {
             Pair rpi = predictions.get(i);
 
-            final double rcx = rpi.getX() + posSpeedCoefficients.get(5).get(i) * deltaR2.getX() * fact(i) / pow(dt, i);
-            final double rcy = rpi.getY() + posSpeedCoefficients.get(5).get(i) * deltaR2.getY() * fact(i) / pow(dt, i);
+            final double rcx = rpi.getX() + GearPredictor.posSpeedCoefficients.get(5).get(i) * deltaR2.getX() * fact(i) / pow(dt, i);
+            final double rcy = rpi.getY() + GearPredictor.posSpeedCoefficients.get(5).get(i) * deltaR2.getY() * fact(i) / pow(dt, i);
 
             corrections.add(rcx, rcy);
         }

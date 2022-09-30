@@ -19,6 +19,8 @@ import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrFail;
 import static java.lang.Double.parseDouble;
 import static java.lang.Math.pow;
 
+// FIXME: primer grafico q muestre los 3 algoritmos solapados y en la leyenda el algo y su ECM
+// FIXME: desps otro grafico barriendo magnitudes de 10^-1 a 10ˆ-x calculando ECM para cada algoritmo
 public class SimulatorOscillator {
     private static final Logger LOGGER = LoggerFactory.getLogger(SimulatorOscillator.class);
     // PARAMETERS

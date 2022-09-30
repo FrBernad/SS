@@ -16,7 +16,7 @@ def get_frame_particles(df: DataFrame):
                               data=np.concatenate((df.id, np.arange(len(df.x), len(df.x)))))
     particles.create_property('Position',
                               data=np.array((df.x, df.y, np.zeros(len(df.x)))).T)
-    particles.create_property('Radius', data=df.radius  )
+    particles.create_property('Radius', data=df.radius)
     particles.create_property('Force',
                               data=np.array((df.vx, df.vy, np.zeros(len(df.x)))).T
                               )
@@ -24,19 +24,12 @@ def get_frame_particles(df: DataFrame):
     return particles
 
 
-def _generate_square(L: int):
-    square_points = []
-    for x in np.arange(0, L + 0.4, 0.4):
-        square_points.append([x, L, 0])
-        square_points.append([x, 0, 0])
-        square_points.append([L, x, 0])
-        square_points.append([0, x, 0])
-
-    return np.array(square_points)
-
-
 def get_particles_data(static_file: str, results_file: str) -> List[EventData]:
     static_df = pd.read_csv(static_file, skiprows=2, sep=" ", names=["radius", "mass"])
+    static_df.radius[0] = 3000
+    static_df.radius[1] = 1000
+    static_df.radius[2] = 800
+    static_df.radius[3] = 700
 
     dfs = []
     with open(results_file, "r") as results:

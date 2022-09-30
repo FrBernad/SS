@@ -23,7 +23,7 @@ def plot_oscillator(run_files: List[Tuple]):
             )
         )
 
-    dt = 0.01
+    dt = 0.001
     A = 1
     gamma = 100
     k = 10000
