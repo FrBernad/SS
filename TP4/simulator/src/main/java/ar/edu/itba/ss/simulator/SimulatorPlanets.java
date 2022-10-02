@@ -16,11 +16,8 @@ import java.util.Properties;
 
 import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrDefault;
 import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrFail;
-import static ar.edu.itba.ss.simulator.utils.ParseUtils.ParticlesParserResult;
-import static ar.edu.itba.ss.simulator.utils.ParseUtils.parseParticlesList;
+import static ar.edu.itba.ss.simulator.utils.ParseUtils.*;
 import static java.lang.Double.parseDouble;
-import static java.lang.Math.pow;
-import static java.lang.Math.sqrt;
 
 public class SimulatorPlanets {
     private static final Logger LOGGER = LoggerFactory.getLogger(SimulatorPlanets.class);
@@ -31,7 +28,6 @@ public class SimulatorPlanets {
     private static final String ALGORITHM_P = "algorithm";
     private static final String DT_P = "dt";
     private static final String TF_P = "tf";
-    private static final double DISTANCE_TO_SPACESHIP = 1500;
     private static final String DELIMITER_P = "delimiter";
     private static final String DEFAULT_DELIMITER = " ";
 
@@ -54,35 +50,6 @@ public class SimulatorPlanets {
         final ParticlesParserResult particlesParserResult = parseParticlesList(baseArguments.getStaticFile(),
             baseArguments.getDynamicFile(),
             baseArguments.getDelimiter());
-
-        double sunx = 0.0;
-        double suny = 0.0;
-        double earthx = Double.parseDouble("1.501409394622880E+08");
-        double earthy = Double.parseDouble("-9.238096308876731E+05");
-        double earthvx = Double.parseDouble("-2.949925999285836E-01");
-        double earthvy = Double.parseDouble("2.968579130065282E+01");
-        double earthR = Double.parseDouble("6371.01");
-
-        //https://math.stackexchange.com/questions/2045174/how-to-find-a-point-between-two-points-with-given-distance
-        double d = sqrt((pow((earthx - sunx), 2) + pow((earthy - suny), 2)));
-        // Componentes del versor que une el sol con la tierra (normal a la orbita)
-        double rx = (earthx - sunx) / d;
-        double ry = (earthy - suny) / d;
-
-        // Componentes del versor tangencial a la orbita
-        double ox = -ry;
-        double oy = rx;
-
-        //Position
-        double spaceshipx = DISTANCE_TO_SPACESHIP * -rx + earthx + earthR;
-        double spaceshipy = DISTANCE_TO_SPACESHIP * -ry + earthy + earthR;
-        System.out.printf("x=%1.20E,y=%1.20E\n", spaceshipx, spaceshipy);
-
-        //Velocity
-        double vt = -7.12 - 8 + earthvx * ox + earthvy * oy;
-        double spaceshipvx = ox * vt;
-        double spaceshipvy = oy * vt;
-        System.out.printf("vx=%1.20E,vy=%1.20E\n", spaceshipvx, spaceshipvy);
 
         LOGGER.info("Executing Venus Mision ...");
 
