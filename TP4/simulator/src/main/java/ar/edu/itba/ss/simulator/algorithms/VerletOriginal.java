@@ -5,10 +5,14 @@ import ar.edu.itba.ss.simulator.utils.Particle.Position;
 import ar.edu.itba.ss.simulator.utils.Particle.State;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static ar.edu.itba.ss.simulator.algorithms.AlgorithmsUtils.*;
-import static ar.edu.itba.ss.simulator.utils.R.values.*;
+import static ar.edu.itba.ss.simulator.utils.R.values.R0;
+import static ar.edu.itba.ss.simulator.utils.R.values.R1;
 import static java.lang.Math.pow;
 
 public class VerletOriginal {
@@ -33,7 +37,7 @@ public class VerletOriginal {
         R prevR = euler(initialR, -dt, particle.getMass(), k, gamma);
 
         int iterations = 0;
-        int totalIterations = (int) (tf / dt);
+        int totalIterations = (int) Math.ceil(tf / dt);
         for (double t = dt; iterations < totalIterations; t += dt, iterations += 1) {
 
             final R currentR = RStates.get(iterations);

@@ -1,7 +1,6 @@
 package ar.edu.itba.ss.simulator.utils;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class R {
     private final ArrayList<Pair> ri;

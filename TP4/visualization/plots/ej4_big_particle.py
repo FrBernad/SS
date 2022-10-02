@@ -2,7 +2,6 @@ import glob
 
 import numpy as np
 import plotly.graph_objects as go
-from sklearn.linear_model import LinearRegression
 
 from utils.parser_utils import get_particles_data
 

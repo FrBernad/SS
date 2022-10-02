@@ -1,7 +1,6 @@
 from typing import List, Tuple
 
 import numpy as np
-import plotly
 import plotly.graph_objects as go
 
 from utils.parser_utils import get_particles_data

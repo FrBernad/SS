@@ -1,7 +1,6 @@
 package ar.edu.itba.ss.simulator.algorithms;
 
 import ar.edu.itba.ss.simulator.utils.Pair;
-import ar.edu.itba.ss.simulator.utils.Particle;
 import ar.edu.itba.ss.simulator.utils.Particle.State;
 import ar.edu.itba.ss.simulator.utils.R;
 

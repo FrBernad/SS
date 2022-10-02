@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static ar.edu.itba.ss.simulator.utils.MathUtils.fact;
-import static ar.edu.itba.ss.simulator.utils.Particle.*;
+import static ar.edu.itba.ss.simulator.utils.Particle.Position;
 import static ar.edu.itba.ss.simulator.utils.R.values.*;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;

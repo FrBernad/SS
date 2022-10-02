@@ -7,7 +7,8 @@ import java.util.*;
 
 import static ar.edu.itba.ss.simulator.algorithms.AlgorithmsUtils.calculateInitialR;
 import static ar.edu.itba.ss.simulator.utils.MathUtils.fact;
-import static ar.edu.itba.ss.simulator.utils.Particle.*;
+import static ar.edu.itba.ss.simulator.utils.Particle.Position;
+import static ar.edu.itba.ss.simulator.utils.Particle.State;
 import static ar.edu.itba.ss.simulator.utils.R.values.*;
 import static java.lang.Math.pow;
 import static java.util.Map.entry;
@@ -47,7 +48,7 @@ public class GearPredictor {
         particlesStates.put(0.0, Map.of(particle, new State(new Position(initialr0.getX(), initialr0.getY()), initialr1.getX(), initialr1.getY())));
 
         int iterations = 0;
-        int totalIterations = (int) (tf / dt);
+        int totalIterations = (int) Math.ceil(tf / dt);
         for (double t = dt; iterations < totalIterations; t += dt, iterations += 1) {
 
             final R currentR = RStates.get(iterations);

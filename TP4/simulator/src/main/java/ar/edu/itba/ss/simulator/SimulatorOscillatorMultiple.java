@@ -3,7 +3,10 @@ package ar.edu.itba.ss.simulator;
 import ar.edu.itba.ss.simulator.algorithms.Beeman;
 import ar.edu.itba.ss.simulator.algorithms.GearPredictor;
 import ar.edu.itba.ss.simulator.algorithms.VerletOriginal;
-import ar.edu.itba.ss.simulator.utils.*;
+import ar.edu.itba.ss.simulator.utils.Algorithm;
+import ar.edu.itba.ss.simulator.utils.AlgorithmResults;
+import ar.edu.itba.ss.simulator.utils.BaseArguments;
+import ar.edu.itba.ss.simulator.utils.Particle;
 import ar.edu.itba.ss.simulator.utils.Particle.Position;
 import ar.edu.itba.ss.simulator.utils.Particle.State;
 import org.slf4j.Logger;
@@ -13,6 +16,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrDefault;
@@ -33,8 +39,10 @@ public class SimulatorOscillatorMultiple {
     private static final double A = 1;
     private static final double V_0 = -A * GAMMA / (2 * MASS);
 
-    private static final double DT_START = 0.1;
-    private static final int RUNS = 10;
+    private static final double DT_START = 0.01;
+    private static final List<Integer> STEPS = List.of(1, 1, 1, 10, 100);
+
+    private static final int RUNS = 5;
 
     private static final String TF_P = "tf";
     private static final String TIME_OUT_PATH_P = "timeFile";
@@ -62,7 +70,7 @@ public class SimulatorOscillatorMultiple {
 
         for (int i = 0; i < RUNS; i++) {
 
-            double dt = DT_START * Math.pow(10, -i);
+            double dt = BigDecimal.valueOf(DT_START * Math.pow(10, -i)).setScale(i + 2, RoundingMode.FLOOR).doubleValue();
             LOGGER.info("Running simulator with dt {}", dt);
 
             for (Algorithm algorithm : Algorithm.values()) {
@@ -73,38 +81,38 @@ public class SimulatorOscillatorMultiple {
                         LOGGER.info("Running Gear Predictor");
 
                         methodResults = GearPredictor.execute(
-                                oscillatorParticle,
-                                new State(new Position(X_0, 0), V_0, 0),
-                                K,
-                                GAMMA,
-                                dt,
-                                baseArguments.getMaxTime()
+                            oscillatorParticle,
+                            new State(new Position(X_0, 0), V_0, 0),
+                            K,
+                            GAMMA,
+                            dt,
+                            baseArguments.getMaxTime()
                         );
-                        writeToFile(GEAR_PREDICTOR_DIR, methodResults, dt, baseArguments.getOutResultsFilePath());
+                        writeToFile(GEAR_PREDICTOR_DIR, methodResults, dt, baseArguments.getOutResultsFilePath(), STEPS.get(i));
                         break;
                     case BEEMAN:
                         LOGGER.info("Running Beeman");
                         methodResults = Beeman.execute(
-                                oscillatorParticle,
-                                new State(new Position(X_0, 0), V_0, 0),
-                                K,
-                                GAMMA,
-                                dt,
-                                baseArguments.getMaxTime()
+                            oscillatorParticle,
+                            new State(new Position(X_0, 0), V_0, 0),
+                            K,
+                            GAMMA,
+                            dt,
+                            baseArguments.getMaxTime()
                         );
-                        writeToFile(BEEMAN_DIR, methodResults, dt, baseArguments.getOutResultsFilePath());
+                        writeToFile(BEEMAN_DIR, methodResults, dt, baseArguments.getOutResultsFilePath(), STEPS.get(i));
                         break;
                     case VERLET_ORIGINAL:
                         LOGGER.info("Running Verlet");
                         methodResults = VerletOriginal.execute(
-                                oscillatorParticle,
-                                new State(new Position(X_0, 0), V_0, 0),
-                                K,
-                                GAMMA,
-                                dt,
-                                baseArguments.getMaxTime()
+                            oscillatorParticle,
+                            new State(new Position(X_0, 0), V_0, 0),
+                            K,
+                            GAMMA,
+                            dt,
+                            baseArguments.getMaxTime()
                         );
-                        writeToFile(VERLET_ORIGINAL_DIR, methodResults, dt, baseArguments.getOutResultsFilePath());
+                        writeToFile(VERLET_ORIGINAL_DIR, methodResults, dt, baseArguments.getOutResultsFilePath(), STEPS.get(i));
                         break;
                     default:
                         System.out.println("Invalid algorithm");
@@ -128,32 +136,31 @@ public class SimulatorOscillatorMultiple {
 
     private static void printClientUsage() {
         System.out.println("Invalid simulator invocation.\n" +
-                "Usage: ./simulator -DoutresultsDir=resultsDir -DtimeFile=timeFile -Dtf=tf "
+            "Usage: ./simulator -DoutresultsDir=resultsDir -DtimeFile=timeFile -Dtf=tf "
         );
     }
 
-    private static void writeToFile(String algorithm, AlgorithmResults methodResults, double dt, String outputDir) throws IOException {
+    private static void writeToFile(String algorithm, AlgorithmResults methodResults, double dt, String outputDir, int step) throws IOException {
         LOGGER.info(String.format("Finished Oscillation In %d Iterations", methodResults.getIterations()));
         LOGGER.info("Writing Results ...");
         String filePath = String.format("%s/%s/results_%f", outputDir, algorithm, dt);
         final File outResultsFile = new File(filePath);
         try (PrintWriter pw = new PrintWriter(outResultsFile)) {
-            methodResults.getParticlesStates()
-                    .forEach((time, states) -> {
-                        pw.append(String.format("%f\n", time));
-                        states.forEach((particle, state) ->
-                                pw.printf("%d %f %f %f %f\n",
-                                        particle.getId(),
-                                        state.getPosition().getX(), state.getPosition().getY(),
-                                        state.getVelocityX(), state.getVelocityY()));
-                    });
+            int i = 0;
+            for (Map.Entry<Double, Map<Particle, State>> entry : methodResults.getParticlesStates().entrySet()) {
+                if (i % step == 0) {
+                    Double time = entry.getKey();
+                    Map<Particle, State> states = entry.getValue();
+                    pw.append(String.format("%f\n", time));
+                    states.forEach((particle, state) ->
+                        pw.printf("%d %f %f %f %f\n",
+                            particle.getId(),
+                            state.getPosition().getX(), state.getPosition().getY(),
+                            state.getVelocityX(), state.getVelocityY()));
+                }
+                i++;
+            }
         }
-
-//        final File outTimeFile = new File(baseArguments.getOutTimeFilePath());
-//        try (PrintWriter pw = new PrintWriter(outTimeFile)) {
-//            ActionLogger.logTimestamps(pw, methodResults.getExecutionTimestamps());
-//        }
-
 
     }
 }

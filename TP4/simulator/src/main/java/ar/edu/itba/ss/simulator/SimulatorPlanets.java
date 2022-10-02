@@ -1,7 +1,10 @@
 package ar.edu.itba.ss.simulator;
 
 import ar.edu.itba.ss.simulator.simulation.SpaceMission;
-import ar.edu.itba.ss.simulator.utils.*;
+import ar.edu.itba.ss.simulator.utils.ActionLogger;
+import ar.edu.itba.ss.simulator.utils.Algorithm;
+import ar.edu.itba.ss.simulator.utils.AlgorithmResults;
+import ar.edu.itba.ss.simulator.utils.BaseArguments;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +19,6 @@ import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrFail;
 import static ar.edu.itba.ss.simulator.utils.ParseUtils.ParticlesParserResult;
 import static ar.edu.itba.ss.simulator.utils.ParseUtils.parseParticlesList;
 import static java.lang.Double.parseDouble;
-import static java.lang.Integer.parseInt;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 

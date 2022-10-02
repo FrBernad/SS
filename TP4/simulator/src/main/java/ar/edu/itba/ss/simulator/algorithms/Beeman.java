@@ -37,7 +37,7 @@ public class Beeman {
         R prevR = euler(initialR, -dt, particle.getMass(), k, gamma);
 
         int iterations = 0;
-        int totalIterations = (int) (tf / dt);
+        int totalIterations = (int) Math.ceil(tf / dt);
         for (double t = dt; iterations < totalIterations; t += dt, iterations += 1) {
 
             final R currentR = RStates.get(iterations);
