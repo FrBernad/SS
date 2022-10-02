@@ -35,19 +35,20 @@ public class GearPredictor {
         final ExecutionTimestamps executionTimestamps = new ExecutionTimestamps();
         executionTimestamps.setAlgorithmStart(LocalDateTime.now());
 
-        int iterations = 0;
 
         final Map<Double, Map<Particle, State>> particlesStates = new TreeMap<>();
 
         final R initialR = calculateInitialR(particle.getMass(), initialState, k, gamma);
+        final List<R> RStates = new ArrayList<>();
+        RStates.add(initialR);
+
         final Pair initialr0 = initialR.get(R0.ordinal());
         final Pair initialr1 = initialR.get(R1.ordinal());
         particlesStates.put(0.0, Map.of(particle, new State(new Position(initialr0.getX(), initialr0.getY()), initialr1.getX(), initialr1.getY())));
 
-        final List<R> RStates = new ArrayList<>();
-        RStates.add(initialR);
-
-        for (double t = dt; t <= tf; t += dt, iterations += 1) {
+        int iterations = 0;
+        int totalIterations = (int) (tf / dt);
+        for (double t = dt; iterations < totalIterations; t += dt, iterations += 1) {
 
             final R currentR = RStates.get(iterations);
 

@@ -35,14 +35,20 @@ public class Beeman {
         particlesStates.put(0.0, Map.of(particle, new State(new Position(initialr0.getX(), initialr0.getY()), initialr1.getX(), initialr1.getY())));
 
         R prevR = euler(initialR, -dt, particle.getMass(), k, gamma);
+
         int iterations = 0;
-        for (double t = dt; t <= tf; t += dt, iterations += 1) {
+        int totalIterations = (int) (tf / dt);
+        for (double t = dt; iterations < totalIterations; t += dt, iterations += 1) {
+
             final R currentR = RStates.get(iterations);
 
             final R nextR = calculateNextR(prevR, currentR, dt, particle.getMass(), k, gamma);
 
             final Pair r0 = nextR.get(R0.ordinal());
             final Pair r1 = nextR.get(R1.ordinal());
+            if (Double.compare(t, tf - 2 * dt) == 0) {
+                System.out.println();
+            }
             particlesStates.put(t, Map.of(particle, new State(new Position(r0.getX(), r0.getY()), r1.getX(), r1.getY())));
 
             RStates.add(nextR);
