@@ -53,12 +53,12 @@ public class ParseUtils {
             final Particle currentParticle = particles.get(particleIndex);
 
             final State currentParticleState = new State(
-                new Position(
-                    parseDouble(dynamicArray.get(DynamicFields.X.getValue())),
-                    parseDouble(dynamicArray.get(DynamicFields.Y.getValue()))
-                ),
-                parseDouble(dynamicArray.get(DynamicFields.VELOCITY_X.getValue())),
-                parseDouble(dynamicArray.get(DynamicFields.VELOCITY_Y.getValue()))
+                    new Position(
+                            parseDouble(dynamicArray.get(DynamicFields.X.getValue())),
+                            parseDouble(dynamicArray.get(DynamicFields.Y.getValue()))
+                    ),
+                    parseDouble(dynamicArray.get(DynamicFields.VELOCITY_X.getValue())),
+                    parseDouble(dynamicArray.get(DynamicFields.VELOCITY_Y.getValue()))
             );
 
             currentParticlesPerTime.put(currentParticle, currentParticleState);
@@ -71,7 +71,7 @@ public class ParseUtils {
         return new ParticlesParserResult(N, L, particlesPerTime);
     }
 
-    public static void parsePlanets(final String pathToAssets, final File earthFile, final File venusFile, final File sunFile, final double distanceToSpaceship) throws FileNotFoundException {
+    public static void parsePlanets(final String staticDir, final String dynamicDir, final File earthFile, final File venusFile, final File sunFile, final double distanceToSpaceship) throws FileNotFoundException {
 
         final Scanner earthScanner = new Scanner(earthFile);
         final Scanner venusScanner = new Scanner(venusFile);
@@ -247,7 +247,7 @@ public class ParseUtils {
 
         venusScanner.close();
 
-        final String staticFilePath = String.format("%s/StaticPlanets.txt", pathToAssets);
+        final String staticFilePath = String.format("%s/StaticPlanets", staticDir);
         final File staticFile = new File(staticFilePath);
         try (PrintWriter pw = new PrintWriter(staticFile)) {
             pw.append("4\n");
@@ -259,7 +259,7 @@ public class ParseUtils {
         }
 
         for (String date : planetPositions.keySet()) {
-            final String dynamicFilePath = String.format("%s/DynamicPlanets_%s.txt", pathToAssets, date);
+            final String dynamicFilePath = String.format("%s/DynamicPlanets_%s", dynamicDir, date);
             final File outFile = new File(dynamicFilePath);
             try (PrintWriter pw = new PrintWriter(outFile)) {
                 pw.append("0\n");

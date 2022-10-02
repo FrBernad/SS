@@ -61,4 +61,6 @@ nb-configuration.xml
 
 /results/
 assets/ej2/
+assets/multipleRuns/
+assets/StaticPlanets
 __pycache__

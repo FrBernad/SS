@@ -15,7 +15,10 @@ public class PlanetsParser {
     private static final String EARTH_PATH_P = "earthFile";
     private static final String VENUS_PATH_P = "venusFile";
     private static final String SUN_PATH_P = "sunFile";
-    private static final String ASSETS_DIR_PATH_P = "assetsDir";
+
+    private static final String ASSETS_STATIC_DIR_PATH_P = "assetsStaticDir";
+    private static final String ASSETS_DYNAMIC_DIR_PATH_P = "assetsDynamicDir";
+
     private static final double DISTANCE_TO_SPACESHIP = 1500;
 
 
@@ -24,26 +27,36 @@ public class PlanetsParser {
     public static void main(String[] args) throws IOException {
         LOGGER.info("SimulatorPlanets Starting ...");
 
-        final Properties properties = System.getProperties();
-        final String assetsDir = getPropertyOrFail(properties, ASSETS_DIR_PATH_P);
+        final String assetsStaticDir;
+        final String assetsDynamicDir;
+        final String earthFilePath;
+        final String sunFilePath;
+        final String venusFilePath;
 
-        final String earthFilePath = getPropertyOrFail(properties, EARTH_PATH_P);
-        final String sunFilePath = getPropertyOrFail(properties, SUN_PATH_P);
-        final String venusFilePath = getPropertyOrFail(properties, VENUS_PATH_P);
+        try {
+            final Properties properties = System.getProperties();
+            assetsStaticDir = getPropertyOrFail(properties, ASSETS_STATIC_DIR_PATH_P);
+            assetsDynamicDir = getPropertyOrFail(properties, ASSETS_DYNAMIC_DIR_PATH_P);
 
+            earthFilePath = getPropertyOrFail(properties, EARTH_PATH_P);
+            sunFilePath = getPropertyOrFail(properties, SUN_PATH_P);
+            venusFilePath = getPropertyOrFail(properties, VENUS_PATH_P);
+        } catch (Exception e) {
+            printClientUsage();
+            return;
+        }
         final File earthFile = new File(earthFilePath);
         final File venusFile = new File(venusFilePath);
         final File sunFile = new File(sunFilePath);
 
-        parsePlanets(assetsDir, earthFile, venusFile, sunFile, DISTANCE_TO_SPACESHIP);
+        parsePlanets(assetsStaticDir, assetsDynamicDir, earthFile, venusFile, sunFile, DISTANCE_TO_SPACESHIP);
 
     }
 
     private static void printClientUsage() {
         System.out.println("Invalid simulator invocation.\n" +
-            "Usage: ./simulator -DassetsDir='path/to/assets " +
-            "-DearthFile=earthFile -DvenusFile=venusFile -DsunFile=sunFile "
-        );
+                "Usage: ./simulator -DassetsStaticDir='path/to/assetsStatic -DassetsDynamicDir='path/to/assetsDynamic'" +
+                " -DearthFile=earthFile -DvenusFile=venusFile -DsunFile=sunFile ");
     }
 
 
