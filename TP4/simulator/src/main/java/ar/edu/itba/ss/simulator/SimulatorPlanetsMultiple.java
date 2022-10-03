@@ -22,8 +22,6 @@ public class SimulatorPlanetsMultiple {
     private static final String STATIC_FILE_PATH_P = "staticFile";
     private static final String DYNAMIC_FILES_PATH_P = "dynamicFilesDir";
     private static final String RESULTS_OUT_DIR_PATH_P = "resultsDir";
-    private static final String TIME_OUT_PATH_P = "timeFile";
-    private static final String ALGORITHM_P = "algorithm";
     private static final String DT_P = "dt";
     private static final String TF_P = "tf";
     private static final String DELIMITER_P = "delimiter";
@@ -34,11 +32,9 @@ public class SimulatorPlanetsMultiple {
         final String staticFilePath;
         final String dynamicFilesPath;
         final String outResultsDirPath;
-        final String timeFilePath;
         final String delimiter;
         final double dt;
         final double tf;
-        final Algorithm algorithm;
 
 
         final Properties properties = System.getProperties();
@@ -46,16 +42,13 @@ public class SimulatorPlanetsMultiple {
             staticFilePath = getPropertyOrFail(properties, STATIC_FILE_PATH_P);
             dynamicFilesPath = getPropertyOrFail(properties, DYNAMIC_FILES_PATH_P);
             outResultsDirPath = getPropertyOrFail(properties, RESULTS_OUT_DIR_PATH_P);
-            timeFilePath = getPropertyOrFail(properties, TIME_OUT_PATH_P);
             delimiter = getPropertyOrDefault(properties, DELIMITER_P, DEFAULT_DELIMITER);
             dt = parseDouble(getPropertyOrFail(properties, DT_P));
             tf = parseDouble(getPropertyOrDefault(properties, TF_P, "5"));
-            algorithm = Algorithm.valueOf(getPropertyOrDefault(properties, ALGORITHM_P, "GEAR_PREDICTOR"));
         } catch (Exception E) {
             printClientUsage();
             return;
         }
-
 
         final File staticFile = Paths.get(staticFilePath).toFile();
         final File dynamicFileDir = new File(dynamicFilesPath);
@@ -70,33 +63,33 @@ public class SimulatorPlanetsMultiple {
 
             final File dynamicFile = dynamicFiles[i];
             final ParseUtils.ParticlesParserResult particlesParserResult = parseParticlesList(staticFile,
-                    dynamicFile,
-                    delimiter);
+                dynamicFile,
+                delimiter);
 
-            LOGGER.info("Executing Venus Mision ...");
+            LOGGER.info("Executing Venus Mission ...");
 
             final AlgorithmResults methodResults = SpaceMission.execute(
-                    particlesParserResult.getParticlesPerTime().get(0),
-                    dt,
-                    tf
+                particlesParserResult.getParticlesPerTime().get(0),
+                dt,
+                tf
             );
 
-            LOGGER.info(String.format("Finished Venus Mision In %d Iterations",
-                    methodResults.getIterations()));
+            LOGGER.info(String.format("Finished Venus Mission In %d Iterations",
+                methodResults.getIterations()));
             LOGGER.info("Writing Results ...");
-            final String fileName = dynamicFile.getName().split("_")[1];
-            final String outResultsPath = String.format("%s/%s", outResultsDirPath, fileName);
+            final String[] fileName = dynamicFile.getName().split("_");
+            final String outResultsPath = String.format("%s/%s %s", outResultsDirPath, fileName[1], fileName[2]);
             final File outResultsFile = new File(outResultsPath);
             try (PrintWriter pw = new PrintWriter(outResultsFile)) {
                 methodResults.getParticlesStates()
-                        .forEach((time, states) -> {
-                            pw.append(String.format("%f\n", time));
-                            states.forEach((particle, state) ->
-                                    pw.printf("%d %f %f %f %f\n",
-                                            particle.getId(),
-                                            state.getPosition().getX(), state.getPosition().getY(),
-                                            state.getVelocityX(), state.getVelocityY()));
-                        });
+                    .forEach((time, states) -> {
+                        pw.append(String.format("%f\n", time));
+                        states.forEach((particle, state) ->
+                            pw.printf("%d %f %f %f %f\n",
+                                particle.getId(),
+                                state.getPosition().getX(), state.getPosition().getY(),
+                                state.getVelocityX(), state.getVelocityY()));
+                    });
             }
 
         }
@@ -106,8 +99,8 @@ public class SimulatorPlanetsMultiple {
 
     private static void printClientUsage() {
         System.out.println("Invalid simulator invocation.\n" +
-                "Usage: ./simulator -DstaticFile='path/to/static/file' -DdynamicFilesDir='path/to/dynamic/files/dir' " +
-                " -DresultsDir=resultsFile [-Ddelimiter=delimiter] -Ddt=dt -Dtf=tf -Dalgorithm=algorithm "
+            "Usage: ./simulator -DstaticFile='path/to/static/file' -DdynamicFilesDir='path/to/dynamic/files/dir' " +
+            " -DresultsDir=resultsFile [-Ddelimiter=delimiter] -Ddt=dt -Dtf=tf"
         );
     }
 

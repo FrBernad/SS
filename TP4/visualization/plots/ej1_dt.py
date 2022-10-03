@@ -6,8 +6,10 @@ import plotly.graph_objects as go
 
 from utils.parser_utils import get_particles_data
 
-
-def plot_oscillator(run_folders: List[Tuple[str, str]]):
+# En todos los casos graficar las soluciones analítica y numérica y calcular el error cuadrático
+# medio (sumando las diferencias al cuadrado para todos los pasos temporales y normalizando por el
+# número total de pasos).
+def plot_oscillator_per_dt(run_folders: List[Tuple[str, str]]):
     data = []
 
     dts = np.array([10 ** (-i) for i in range(2, 7)])
@@ -74,11 +76,11 @@ def plot_oscillator(run_folders: List[Tuple[str, str]]):
 
 
 if __name__ == "__main__":
-    static_file = '../../assets/Static.txt'
-    results_gear_predictor_folder = '../../results/ejer1/multipleRuns/GearPredictor'
-    results_beeman_folder = '../../results/ejer1/multipleRuns/Beeman'
-    results_verlet_original_folder = '../../results/ejer1/multipleRuns/VerletOriginal'
-    plot_oscillator(
+    static_file = '../../assets/ej1/Static.txt'
+    results_gear_predictor_folder = '../../results/ej1/multipleRuns/GearPredictor'
+    results_beeman_folder = '../../results/ej1/multipleRuns/Beeman'
+    results_verlet_original_folder = '../../results/ej1/multipleRuns/VerletOriginal'
+    plot_oscillator_per_dt(
         [
             (static_file, results_verlet_original_folder),
             (static_file, results_beeman_folder),

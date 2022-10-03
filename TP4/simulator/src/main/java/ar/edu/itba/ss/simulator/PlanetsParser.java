@@ -51,6 +51,7 @@ public class PlanetsParser {
 
         parsePlanets(assetsStaticDir, assetsDynamicDir, earthFile, venusFile, sunFile, DISTANCE_TO_SPACESHIP);
 
+        LOGGER.info("SimulatorPlanets finished!");
     }
 
     private static void printClientUsage() {

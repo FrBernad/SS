@@ -5,8 +5,10 @@ import plotly.graph_objects as go
 
 from utils.parser_utils import get_particles_data
 
-
-def plot_oscillator(run_files: List[Tuple]):
+# Estudiar como disminuye el error al disminuir el paso de integración (dt). Usar ejes semilogarítmicos
+# o logarítmicos para poder apreciar las diferencias de error a escalas pequeñas. ¿Cuál de
+# los esquemas de integración resulta mejor para este sistema ?
+def plot_oscillator_ecm(run_files: List[Tuple]):
     data = []
     ECMs = []
 
@@ -117,11 +119,11 @@ def plot_oscillator(run_files: List[Tuple]):
 
 
 if __name__ == "__main__":
-    static_file = '../../assets/Static.txt'
-    results_gear_predictor = '../../results/ejer1/resultsGearPredictor.txt'
-    results_beeman = '../../results/ejer1/resultsBeeman.txt'
-    results_verlet_original = '../../results/ejer1/resultsVerletOriginal.txt'
-    plot_oscillator(
+    static_file = '../../assets/ej1/Static.txt'
+    results_gear_predictor = '../../results/ej1/resultsGearPredictor.txt'
+    results_beeman = '../../results/ej1/resultsBeeman.txt'
+    results_verlet_original = '../../results/ej1/resultsVerletOriginal.txt'
+    plot_oscillator_ecm(
         [
             (static_file, results_verlet_original),
             (static_file, results_beeman),

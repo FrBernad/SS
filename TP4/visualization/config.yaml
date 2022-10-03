@@ -1,7 +1,7 @@
 ---
 # --- Visualization plotly config ---
 config:
-  results_file: "../results/ejer2/results.txt"
-  dynamic_file: "../assets/DynamicPlanets.txt"
-  static_file: "../assets/StaticPlanets.txt"
+  results_file: "../results/ej2/results.txt"
+  dynamic_file: "../assets/ej2/results.txt"
+  static_file: "../assets/ej2/StaticPlanets.txt"
 ...
