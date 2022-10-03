@@ -5,6 +5,7 @@ import plotly.graph_objects as go
 
 from utils.parser_utils import get_particles_data
 
+
 # Estudiar como disminuye el error al disminuir el paso de integración (dt). Usar ejes semilogarítmicos
 # o logarítmicos para poder apreciar las diferencias de error a escalas pequeñas. ¿Cuál de
 # los esquemas de integración resulta mejor para este sistema ?
@@ -36,7 +37,7 @@ def plot_oscillator_ecm(run_files: List[Tuple]):
         event_times = np.array(list(map(lambda df: df.time, dfs)))
         particle_df = np.array(list(map(lambda df: df.data.x, dfs))).flatten()
 
-        ECMs.append(np.sum((particle_df - analytic_y) ** 2) / len(analytic_y))
+        ECMs.append(np.sum((analytic_y - particle_df) ** 2) / len(analytic_y))
 
         data.append(
             go.Scatter(
@@ -94,12 +95,13 @@ def plot_oscillator_ecm(run_files: List[Tuple]):
         data=go.Scatter(
             x=names,
             y=ECMs,
+            marker=dict(size=5)
         ),
         layout=go.Layout(
             title=dict(text=f'ECMs', x=0.5),
             xaxis=dict(title=r'$\Large{\text{Algoritmo}}$', exponentformat="power",
                        linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
-            yaxis=dict(title=r'$\Large{\text{ECM (m)}}$', exponentformat="power", type='log',
+            yaxis=dict(title=r'$\Large{\text{ECM } (\text{m}^{\text{2}})}$', exponentformat="power", type='log',
                        linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
             font=dict(
                 family="Computer Modern",
@@ -123,6 +125,7 @@ if __name__ == "__main__":
     results_gear_predictor = '../../results/ej1/resultsGearPredictor.txt'
     results_beeman = '../../results/ej1/resultsBeeman.txt'
     results_verlet_original = '../../results/ej1/resultsVerletOriginal.txt'
+
     plot_oscillator_ecm(
         [
             (static_file, results_verlet_original),

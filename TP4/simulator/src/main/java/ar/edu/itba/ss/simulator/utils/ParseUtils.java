@@ -53,12 +53,12 @@ public class ParseUtils {
             final Particle currentParticle = particles.get(particleIndex);
 
             final State currentParticleState = new State(
-                    new Position(
-                            parseDouble(dynamicArray.get(DynamicFields.X.getValue())),
-                            parseDouble(dynamicArray.get(DynamicFields.Y.getValue()))
-                    ),
-                    parseDouble(dynamicArray.get(DynamicFields.VELOCITY_X.getValue())),
-                    parseDouble(dynamicArray.get(DynamicFields.VELOCITY_Y.getValue()))
+                new Position(
+                    parseDouble(dynamicArray.get(DynamicFields.X.getValue())),
+                    parseDouble(dynamicArray.get(DynamicFields.Y.getValue()))
+                ),
+                parseDouble(dynamicArray.get(DynamicFields.VELOCITY_X.getValue())),
+                parseDouble(dynamicArray.get(DynamicFields.VELOCITY_Y.getValue()))
             );
 
             currentParticlesPerTime.put(currentParticle, currentParticleState);

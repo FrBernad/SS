@@ -68,7 +68,7 @@ public class SimulatorPlanets {
                 .forEach((time, states) -> {
                     pw.append(String.format("%f\n", time));
                     states.forEach((particle, state) ->
-                        pw.printf("%d %f %f %f %f\n",
+                        pw.printf("%d %.16f %.16f %.16f %.16f\n",
                             particle.getId(),
                             state.getPosition().getX(), state.getPosition().getY(),
                             state.getVelocityX(), state.getVelocityY()));

@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Paths;
+import java.util.Map;
 import java.util.Properties;
 
 import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrDefault;
@@ -36,7 +37,6 @@ public class SimulatorPlanetsMultiple {
         final double dt;
         final double tf;
 
-
         final Properties properties = System.getProperties();
         try {
             staticFilePath = getPropertyOrFail(properties, STATIC_FILE_PATH_P);
@@ -54,19 +54,20 @@ public class SimulatorPlanetsMultiple {
         final File dynamicFileDir = new File(dynamicFilesPath);
         File[] dynamicFiles = dynamicFileDir.listFiles();
         if (dynamicFiles == null) {
+            LOGGER.error("Missing files");
             return;
         }
 
         for (int i = 0; i < dynamicFiles.length; i++) {
             LOGGER.info("Running File {}: {}", i + 1, dynamicFiles[i].getName());
-            LOGGER.info("Parsing Particles ...");
+            LOGGER.info("   Parsing Particles ...");
 
             final File dynamicFile = dynamicFiles[i];
             final ParseUtils.ParticlesParserResult particlesParserResult = parseParticlesList(staticFile,
                 dynamicFile,
                 delimiter);
 
-            LOGGER.info("Executing Venus Mission ...");
+            LOGGER.info("   Executing Venus Mission ...");
 
             final AlgorithmResults methodResults = SpaceMission.execute(
                 particlesParserResult.getParticlesPerTime().get(0),
@@ -74,26 +75,35 @@ public class SimulatorPlanetsMultiple {
                 tf
             );
 
-            LOGGER.info(String.format("Finished Venus Mission In %d Iterations",
+            LOGGER.info(String.format("   Finished Venus Mission In %d Iterations",
                 methodResults.getIterations()));
-            LOGGER.info("Writing Results ...");
+            LOGGER.info("   Writing Results ...");
             final String[] fileName = dynamicFile.getName().split("_");
             final String outResultsPath = String.format("%s/%s %s", outResultsDirPath, fileName[1], fileName[2]);
             final File outResultsFile = new File(outResultsPath);
+
+            int index = 0;
+            double step = 6;
+
             try (PrintWriter pw = new PrintWriter(outResultsFile)) {
-                methodResults.getParticlesStates()
-                    .forEach((time, states) -> {
+                for (Map.Entry<Double, Map<Particle, Particle.State>> entry : methodResults.getParticlesStates().entrySet()) {
+                    Double time = entry.getKey();
+                    Map<Particle, Particle.State> states = entry.getValue();
+                    if (index % step == 0) {
                         pw.append(String.format("%f\n", time));
                         states.forEach((particle, state) ->
-                            pw.printf("%d %f %f %f %f\n",
+                            pw.printf("%d %.16f %.16f %.16f %.16f\n",
                                 particle.getId(),
                                 state.getPosition().getX(), state.getPosition().getY(),
                                 state.getVelocityX(), state.getVelocityY()));
-                    });
+
+                    }
+                    index += 1;
+                }
             }
 
         }
-        LOGGER.info("Done!");
+        LOGGER.info("   Done!\n");
 
     }
 

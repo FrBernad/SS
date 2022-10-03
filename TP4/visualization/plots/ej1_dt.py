@@ -6,6 +6,7 @@ import plotly.graph_objects as go
 
 from utils.parser_utils import get_particles_data
 
+
 # En todos los casos graficar las soluciones analítica y numérica y calcular el error cuadrático
 # medio (sumando las diferencias al cuadrado para todos los pasos temporales y normalizando por el
 # número total de pasos).
@@ -26,7 +27,7 @@ def plot_oscillator_per_dt(run_folders: List[Tuple[str, str]]):
         print(f'''Parsing {names[i]}''')
         ECMs = []
         for j, file in enumerate(files):
-            print(f'''dt = {dts[j]}''')
+            print(f'''dt = {dts[j]}, step = {steps[j]}''')
             analytic_x = np.arange(0, 5 + dts[j], dts[j])[::steps[j]]
             exp_term = -(gamma / (2 * m))
             cos_term = ((k / m) - ((gamma ** 2) / (4 * m ** 2))) ** 0.5
@@ -36,13 +37,14 @@ def plot_oscillator_per_dt(run_folders: List[Tuple[str, str]]):
 
             particle_df = np.array(list(map(lambda df: df.data.x, dfs))).flatten()
 
-            ECMs.append(np.sum((particle_df - analytic_y) ** 2) / len(analytic_y))
+            ECMs.append(np.sum((analytic_y - particle_df) ** 2) / len(analytic_y))
 
         data.append(
             go.Scatter(
                 x=dts,
                 y=ECMs,
-                name=names[i]
+                name=names[i],
+                marker=dict(size=10)
             )
         )
 
@@ -51,26 +53,21 @@ def plot_oscillator_per_dt(run_folders: List[Tuple[str, str]]):
         layout=go.Layout(
             title=dict(text=f'Oscillator ECM per dt', x=0.5),
             xaxis=dict(title=r'$\Large{\text{dt (s)}}$', exponentformat="power", type='log',
+                       dtick=1,
                        linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
-            yaxis=dict(title=r'$\Large{\text{ECM (m)}}$', exponentformat="power", type='log',
+            yaxis=dict(title=r'$\Large{\text{ECM } (\text{m}^{\text{2}})}$', exponentformat="power", type='log',
                        linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
             font=dict(
                 family="Computer Modern",
                 size=22,
             ),
             plot_bgcolor='rgba(0,0,0,0)',
-            legend=dict(
-                yanchor="top",
-                y=0.99,
-                xanchor="right",
-                x=0.99
-            )
         )
 
     )
 
     # Set figure size
-    fig.update_layout(width=1000, height=1000)
+    fig.update_layout(width=1500, height=1000)
 
     fig.show()
 

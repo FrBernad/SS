@@ -23,18 +23,28 @@ def plot_distance_to_venus(static_files: str, position_per_date_folder: str):
     min_distances = []
     date_strs = []
 
-    for file in position_per_date_files:
-        date_str = filename_to_date(file).strftime("%d-%m-%Y %H")
+    orbit_len = 1500 + 6052
+    step = 300 * 6
 
-        print(f'''Parsing {date_str}''')
+    for file in position_per_date_files:
+        date_str = filename_to_date(file).strftime("%d-%m-%Y")
+
+        print(f'''{datetime.now().strftime("%H:%M:%S")} - Parsing {date_str}''')
         date_strs.append(date_str)
 
-        dfs = get_particles_data(static_files, file, step=int(12 * 60 * 60 / 300))
+        dfs = get_particles_data(static_files, file)
 
         dfs_data = np.array(list(map(lambda df: df.data, dfs)))
         distances = np.sqrt((dfs_data[:, 2, 1] - dfs_data[:, 3, 1]) ** 2 + (dfs_data[:, 2, 2] - dfs_data[:, 3, 2]) ** 2)
+        min_distance = min(distances)
+        min_distances.append(min_distance)
+        # 23-10-2022 - 23-05-2023 - 23-02-2024 23-07-2024 23-01-2025 23-04-2025 23-08-2025
 
-        min_distances.append(min(distances))
+        print(
+            f'''  Min distance: {min_distance}km'''
+            f''' - Time:{np.where(distances == min_distance)[0][0] * step / (60 * 60 * 24)}''')
+        if min_distance < orbit_len:
+            print(f'''  Inside Orbit!!''')
 
     data = go.Scatter(
         x=date_strs,
@@ -44,7 +54,7 @@ def plot_distance_to_venus(static_files: str, position_per_date_folder: str):
         data=data,
         layout=go.Layout(
             title=dict(text=f'Min Distance to venus per launch date', x=0.5),
-            xaxis=dict(title=r'$\Large{\text{Dia de salida}}$',
+            xaxis=dict(title=r'$\Large{\text{Día de salida}}$',
                        linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
             yaxis=dict(title=r'$\Large{\text{Distancia (km)}}$', exponentformat="power",
                        linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
@@ -71,5 +81,5 @@ def plot_distance_to_venus(static_files: str, position_per_date_folder: str):
 
 if __name__ == "__main__":
     static_file = '../../assets/ej2/StaticPlanets'
-    dates_folder = '../../results/ej2/multipleRuns'
+    dates_folder = '../../results/ej2/multipleRuns/2years'
     plot_distance_to_venus(static_file, dates_folder)

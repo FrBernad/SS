@@ -41,9 +41,7 @@ public class SimulatorOscillatorMultiple {
 
     private static final double DT_START = 0.01;
     private static final List<Integer> STEPS = List.of(1, 1, 1, 10, 100);
-
     private static final int RUNS = 5;
-
     private static final String TF_P = "tf";
     private static final String TIME_OUT_PATH_P = "timeFile";
     private static final String RESULTS_OUT_DIR_P = "outResultsDir";
@@ -69,7 +67,6 @@ public class SimulatorOscillatorMultiple {
         final Particle oscillatorParticle = new Particle(1, RADIUS, MASS);
 
         for (int i = 0; i < RUNS; i++) {
-
             double dt = BigDecimal.valueOf(DT_START * Math.pow(10, -i)).setScale(i + 2, RoundingMode.FLOOR).doubleValue();
             LOGGER.info("Running simulator with dt {}", dt);
 
@@ -130,13 +127,13 @@ public class SimulatorOscillatorMultiple {
 
         final String outResultsFile = getPropertyOrFail(properties, RESULTS_OUT_DIR_P);
         final double tf = parseDouble(getPropertyOrDefault(properties, TF_P, "5"));
-        final String timeFilePath = getPropertyOrFail(properties, TIME_OUT_PATH_P);
+        final String timeFilePath = getPropertyOrDefault(properties, TIME_OUT_PATH_P, "");
         return new BaseArguments(null, null, outResultsFile, timeFilePath, null, tf, 0, null);
     }
 
     private static void printClientUsage() {
         System.out.println("Invalid simulator invocation.\n" +
-            "Usage: ./simulator -DoutresultsDir=resultsDir -DtimeFile=timeFile -Dtf=tf "
+            "Usage: ./simulator -DoutresultsDir=resultsDir -Dtf=tf "
         );
     }
 
@@ -153,7 +150,7 @@ public class SimulatorOscillatorMultiple {
                     Map<Particle, State> states = entry.getValue();
                     pw.append(String.format("%f\n", time));
                     states.forEach((particle, state) ->
-                        pw.printf("%d %f %f %f %f\n",
+                        pw.printf("%d %.16f %.16f %.16f %.16f\n",
                             particle.getId(),
                             state.getPosition().getX(), state.getPosition().getY(),
                             state.getVelocityX(), state.getVelocityY()));

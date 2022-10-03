@@ -36,7 +36,6 @@ public class GearPredictor {
         final ExecutionTimestamps executionTimestamps = new ExecutionTimestamps();
         executionTimestamps.setAlgorithmStart(LocalDateTime.now());
 
-
         final Map<Double, Map<Particle, State>> particlesStates = new TreeMap<>();
 
         final R initialR = calculateInitialR(particle.getMass(), initialState, k, gamma);
