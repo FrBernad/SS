@@ -13,24 +13,20 @@ from utils.parser_utils import get_particles_data
 # El momento en el futuro (fecha y cuántos días desde 23/09/2022) en el cual la nave debería partir
 # para asegurar el arribo a Venus. Para ello, graficar la mínima distancia nave-Venus en función de la
 # fecha de salida.
-def plot_distance_to_venus(static_files: str, position_per_date_folder: str):
+def plot_speed_trip(static_files: str, position_per_date_folder: str):
     position_per_date_files = glob.glob(position_per_date_folder + '/*')
 
-    filename_to_date = lambda f: datetime.strptime(f.split("/")[-1], '%Y-%b-%d %H:%M:%S.%f')
-
-    position_per_date_files.sort(key=lambda f: filename_to_date(f))
+    position_per_date_files.sort(key=lambda f: float(f.split("/")[-1].split()[-1]))
 
     min_distances = []
-    date_strs = []
+
+    speeds = np.arange(4, 12 + 0.5, 0.5)
 
     orbit_len = 1500 + 6052
     step = 300 * 6
 
-    for file in position_per_date_files:
-        date_str = filename_to_date(file).strftime("%d-%m-%Y %H:%M")
-
-        print(f'''{datetime.now().strftime("%H:%M:%S")} - Parsing {date_str}''')
-        date_strs.append(date_str)
+    for i, file in enumerate(position_per_date_files):
+        print(f'''{datetime.now().strftime("%H:%M:%S")} - Parsing {speeds[i]}''')
 
         dfs = get_particles_data(static_files, file)
 
@@ -47,17 +43,17 @@ def plot_distance_to_venus(static_files: str, position_per_date_folder: str):
             print(f'''  Inside Orbit!!''')
 
     data = go.Scatter(
-        x=date_strs,
+        x=speeds,
         y=min_distances)
 
     fig = go.Figure(
         data=data,
         layout=go.Layout(
             title=dict(text=f'Min Distance to venus per launch date', x=0.5),
-            xaxis=dict(title=r'$\Large{\text{Día de salida}}$',
+            xaxis=dict(title=r'$\Large{\text{Rapidez }(\frac{\text{km}}{\text{s}})}$',
                        linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
-            yaxis=dict(title=r'$\Large{\text{Distancia (km)}}$', exponentformat="power",
-                       linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
+            yaxis=dict(title=r'$\Large{\text{Distancia (km)}}$', exponentformat="power", type="log",
+                       linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10, dtick=1),
             font=dict(
                 family="Computer Modern",
                 size=22,
@@ -81,5 +77,5 @@ def plot_distance_to_venus(static_files: str, position_per_date_folder: str):
 
 if __name__ == "__main__":
     static_file = '../../assets/ej2/StaticPlanets'
-    dates_folder = '../../results/ej2/multipleRuns/2022-10-26_h/2022-Oct-26 22:00:00.0000'
-    plot_distance_to_venus(static_file, dates_folder)
+    dates_folder = '../../results/ej2/multipleRuns/speed'
+    plot_speed_trip(static_file, dates_folder)
