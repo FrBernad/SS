@@ -20,11 +20,14 @@ def get_frame_particles(df: DataFrame):
     particles.create_property('Force',
                               data=np.array((df.vx, df.vy, np.zeros(len(df.x)))).T
                               )
+    particles.create_property('Color',
+                              data=[(1.0, 1.0, 0.0), tuple(np.array([173, 255, 47]) / 255.0),
+                                    tuple(np.array([189, 183, 107]) / 255.0), tuple(np.array([65, 105, 225]) / 255.0)])
 
     return particles
 
 
-def get_particles_data(static_file: str, results_file: str, step: int = 1) -> List[EventData]:
+def get_particles_data(static_file: str, results_file: str) -> List[EventData]:
     static_df = pd.read_csv(static_file, skiprows=2, sep=" ", names=["radius", "mass"])
     static_df.radius[0] = 3000
     static_df.radius[1] = 1000
@@ -47,7 +50,7 @@ def get_particles_data(static_file: str, results_file: str, step: int = 1) -> Li
         df = pd.DataFrame(np.array(current_frame), columns=["id", "x", "y", "vx", "vy"])
         dfs.append(EventData(current_frame_time, pd.concat([df, static_df], axis=1)))
 
-    return dfs[0::step]
+    return dfs
 
 
 def get_particles_initial_data(static_file: str, dynamic_file: str) -> List[DataFrame]:

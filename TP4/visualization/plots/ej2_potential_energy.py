@@ -19,12 +19,12 @@ def plot_potential_energy(static_files: str, results_file: str):
     dfs_data = np.array(list(map(lambda df: df.data, dfs)))
     dfs_time = np.array(list(map(lambda df: df.time, dfs)))
 
-    potential_energy = np.zeros(len(dfs_data))
-    kinetic_energy = np.zeros(len(dfs_data))
+    potential_energy = np.zeros((4, len(dfs_data)))
+    kinetic_energy = np.zeros((4, len(dfs_data)))
     for i in range(4):
         speed = np.sqrt((dfs_data[:, i, 3] ** 2) + (dfs_data[:, i, 4] ** 2))
         mass = dfs_data[:, i, 6]
-        kinetic_energy += (mass * speed ** 2) / 2
+        kinetic_energy[i] += (mass * speed ** 2) / 2
 
         for j in range(4):
             if i != j:
@@ -32,9 +32,9 @@ def plot_potential_energy(static_files: str, results_file: str):
                 distances = np.sqrt(
                     (dfs_data[:, i, 1] - dfs_data[:, j, 1]) ** 2 + (dfs_data[:, i, 2] - dfs_data[:, j, 2]) ** 2)
 
-                potential_energy += (mass_mult * - G / distances)
+                potential_energy[i] += (mass_mult * - G / distances)
 
-    energy = kinetic_energy + potential_energy
+    energy = kinetic_energy[3] + potential_energy[3]
 
     variation = (100 * (energy - energy[0])) / energy[0]
 

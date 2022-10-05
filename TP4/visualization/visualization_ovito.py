@@ -16,8 +16,12 @@ def visualization_ovito(config_file: str):
     config = get_config(config_file)
 
     print("Getting Particles Data ...")
-    dfs = get_particles_data(config.static_file, config.results_file, step=int(12 * 60 * 60 / 300)) #12 horas en 300 segs, dame cada 12 hrs de viaje
-
+    dfs = get_particles_data(config.static_file, config.results_file)  # 12 horas en 300 segs, dame cada 12 hrs de viaje
+    hrs_step = 12
+    sim_step = dfs[1].time - dfs[0].time
+    step = int((60 * 60 * hrs_step) / sim_step)
+    # step = 1
+    dfs = dfs[::step]
     pipeline = Pipeline(source=StaticSource(data=DataCollection()))
 
     def create_particle_pos(frame, data):
@@ -35,7 +39,7 @@ def visualization_ovito(config_file: str):
     print("Exporting File ...")
     export_file(pipeline, '../results/visualization.dump', 'lammps/dump',
                 columns=["Particle Identifier", "Position.X", "Position.Y", "Position.Z", "Radius",
-                         "Force.X", "Force.Y", "Force.Z"],
+                         "Force.X", "Force.Y", "Force.Z", "Color.r", "Color.g", "Color.b"],
                 multiple_frames=True, start_frame=0, end_frame=len(dfs) - 1)
 
     print("Done!")

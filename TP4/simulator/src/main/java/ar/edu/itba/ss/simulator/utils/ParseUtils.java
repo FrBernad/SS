@@ -542,7 +542,7 @@ public class ParseUtils {
                 double spaceshipy = (distanceToSpaceship + venusR) * ry + venusy;
 
                 //Velocity
-                double vt = -7.12 - 4 + venusvx * ox + venusvy * oy;
+                double vt = 10 + venusvx * ox + venusvy * oy;
                 double spaceshipvx = ox * vt;
                 double spaceshipvy = oy * vt;
 

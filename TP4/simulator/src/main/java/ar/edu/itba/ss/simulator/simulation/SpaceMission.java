@@ -31,13 +31,14 @@ public class SpaceMission {
 
         final Map<Double, Map<Particle, State>> particlesStates = new TreeMap<>();
 
-        int iterations = 0;
         final Map<Particle, R> initialRs = calculateInitialRs(initialStates);
         storeStates(particlesStates, initialRs, 0.0);
 
         Map<Particle, R> currentRs = initialRs;
 
-        for (double t = dt; t <= tf; t += dt, iterations += 1) {
+        int iterations = 0;
+        int totalIterations = (int) Math.ceil(tf / dt);
+        for (double t = dt; iterations < totalIterations; t += dt, iterations += 1) {
             // Predict
             final Map<Particle, R> predictions = predict(currentRs, dt);
 

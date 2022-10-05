@@ -28,11 +28,16 @@ public class AlgorithmsUtils {
         final Pair r2 = calculateAcceleration(mass, initialR.get(R0.ordinal()), initialR.get(R1.ordinal()), k, gamma);
         initialR.add(r2.getX(), r2.getY());
         //r3
-        initialR.add(0, 0);
+        initialR.add((-k * initialR.get(R1.ordinal()).getX() - gamma * initialR.get(R2.ordinal()).getX()) / mass,
+            (-k * initialR.get(R1.ordinal()).getY() - gamma * initialR.get(R2.ordinal()).getY()) / mass);
         //r4
-        initialR.add(0, 0);
+        initialR.add((-k * initialR.get(R2.ordinal()).getX() - gamma * initialR.get(R3.ordinal()).getX()) / mass,
+            (-k * initialR.get(R2.ordinal()).getY() - gamma * initialR.get(R3.ordinal()).getY()) / mass);
+
         //r5
-        initialR.add(0, 0);
+        initialR.add((-k * initialR.get(R3.ordinal()).getX() - gamma * initialR.get(R4.ordinal()).getX()) / mass,
+            (-k * initialR.get(R3.ordinal()).getY() - gamma * initialR.get(R4.ordinal()).getY()) / mass);
+
 
         return initialR;
     }

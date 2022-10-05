@@ -20,16 +20,16 @@ def plot_distance_to_earth(static_files: str, position_per_date_folder: str):
     min_distances = []
     date_strs = []
 
-    orbit_len = 1500 + 6052
-    step = 300 * 3
+    orbit_len = 1500 + 6371
 
-    for file in position_per_date_files:
+    for i, file in enumerate(position_per_date_files):
         date_str = filename_to_date(file).strftime("%d-%m-%Y %H:%M")
 
-        print(f'''{datetime.now().strftime("%H:%M:%S")} - Parsing {date_str}''')
+        print(f'''{datetime.now().strftime("%H:%M:%S")} - File {i + 1} {date_str}''')
         date_strs.append(date_str)
 
         dfs = get_particles_data(static_files, file)
+        step = dfs[1].time - dfs[0].time
 
         dfs_data = np.array(list(map(lambda df: df.data, dfs)))
         distances = np.sqrt((dfs_data[:, 1, 1] - dfs_data[:, 3, 1]) ** 2 + (dfs_data[:, 1, 2] - dfs_data[:, 3, 2]) ** 2)
@@ -37,8 +37,8 @@ def plot_distance_to_earth(static_files: str, position_per_date_folder: str):
         min_distances.append(min_distance)
 
         print(
-            f'''  Min distance: {min_distance}km'''
-            f''' - Time:{np.where(distances == min_distance)[0][0] * step / (60 * 60 * 24)}''')
+            f'''  Min distance: {min_distance}km\n'''
+            f'''  Time: {np.where(distances == min_distance)[0][0] * step / (60 * 60 * 24)}''')
         if min_distance < orbit_len:
             print(f'''  Inside Orbit!!''')
 
@@ -77,5 +77,5 @@ def plot_distance_to_earth(static_files: str, position_per_date_folder: str):
 
 if __name__ == "__main__":
     static_file = '../../assets/ej2/StaticPlanets'
-    dates_folder = '../../results/ej2/multipleRuns/toEarth/2022-10-27_m'
+    dates_folder = '../../results/ej2/multipleRuns/toEarth/2023-05-22_1030_5mins'
     plot_distance_to_earth(static_file, dates_folder)
