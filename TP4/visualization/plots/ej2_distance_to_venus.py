@@ -24,7 +24,6 @@ def plot_distance_to_venus(static_files: str, position_per_date_folder: str):
     date_strs = []
 
     orbit_len = 1500 + 6052
-    step = 300 * 6
 
     for file in position_per_date_files:
         date_str = filename_to_date(file).strftime("%d-%m-%Y %H:%M")
@@ -33,12 +32,12 @@ def plot_distance_to_venus(static_files: str, position_per_date_folder: str):
         date_strs.append(date_str)
 
         dfs = get_particles_data(static_files, file)
+        step = dfs[1].time - dfs[0].time
 
         dfs_data = np.array(list(map(lambda df: df.data, dfs)))
         distances = np.sqrt((dfs_data[:, 2, 1] - dfs_data[:, 3, 1]) ** 2 + (dfs_data[:, 2, 2] - dfs_data[:, 3, 2]) ** 2)
         min_distance = min(distances)
         min_distances.append(min_distance)
-        # 23-10-2022 - 23-05-2023 - 23-02-2024 23-07-2024 23-01-2025 23-04-2025 23-08-2025
 
         print(
             f'''  Min distance: {min_distance}km'''
@@ -48,7 +47,9 @@ def plot_distance_to_venus(static_files: str, position_per_date_folder: str):
 
     data = go.Scatter(
         x=date_strs,
-        y=min_distances)
+        y=min_distances,
+        marker=dict(size=10)
+    )
 
     fig = go.Figure(
         data=data,
@@ -81,5 +82,5 @@ def plot_distance_to_venus(static_files: str, position_per_date_folder: str):
 
 if __name__ == "__main__":
     static_file = '../../assets/ej2/StaticPlanets'
-    dates_folder = '../../results/ej2/multipleRuns/2022-10-26_h/2022-Oct-26 22:00:00.0000'
+    dates_folder = '../../results/ej2/multipleRuns/toVenus/2023-05-12_1045_5mins'
     plot_distance_to_venus(static_file, dates_folder)

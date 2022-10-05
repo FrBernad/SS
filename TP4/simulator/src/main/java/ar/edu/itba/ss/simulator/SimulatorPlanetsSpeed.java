@@ -40,7 +40,7 @@ public class SimulatorPlanetsSpeed {
 
     private static final double MIN_SPEED = 4;
     private static final double MAX_SPEED = 12;
-    
+
     public static void main(String[] args) throws IOException {
         LOGGER.info("SimulatorPlanetsSpeed Starting ...");
         final String staticFilePath;
@@ -134,7 +134,7 @@ public class SimulatorPlanetsSpeed {
             spaceshipState = new State(new Position(spaceshipx, spaceshipy), spaceshipvx, spaceshipvy);
             particles.put(spaceship, spaceshipState);
 
-            LOGGER.info(String.format("Speed %d", speed));
+            LOGGER.info(String.format("Speed %f", speed));
             LOGGER.info("   Executing Venus Mission ...");
 
             final AlgorithmResults methodResults = SpaceMission.execute(

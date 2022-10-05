@@ -1,0 +1,146 @@
+*******************************************************************************
+ Revised: April 12, 2021                Venus                           299 / 2
+ 
+ PHYSICAL DATA (updated 2020-Oct-19):
+  Vol. Mean Radius (km) =  6051.84+-0.01 Density (g/cm^3)      =  5.204
+  Mass x10^23 (kg)      =    48.685      Volume (x10^10 km^3)  = 92.843
+  Sidereal rot. period  =   243.018484 d Sid. Rot. Rate (rad/s)= -0.00000029924
+  Mean solar day        =   116.7490 d   Equ. gravity  m/s^2   =  8.870
+  Mom. of Inertia       =     0.33       Core radius (km)      = ~3200
+  Geometric Albedo      =     0.65       Potential Love # k2   = ~0.25
+  GM (km^3/s^2)         = 324858.592     Equatorial Radius, Re = 6051.893 km
+  GM 1-sigma (km^3/s^2) =    +-0.006     Mass ratio (Sun/Venus)= 408523.72
+  Atmos. pressure (bar) =  90            Max. angular diam.    =   60.2"
+  Mean Temperature (K)  = 735            Visual mag. V(1,0)    =   -4.40
+  Obliquity to orbit    = 177.3 deg      Hill's sphere rad.,Rp =  167.1
+  Sidereal orb. per., y =   0.61519726   Orbit speed, km/s     =   35.021
+  Sidereal orb. per., d = 224.70079922   Escape speed, km/s    =   10.361
+                                 Perihelion  Aphelion    Mean
+  Solar Constant (W/m^2)         2759         2614       2650
+  Maximum Planetary IR (W/m^2)    153         153         153
+  Minimum Planetary IR (W/m^2)    153         153         153
+*******************************************************************************
+
+
+*******************************************************************************
+Ephemeris / WWW_USER Mon Oct  3 18:28:09 2022 Pasadena, USA      / Horizons
+*******************************************************************************
+Target body name: Venus (299)                     {source: DE441}
+Center body name: Sun (10)                        {source: DE441}
+Center-site name: BODY CENTER
+*******************************************************************************
+Start time      : A.D. 2022-Oct-27 00:00:00.0000 TDB
+Stop  time      : A.D. 2023-Oct-27 00:00:00.0000 TDB
+Step-size       : 1 calendar months
+*******************************************************************************
+Center geodetic : 0.00000000,0.00000000,0.0000000 {E-lon(deg),Lat(deg),Alt(km)}
+Center cylindric: 0.00000000,0.00000000,0.0000000 {E-lon(deg),Dxy(km),Dz(km)}
+Center radii    : 696000.0 x 696000.0 x 696000.0 k{Equator, meridian, pole}    
+Output units    : KM-S
+Output type     : GEOMETRIC cartesian states
+Output format   : 2 (position and velocity)
+Reference frame : Ecliptic of J2000.0
+*******************************************************************************
+JDTDB
+   X     Y     Z
+   VX    VY    VZ
+*******************************************************************************
+$$SOE
+2459879.500000000 = A.D. 2022-Oct-27 00:00:00.0000 TDB 
+ X =-8.768390714448676E+07 Y =-6.313900451342393E+07 Z = 4.192750085974544E+06
+ VX= 2.021716882236491E+01 VY=-2.858367047480561E+01 VZ=-1.558989951908906E+00
+2459910.500000000 = A.D. 2022-Nov-27 00:00:00.0000 TDB 
+ X =-9.194119310684655E+06 Y =-1.083194142188281E+08 Z =-9.565610640122145E+05
+ VX= 3.465997945528481E+01 VY=-3.095328571532362E+00 VZ=-2.042460116423106E+00
+2459940.500000000 = A.D. 2022-Dec-27 00:00:00.0000 TDB 
+ X = 7.365217066633178E+07 Y =-8.009177267568934E+07 Z =-5.349466123704702E+06
+ VX= 2.554813936226857E+01 VY= 2.357855743021689E+01 VZ=-1.150485964729270E+00
+2459971.500000000 = A.D. 2023-Jan-27 00:00:00.0000 TDB 
+ X = 1.084428027460410E+08 Y = 3.330258221657915E+06 Z =-6.211682810033564E+06
+ VX=-1.221529778931367E+00 VY= 3.484556224444056E+01 VZ= 5.488779815822031E-01
+2460002.500000000 = A.D. 2023-Feb-27 00:00:00.0000 TDB 
+ X = 6.758928315271807E+07 Y = 8.429133987158094E+07 Z =-2.742812349050142E+06
+ VX=-2.743095845637707E+01 VY= 2.175814023485174E+01 VZ= 1.881557985608469E+00
+2460030.500000000 = A.D. 2023-Mar-27 00:00:00.0000 TDB 
+ X =-1.196430560580661E+07 Y = 1.069186946381991E+08 Z = 2.158293612099126E+06
+ VX=-3.492313742665864E+01 VY=-4.083844014788214E+00 VZ= 1.959089273664099E+00
+2460061.500000000 = A.D. 2023-Apr-27 00:00:00.0000 TDB 
+ X =-8.970902010698529E+07 Y = 5.893503708779965E+07 Z = 5.985585403489426E+06
+ VX=-1.936965335889024E+01 VY=-2.944241230635350E+01 VZ= 7.134541799275098E-01
+2460091.500000000 = A.D. 2023-May-27 00:00:00.0000 TDB 
+ X =-1.039053534274443E+08 Y =-2.847548391367717E+07 Z = 5.604654958609854E+06
+ VX= 9.025578048523666E+00 VY=-3.393283786409418E+01 VZ=-9.866797733890404E-01
+2460122.500000000 = A.D. 2023-Jun-27 00:00:00.0000 TDB 
+ X =-4.587091811530965E+07 Y =-9.831415332112662E+07 Z = 1.297063078566484E+06
+ VX= 3.149610318086037E+01 VY=-1.496158329903635E+01 VZ=-2.022824637740518E+00
+2460152.500000000 = A.D. 2023-Jul-27 00:00:00.0000 TDB 
+ X = 4.169113323347002E+07 Y =-1.005329523968962E+08 Z =-3.785949427959561E+06
+ VX= 3.211338343114668E+01 VY= 1.329717386068884E+01 VZ=-1.670444538939668E+00
+2460183.500000000 = A.D. 2023-Aug-27 00:00:00.0000 TDB 
+ X = 1.030889936091846E+08 Y =-3.432104780699132E+07 Z =-6.419559881704872E+06
+ VX= 1.087564160899545E+01 VY= 3.307407931001445E+01 VZ=-1.733679318407244E-01
+2460214.500000000 = A.D. 2023-Sep-27 00:00:00.0000 TDB 
+ X = 9.284367527948402E+07 Y = 5.564898384076960E+07 Z =-4.592884431450421E+06
+ VX=-1.811296936990637E+01 VY= 2.988741158396096E+01 VZ= 1.455573876278818E+00
+2460244.500000000 = A.D. 2023-Oct-27 00:00:00.0000 TDB 
+ X = 2.038716466821753E+07 Y = 1.058161706213413E+08 Z = 2.768599762461782E+05
+ VX=-3.450584968212659E+01 VY= 6.451454812254716E+00 VZ= 2.079612860783591E+00
+$$EOE
+*******************************************************************************
+ 
+TIME
+
+  Barycentric Dynamical Time ("TDB" or T_eph) output was requested. This
+continuous relativistic coordinate time is equivalent to the relativistic
+proper time of a clock at rest in a reference frame comoving with the
+solar system barycenter but outside the system's gravity well. It is the
+independent variable in the solar system relativistic equations of motion.
+
+  TDB runs at a uniform rate of one SI second per second and is independent
+of irregularities in Earth's rotation.
+
+  Calendar dates prior to 1582-Oct-15 are in the Julian calendar system.
+Later calendar dates are in the Gregorian system.
+
+REFERENCE FRAME AND COORDINATES
+
+  Ecliptic at the standard reference epoch
+
+    Reference epoch: J2000.0
+    X-Y plane: adopted Earth orbital plane at the reference epoch
+               Note: IAU76 obliquity of 84381.448 arcseconds wrt ICRF X-Y plane
+    X-axis   : ICRF
+    Z-axis   : perpendicular to the X-Y plane in the directional (+ or -) sense
+               of Earth's north pole at the reference epoch.
+
+  Symbol meaning:
+
+    JDTDB    Julian Day Number, Barycentric Dynamical Time
+      X      X-component of position vector (km)
+      Y      Y-component of position vector (km)
+      Z      Z-component of position vector (km)
+      VX     X-component of velocity vector (km/sec)                           
+      VY     Y-component of velocity vector (km/sec)                           
+      VZ     Z-component of velocity vector (km/sec)                           
+
+ABERRATIONS AND CORRECTIONS
+
+ Geometric state vectors have NO corrections or aberrations applied.
+
+Computations by ...
+
+    Solar System Dynamics Group, Horizons On-Line Ephemeris System
+    4800 Oak Grove Drive, Jet Propulsion Laboratory
+    Pasadena, CA  91109   USA
+
+    General site: https://ssd.jpl.nasa.gov/
+    Mailing list: https://ssd.jpl.nasa.gov/email_list.html
+    System news : https://ssd.jpl.nasa.gov/horizons/news.html
+    User Guide  : https://ssd.jpl.nasa.gov/horizons/manual.html
+    Connect     : browser        https://ssd.jpl.nasa.gov/horizons/app.html#/x
+                  API            https://ssd-api.jpl.nasa.gov/doc/horizons.html
+                  command-line   telnet ssd.jpl.nasa.gov 6775
+                  e-mail/batch   https://ssd.jpl.nasa.gov/ftp/ssd/hrzn_batch.txt
+                  scripts        https://ssd.jpl.nasa.gov/ftp/ssd/SCRIPTS
+    Author      : Jon.D.Giorgini@jpl.nasa.gov
+*******************************************************************************

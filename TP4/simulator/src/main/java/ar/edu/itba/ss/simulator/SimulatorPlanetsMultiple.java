@@ -83,7 +83,7 @@ public class SimulatorPlanetsMultiple {
             final File outResultsFile = new File(outResultsPath);
 
             int index = 0;
-            double step = 6;
+            double step = 1;
 
             try (PrintWriter pw = new PrintWriter(outResultsFile)) {
                 for (Map.Entry<Double, Map<Particle, Particle.State>> entry : methodResults.getParticlesStates().entrySet()) {
@@ -96,14 +96,13 @@ public class SimulatorPlanetsMultiple {
                                 particle.getId(),
                                 state.getPosition().getX(), state.getPosition().getY(),
                                 state.getVelocityX(), state.getVelocityY()));
-
                     }
                     index += 1;
                 }
             }
 
         }
-        LOGGER.info("   Done!\n");
+        LOGGER.info("Done!\n");
 
     }
 

@@ -1,10 +1,7 @@
 package ar.edu.itba.ss.simulator;
 
 import ar.edu.itba.ss.simulator.simulation.SpaceMission;
-import ar.edu.itba.ss.simulator.utils.ActionLogger;
-import ar.edu.itba.ss.simulator.utils.Algorithm;
-import ar.edu.itba.ss.simulator.utils.AlgorithmResults;
-import ar.edu.itba.ss.simulator.utils.BaseArguments;
+import ar.edu.itba.ss.simulator.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,12 +9,15 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Paths;
+import java.util.Map;
 import java.util.Properties;
 
 import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrDefault;
 import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrFail;
 import static ar.edu.itba.ss.simulator.utils.ParseUtils.*;
+import static ar.edu.itba.ss.simulator.utils.Particle.*;
 import static java.lang.Double.parseDouble;
+import static java.lang.Math.*;
 
 public class SimulatorPlanets {
     private static final Logger LOGGER = LoggerFactory.getLogger(SimulatorPlanets.class);
@@ -30,6 +30,8 @@ public class SimulatorPlanets {
     private static final String TF_P = "tf";
     private static final String DELIMITER_P = "delimiter";
     private static final String DEFAULT_DELIMITER = " ";
+    private static final Double G = 6.693 * pow(10, -11) / pow(10, 9);
+
 
     public static void main(String[] args) throws IOException {
         LOGGER.info("SimulatorPlanets Starting ...");
@@ -62,17 +64,25 @@ public class SimulatorPlanets {
         LOGGER.info(String.format("Finished Venus Mision In %d Iterations",
             methodResults.getIterations()));
         LOGGER.info("Writing Results ...");
+
+        int index = 0;
+        double step = 6;
+
         final File outResultsFile = new File(baseArguments.getOutResultsFilePath());
         try (PrintWriter pw = new PrintWriter(outResultsFile)) {
-            methodResults.getParticlesStates()
-                .forEach((time, states) -> {
+            for (Map.Entry<Double, Map<Particle, State>> entry : methodResults.getParticlesStates().entrySet()) {
+                Double time = entry.getKey();
+                Map<Particle, State> states = entry.getValue();
+                if (index % step == 0) {
                     pw.append(String.format("%f\n", time));
                     states.forEach((particle, state) ->
                         pw.printf("%d %.16f %.16f %.16f %.16f\n",
                             particle.getId(),
                             state.getPosition().getX(), state.getPosition().getY(),
                             state.getVelocityX(), state.getVelocityY()));
-                });
+                }
+                index += 1;
+            }
         }
 
         final File outTimeFile = new File(baseArguments.getOutTimeFilePath());
@@ -83,6 +93,7 @@ public class SimulatorPlanets {
         LOGGER.info("Done!");
 
     }
+
 
     private static BaseArguments getAndParseBaseArguments(final Properties properties) throws IllegalArgumentException {
         final String staticFilePath = getPropertyOrFail(properties, STATIC_FILE_PATH_P);
@@ -107,5 +118,21 @@ public class SimulatorPlanets {
             "Usage: ./simulator -DstaticFile='path/to/static/file' -DdynamicFile='path/to/dynamic/file' " +
             " -DresultsFile=resultsFile -DtimeFile=timeFile [-Ddelimiter=delimiter] -Ddt=dt -Dtf=tf -Dalgorithm=algorithm "
         );
+    }
+
+    private static double getEnergy(Map<Particle, State> particleStateMap, Particle particle, State state) {
+
+        final double kineticEnergy = (0.5) * particle.getMass() * (sqrt(pow(state.getVelocityX(), 2) + pow(state.getVelocityY(), 2)));
+        double potentialEnergy = 0;
+        for (Map.Entry<Particle, State> entry : particleStateMap.entrySet()) {
+            Particle p = entry.getKey();
+            State s = entry.getValue();
+            if (!p.equals(particle)) {
+                double distance = sqrt(pow(state.getPosition().getX() - s.getPosition().getX(), 2) + pow(state.getPosition().getY() - s.getPosition().getY(), 2));
+                potentialEnergy += (-G * p.getMass() * particle.getMass() / distance);
+            }
+        }
+
+        return kineticEnergy + potentialEnergy;
     }
 }

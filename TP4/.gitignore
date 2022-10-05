@@ -64,3 +64,4 @@ assets/ej2/
 assets/multipleRuns/
 assets/StaticPlanets
 __pycache__
+/visualization/.run/

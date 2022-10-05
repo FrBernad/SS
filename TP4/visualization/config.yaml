@@ -1,7 +1,7 @@
 ---
 # --- Visualization plotly config ---
 config:
-  results_file: "../results/ej2/multipleRuns/2022-Oct-26 16:00:00.0000"
+  results_file: "../results/ej2/multipleRuns/toVenus/2023-05-12_1045_5mins/2023-May-12 11:15:00.0000"
   dynamic_file: "../assets/ej2/results.txt"
   static_file: "../assets/ej2/StaticPlanets"
 ...
