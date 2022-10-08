@@ -76,5 +76,5 @@ def plot_potential_energy(static_files: str, results_file: str):
 
 if __name__ == "__main__":
     static_file = '../../assets/ej2/StaticPlanets'
-    results_file = '/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP4/results/ej2/results.txt'
+    results_file = '../../results/ej2/multipleRuns/toVenus/2023-05-12_1045_5mins/2023-May-12 11:15:00.0000'
     plot_potential_energy(static_file, results_file)

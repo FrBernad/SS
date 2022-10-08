@@ -10,28 +10,27 @@ import plotly.graph_objects as go
 from utils.parser_utils import get_particles_data
 
 
-def plot_speed_trip(static_files: str, position_per_date_folder: str):
+def plot_speed_variation(static_files: str, position_per_date_folder: str):
     position_per_date_files = glob.glob(position_per_date_folder + '/*')
 
     position_per_date_files.sort(key=lambda f: float(f.split("/")[-1].split()[-1]))
 
     min_distances = []
 
-    speeds = np.arange(4, 12 + 0.5, 0.5)
+    speeds = np.arange(7.990, 8.010 + 0.001, 0.001)
 
     orbit_len = 1500 + 6052
-    step = 300 * 3
 
     for i, file in enumerate(position_per_date_files):
         print(f'''{datetime.now().strftime("%H:%M:%S")} - Parsing {speeds[i]}''')
 
         dfs = get_particles_data(static_files, file)
+        step = dfs[1].time - dfs[0].time
 
         dfs_data = np.array(list(map(lambda df: df.data, dfs)))
         distances = np.sqrt((dfs_data[:, 2, 1] - dfs_data[:, 3, 1]) ** 2 + (dfs_data[:, 2, 2] - dfs_data[:, 3, 2]) ** 2)
         min_distance = min(distances)
-        min_distances.append(min_distance)
-        # 23-10-2022 - 23-05-2023 - 23-02-2024 23-07-2024 23-01-2025 23-04-2025 23-08-2025
+        min_distances.append(np.floor(min_distance))
 
         print(
             f'''  Min distance: {min_distance}km'''
@@ -40,6 +39,8 @@ def plot_speed_trip(static_files: str, position_per_date_folder: str):
             print(f'''  Inside Orbit!!''')
 
     data = go.Scatter(
+        mode="markers+lines",
+        marker=dict(size=10),
         x=speeds,
         y=min_distances)
 
@@ -49,8 +50,8 @@ def plot_speed_trip(static_files: str, position_per_date_folder: str):
             title=dict(text=f'Min Distance to venus per launch date', x=0.5),
             xaxis=dict(title=r'$\Large{\text{Rapidez }(\frac{\text{km}}{\text{s}})}$',
                        linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
-            yaxis=dict(title=r'$\Large{\text{Distancia (km)}}$', exponentformat="power", type="log",
-                       linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10, dtick=1),
+            yaxis=dict(title=r'$\Large{\text{Distancia mínima (km)}}$', exponentformat="power", type="log",
+                       linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
             font=dict(
                 family="Computer Modern",
                 size=22,
@@ -74,5 +75,5 @@ def plot_speed_trip(static_files: str, position_per_date_folder: str):
 
 if __name__ == "__main__":
     static_file = '../../assets/ej2/StaticPlanets'
-    dates_folder = '../../results/ej2/multipleRuns/speed'
-    plot_speed_trip(static_file, dates_folder)
+    dates_folder = '/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP4/results/ej2/multipleRuns/toVenus/speed'
+    plot_speed_variation(static_file, dates_folder)

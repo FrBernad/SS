@@ -95,7 +95,7 @@ def plot_oscillator_ecm(run_files: List[Tuple]):
         data=go.Scatter(
             x=names,
             y=ECMs,
-            marker=dict(size=5)
+            marker=dict(size=10)
         ),
         layout=go.Layout(
             title=dict(text=f'ECMs', x=0.5),

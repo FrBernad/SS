@@ -44,6 +44,7 @@ def plot_distance_to_earth(static_files: str, position_per_date_folder: str):
 
     data = go.Scatter(
         x=date_strs,
+        marker=dict(size=10),
         y=min_distances)
 
     fig = go.Figure(
@@ -52,7 +53,7 @@ def plot_distance_to_earth(static_files: str, position_per_date_folder: str):
             title=dict(text=f'Min Distance to earth per launch date', x=0.5),
             xaxis=dict(title=r'$\Large{\text{Día de salida}}$',
                        linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
-            yaxis=dict(title=r'$\Large{\text{Distancia (km)}}$', exponentformat="power",
+            yaxis=dict(title=r'$\Large{\text{Distancia mínima(km)}}$', exponentformat="power",
                        linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
             font=dict(
                 family="Computer Modern",
@@ -77,5 +78,5 @@ def plot_distance_to_earth(static_files: str, position_per_date_folder: str):
 
 if __name__ == "__main__":
     static_file = '../../assets/ej2/StaticPlanets'
-    dates_folder = '../../results/ej2/multipleRuns/toEarth/2025-01-04_15_00_5mins'
+    dates_folder = '/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP4/results/ej2/multipleRuns/toEarth/2025-01-04_15_00_5mins'
     plot_distance_to_earth(static_file, dates_folder)

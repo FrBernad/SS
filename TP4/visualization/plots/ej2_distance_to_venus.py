@@ -57,7 +57,7 @@ def plot_distance_to_venus(static_files: str, position_per_date_folder: str):
             title=dict(text=f'Min Distance to venus per launch date', x=0.5),
             xaxis=dict(title=r'$\Large{\text{Día de salida}}$',
                        linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
-            yaxis=dict(title=r'$\Large{\text{Distancia (km)}}$', exponentformat="power",
+            yaxis=dict(title=r'$\Large{\text{Distancia mínima (km)}}$', exponentformat="power",
                        linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
             font=dict(
                 family="Computer Modern",

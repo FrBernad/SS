@@ -20,9 +20,9 @@ import static java.lang.Double.parseDouble;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 
-public class SimulatorPlanetsSpeed {
+public class SimulatorSpeedToVenus {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SimulatorPlanetsSpeed.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SimulatorSpeedToVenus.class);
     private static final String STATIC_FILE_PATH_P = "staticFile";
     private static final String DYNAMIC_FILE_PATH_P = "dynamicFile";
     private static final String RESULTS_OUT_DIR_PATH_P = "resultsDir";
@@ -36,13 +36,13 @@ public class SimulatorPlanetsSpeed {
     private static final int SPACESHIP = 4;
     private static final double DISTANCE_TO_SPACESHIP = 1500;
     private static final double ORBITAL_SPEED = 7.12;
-    private static final double SPEED_STEP = 0.5;
+    private static final double SPEED_STEP = 0.001;
 
-    private static final double MIN_SPEED = 4;
-    private static final double MAX_SPEED = 12;
+    private static final double MIN_SPEED = 7.990;
+    private static final double MAX_SPEED = 8.010;
 
     public static void main(String[] args) throws IOException {
-        LOGGER.info("SimulatorPlanetsSpeed Starting ...");
+        LOGGER.info("SimulatorSpeedToVenus Starting ...");
         final String staticFilePath;
         final String dynamicFilePath;
         final String outResultsDirPath;
@@ -123,8 +123,8 @@ public class SimulatorPlanetsSpeed {
         double oy = rx;
 
         //Position
-        double spaceshipx = DISTANCE_TO_SPACESHIP * -rx + earthx + earthR;
-        double spaceshipy = DISTANCE_TO_SPACESHIP * -ry + earthy + earthR;
+        double spaceshipx = (DISTANCE_TO_SPACESHIP + earthR) * -rx + earthx;
+        double spaceshipy = (DISTANCE_TO_SPACESHIP + earthR) * -ry + earthy;
 
         for (double speed = MIN_SPEED; speed <= MAX_SPEED; speed += SPEED_STEP) {
             //Velocity
