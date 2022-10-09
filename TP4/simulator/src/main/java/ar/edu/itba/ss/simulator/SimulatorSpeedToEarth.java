@@ -38,13 +38,14 @@ public class SimulatorSpeedToEarth {
     private static final int VENUS = 3;
     private static final int SPACESHIP = 4;
     private static final double DISTANCE_TO_SPACESHIP = 1500;
-    private static final double ORBITAL_SPEED = 5.6;
-    //    private static final double SPEED_STEP = 0.001;
-//    private static final double MIN_SPEED = 5.590;
-//    private static final double MAX_SPEED = 5.610;
-    private static final double SPEED_STEP = 1;
-    private static final double MIN_SPEED = 2;
-    private static final double MAX_SPEED = 8;
+    private static final double ORBITAL_SPEED = 5.8;
+//    private static final double SPEED_STEP = 0.1;
+//    private static final double MIN_SPEED = 2;
+//    private static final double MAX_SPEED = 8;
+    private static final double SPEED_STEP = 0.001;
+    private static final double MIN_SPEED = 4.390;
+    private static final double MAX_SPEED = 4.411;
+
 
     public static void main(String[] args) throws IOException {
         LOGGER.info("SimulatorSpeedToEarth Starting ...");
@@ -71,15 +72,12 @@ public class SimulatorSpeedToEarth {
         final File staticFile = Paths.get(staticFilePath).toFile();
         final File dynamicFile = Paths.get(dynamicFilePath).toFile();
 
-
         final ParseUtils.ParticlesParserResult particlesParserResult = parseParticlesList(staticFile,
             dynamicFile,
             delimiter);
 
         Map<Particle, State> particles = particlesParserResult.getParticlesPerTime().get(0);
         State sunState = null;
-        Particle earth = null;
-        State earthState = null;
         Particle venus = null;
         State venusState = null;
         Particle spaceship = null;
@@ -93,8 +91,6 @@ public class SimulatorSpeedToEarth {
                     sunState = s;
                     break;
                 case EARTH:
-                    earth = p;
-                    earthState = s;
                     break;
                 case VENUS:
                     venus = p;
@@ -107,7 +103,7 @@ public class SimulatorSpeedToEarth {
             }
         }
 
-        if (sunState == null || earthState == null || venusState == null || spaceshipState == null) {
+        if (sunState == null || venusState == null || spaceshipState == null) {
             printClientUsage();
             return;
         }
@@ -136,13 +132,14 @@ public class SimulatorSpeedToEarth {
 
         for (double speed = MIN_SPEED; speed <= MAX_SPEED; speed += SPEED_STEP) {
             //Velocity
-            double vt = ORBITAL_SPEED + speed + venusvx * ox + venusvy * oy;
+            double vt = speed + ORBITAL_SPEED + venusvx * ox + venusvy * oy;
             double spaceshipvx = ox * vt;
             double spaceshipvy = oy * vt;
             spaceshipState = new State(new Position(spaceshipx, spaceshipy), spaceshipvx, spaceshipvy);
             particles.put(spaceship, spaceshipState);
 
             LOGGER.info(String.format("Speed %f", speed));
+            LOGGER.info(String.format("   Spaceship %f", ORBITAL_SPEED + speed));
             LOGGER.info("   Executing Venus Mission ...");
 
             final AlgorithmResults methodResults = SpaceMission.execute(

@@ -332,7 +332,6 @@ public class ParseUtils {
 
         boolean foundMass = false;
 
-
         while (sunScanner.hasNextLine()) {
 
             String line = sunScanner.nextLine();
@@ -525,7 +524,7 @@ public class ParseUtils {
                 double venusy = parseDouble(venusPosition.get(1));
                 double venusvx = parseDouble(venusVelocities.get(0));
                 double venusvy = parseDouble(venusVelocities.get(1));
-                double venusR = parseDouble(planetRadius.get(1));
+                double venusR = parseDouble(planetRadius.get(2));
 
                 //https://math.stackexchange.com/questions/2045174/how-to-find-a-point-between-two-points-with-given-distance
                 double d = sqrt((pow((venusx - sunx), 2) + pow((venusy - suny), 2)));
@@ -542,12 +541,12 @@ public class ParseUtils {
                 double spaceshipy = (distanceToSpaceship + venusR) * ry + venusy;
 
                 //Velocity
-                double vt = 10 + venusvx * ox + venusvy * oy;
+                double vt = 10.2 + venusvx * ox + venusvy * oy;
                 double spaceshipvx = ox * vt;
                 double spaceshipvy = oy * vt;
 
                 pw.append(String.format("%1.20E %1.20E ", spaceshipx, spaceshipy));
-                pw.append(String.format("%1.20E %1.20E\n", spaceshipvx, spaceshipvy));
+                pw.append(String.format("%1.20E %1.20E \n", spaceshipvx, spaceshipvy));
             }
         }
     }

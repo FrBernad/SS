@@ -75,8 +75,7 @@ public class SimulatorPlanetsMultiple {
                 tf
             );
 
-            LOGGER.info(String.format("   Finished Venus Mission In %d Iterations",
-                methodResults.getIterations()));
+            LOGGER.info(String.format("   Finished Venus Mission In %d Iterations", methodResults.getIterations()));
             LOGGER.info("   Writing Results ...");
             final String[] fileName = dynamicFile.getName().split("_");
             final String outResultsPath = String.format("%s/%s %s", outResultsDirPath, fileName[1], fileName[2]);

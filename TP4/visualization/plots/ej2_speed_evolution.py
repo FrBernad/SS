@@ -84,5 +84,5 @@ def plot_speed_evolution(static_files: str, results_file: str):
 if __name__ == "__main__":
     static_file = '../../assets/ej2/StaticPlanets'
     # results_file = '../../results/ej2/multipleRuns/toVenus/2023-05-12_1045_5mins/2023-May-12 11:15:00.0000'
-    results_file = '/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP4/results/ej2/multipleRuns/toEarth/2025-01-04_15_00_5mins/2025-Jan-04 15:30:00.0000'
+    results_file = '/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP4/results/ej2/multipleRuns/toEarth/2025-01-04_1920_5mins/2025-Jan-04 20:10:00.0000'
     plot_speed_evolution(static_file, results_file)
