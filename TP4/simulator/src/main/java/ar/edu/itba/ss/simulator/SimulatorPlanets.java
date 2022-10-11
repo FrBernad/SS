@@ -66,7 +66,7 @@ public class SimulatorPlanets {
         LOGGER.info("Writing Results ...");
 
         int index = 0;
-        double step = 1;
+        double step = 6;
 
         final File outResultsFile = new File(baseArguments.getOutResultsFilePath());
         try (PrintWriter pw = new PrintWriter(outResultsFile)) {

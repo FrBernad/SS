@@ -17,8 +17,8 @@ def plot_speed_variation(static_files: str, position_per_date_folder: str):
 
     min_distances = []
 
-    # speeds = np.arange(7.990, 8.010 + 0.001, 0.001)
-    speeds = np.arange(4.390, 4.410 + 0.001, 0.001)
+    speeds = np.arange(7.990, 8.010 + 0.001, 0.001)
+    # speeds = np.arange(4.390, 4.410 + 0.001, 0.001)
     # speeds = np.arange(2, 8 + 0.1, 0.1)
 
     orbit_len = 1500 + 6052
@@ -29,8 +29,8 @@ def plot_speed_variation(static_files: str, position_per_date_folder: str):
         dfs = get_particles_data(static_files, file)
 
         dfs_data = np.array(list(map(lambda df: df.data, dfs)))
-        # distances = np.sqrt((dfs_data[:, 2, 1] - dfs_data[:, 3, 1]) ** 2 + (dfs_data[:, 2, 2] - dfs_data[:, 3, 2]) ** 2)
-        distances = np.sqrt((dfs_data[:, 1, 1] - dfs_data[:, 3, 1]) ** 2 + (dfs_data[:, 1, 2] - dfs_data[:, 3, 2]) ** 2)
+        distances = np.sqrt((dfs_data[:, 2, 1] - dfs_data[:, 3, 1]) ** 2 + (dfs_data[:, 2, 2] - dfs_data[:, 3, 2]) ** 2)
+        # distances = np.sqrt((dfs_data[:, 1, 1] - dfs_data[:, 3, 1]) ** 2 + (dfs_data[:, 1, 2] - dfs_data[:, 3, 2]) ** 2)
         min_distance = min(distances)
         min_distances.append(min_distance)
 
@@ -81,6 +81,6 @@ def plot_speed_variation(static_files: str, position_per_date_folder: str):
 
 if __name__ == "__main__":
     static_file = '../../assets/ej2/StaticPlanets'
-    dates_folder = '/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP4/results/ej2/multipleRuns/toEarth/speed'
-    # dates_folder = '/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP4/results/ej2/multipleRuns/toVenus/speed'
+    # dates_folder = '/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP4/results/ej2/multipleRuns/toEarth/speed'
+    dates_folder = '/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP4/results/ej2/multipleRuns/toVenus/speed'
     plot_speed_variation(static_file, dates_folder)
