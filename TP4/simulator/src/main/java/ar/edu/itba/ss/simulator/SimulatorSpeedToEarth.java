@@ -39,12 +39,12 @@ public class SimulatorSpeedToEarth {
     private static final int SPACESHIP = 4;
     private static final double DISTANCE_TO_SPACESHIP = 1500;
     private static final double ORBITAL_SPEED = 5.8;
-//    private static final double SPEED_STEP = 0.1;
-//    private static final double MIN_SPEED = 2;
-//    private static final double MAX_SPEED = 8;
-    private static final double SPEED_STEP = 0.001;
-    private static final double MIN_SPEED = 4.390;
-    private static final double MAX_SPEED = 4.411;
+    private static final double SPEED_STEP = 0.1;
+    private static final double MIN_SPEED = 2;
+    private static final double MAX_SPEED = 8;
+//    private static final double SPEED_STEP = 0.001;
+//    private static final double MIN_SPEED = 4.390;
+//    private static final double MAX_SPEED = 4.411;
 
 
     public static void main(String[] args) throws IOException {

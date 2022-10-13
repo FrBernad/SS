@@ -62,7 +62,7 @@ def plot_speed_evolution(static_files: str, results_file: str):
                        linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
             font=dict(
                 family="Computer Modern",
-                size=22,
+                size=26,
             ),
             plot_bgcolor='rgba(0,0,0,0)',
             legend=dict(

@@ -17,9 +17,10 @@ def plot_speed_variation(static_files: str, position_per_date_folder: str):
 
     min_distances = []
 
-    speeds = np.arange(7.990, 8.010 + 0.001, 0.001)
+    # speeds = np.arange(7.990, 8.010 + 0.001, 0.001)
     # speeds = np.arange(4.390, 4.410 + 0.001, 0.001)
     # speeds = np.arange(2, 8 + 0.1, 0.1)
+    speeds = np.arange(4, 12 + 0.1, 0.1)
 
     orbit_len = 1500 + 6052
 
@@ -42,8 +43,8 @@ def plot_speed_variation(static_files: str, position_per_date_folder: str):
             print(f'''  Inside Orbit!!''')
 
     data = go.Scatter(
-        mode="markers+lines",
-        # mode="lines",
+        # mode="markers+lines",
+        mode="lines",
         marker=dict(size=10),
         x=speeds,
         y=min_distances)
@@ -54,13 +55,13 @@ def plot_speed_variation(static_files: str, position_per_date_folder: str):
             title=dict(text=f'Min Distance to venus per launch date', x=0.5),
             xaxis=dict(title=r'$\Large{\text{Rapidez }(\frac{\text{km}}{\text{s}})}$',
                        linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
-            # yaxis=dict(title=r'$\Large{\text{Distancia mínima (km)}}$', exponentformat="power", type="log",
-            #            linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10, dtick=1),
-            yaxis=dict(title=r'$\Large{\text{Distancia mínima (km)}}$', exponentformat="power",
-                       linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
+            yaxis=dict(title=r'$\Large{\text{Distancia mínima (km)}}$', exponentformat="power", type="log",
+                       linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10, dtick=1),
+            # yaxis=dict(title=r'$\Large{\text{Distancia mínima (km)}}$', exponentformat="power",
+            #            linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
             font=dict(
                 family="Computer Modern",
-                size=22,
+                size=26,
             ),
             plot_bgcolor='rgba(0,0,0,0)',
             legend=dict(

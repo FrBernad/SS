@@ -57,7 +57,7 @@ def plot_oscillator_ecm(run_files: List[Tuple]):
                        linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
             font=dict(
                 family="Computer Modern",
-                size=22,
+                size=26,
             ),
             plot_bgcolor='rgba(0,0,0,0)',
             legend=dict(
@@ -85,7 +85,7 @@ def plot_oscillator_ecm(run_files: List[Tuple]):
             title=dict(text=f'ECM', x=0.5),
             font=dict(
                 family="Computer Modern",
-                size=22)
+                size=26)
         )
     )
     fig.update_layout(width=1000, height=1000)
@@ -105,7 +105,7 @@ def plot_oscillator_ecm(run_files: List[Tuple]):
                        linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
             font=dict(
                 family="Computer Modern",
-                size=22,
+                size=26,
             ),
             plot_bgcolor='rgba(0,0,0,0)',
             legend=dict(

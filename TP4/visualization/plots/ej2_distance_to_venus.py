@@ -26,7 +26,8 @@ def plot_distance_to_venus(static_files: str, position_per_date_folder: str):
     orbit_len = 1500 + 6052
 
     for i, file in enumerate(position_per_date_files):
-        date_str = filename_to_date(file).strftime("%d-%m-%Y %H:%M")
+        date = filename_to_date(file)
+        date_str = date.strftime("%d-%m-%Y %H:%M")
 
         print(f'''{datetime.now().strftime("%H:%M:%S")} - File {i + 1} {date_str}''')
         date_strs.append(date_str)
@@ -61,7 +62,7 @@ def plot_distance_to_venus(static_files: str, position_per_date_folder: str):
                        linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
             font=dict(
                 family="Computer Modern",
-                size=22,
+                size=26,
             ),
             plot_bgcolor='rgba(0,0,0,0)',
             legend=dict(
@@ -82,5 +83,5 @@ def plot_distance_to_venus(static_files: str, position_per_date_folder: str):
 
 if __name__ == "__main__":
     static_file = '../../assets/ej2/StaticPlanets'
-    dates_folder = '../../results/ej2/multipleRuns/toVenus/2023-05-12_1045_5mins'
+    dates_folder = '/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP4/results/ej2/multipleRuns/toVenus/2022-09-23_365d'
     plot_distance_to_venus(static_file, dates_folder)

@@ -1,8 +1,6 @@
 import glob
-import re
 
 from datetime import datetime
-from typing import Tuple, List
 
 import numpy as np
 import plotly.graph_objects as go
@@ -23,7 +21,8 @@ def plot_distance_to_earth(static_files: str, position_per_date_folder: str):
     orbit_len = 1500 + 6371
 
     for i, file in enumerate(position_per_date_files):
-        date_str = filename_to_date(file).strftime("%d-%m-%Y %H:%M")
+        date = filename_to_date(file)
+        date_str = date.strftime("%d-%m-%Y %H:%M")
 
         print(f'''{datetime.now().strftime("%H:%M:%S")} - File {i + 1} {date_str}''')
         date_strs.append(date_str)
@@ -53,11 +52,11 @@ def plot_distance_to_earth(static_files: str, position_per_date_folder: str):
             title=dict(text=f'Min Distance to earth per launch date', x=0.5),
             xaxis=dict(title=r'$\Large{\text{Día de salida}}$',
                        linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
-            yaxis=dict(title=r'$\Large{\text{Distancia mínima(km)}}$', exponentformat="power",
+            yaxis=dict(title=r'$\Large{\text{Distancia mínima (km)}}$', exponentformat="power",
                        linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
             font=dict(
                 family="Computer Modern",
-                size=22,
+                size=26,
             ),
             plot_bgcolor='rgba(0,0,0,0)',
             legend=dict(
@@ -78,5 +77,5 @@ def plot_distance_to_earth(static_files: str, position_per_date_folder: str):
 
 if __name__ == "__main__":
     static_file = '../../assets/ej2/StaticPlanets'
-    dates_folder = '/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP4/results/ej2/multipleRuns/toEarth/2023-07-18_2years'
+    dates_folder = '/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP4/results/ej2/multipleRuns/toEarth/2025-01-04_1920_5mins'
     plot_distance_to_earth(static_file, dates_folder)

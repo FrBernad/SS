@@ -36,10 +36,14 @@ public class SimulatorSpeedToVenus {
     private static final int SPACESHIP = 4;
     private static final double DISTANCE_TO_SPACESHIP = 1500;
     private static final double ORBITAL_SPEED = 7.12;
-    private static final double SPEED_STEP = 0.001;
 
-    private static final double MIN_SPEED = 7.990;
-    private static final double MAX_SPEED = 8.010;
+    private static final double SPEED_STEP = 0.1;
+    private static final double MIN_SPEED = 4;
+    private static final double MAX_SPEED = 12;
+
+//    private static final double SPEED_STEP = 0.001;
+//    private static final double MIN_SPEED = 7.990;
+//    private static final double MAX_SPEED = 8.010;
 
     public static void main(String[] args) throws IOException {
         LOGGER.info("SimulatorSpeedToVenus Starting ...");
