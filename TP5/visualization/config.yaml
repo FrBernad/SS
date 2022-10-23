@@ -1,0 +1,7 @@
+---
+# --- Visualization plotly config ---
+config:
+  results_file: "/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP5/results/"
+  dynamic_file: "/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP5/results/dynamic.txt"
+  static_file: "/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP5/results/static.txt"
+...
