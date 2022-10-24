@@ -12,15 +12,29 @@ EventData = namedtuple('EventData', ['time', 'data'])
 def get_frame_particles(df: DataFrame):
     particles = od.Particles()
 
+    silo_points = _generate_silo(70, 20, 4)
+
     particles.create_property('Particle Identifier',
-                              data=np.concatenate((df.id, np.arange(len(df.x), len(df.x)))))
+                              data=np.concatenate((df.id, np.full(len(silo_points), max(df.id) + 1))))
     particles.create_property('Position',
-                              data=np.array((df.x, df.y, np.zeros(len(df.x)))).T)
-    particles.create_property('Radius', data=df.radius)
+                              data=np.concatenate((np.array((df.x, df.y, np.zeros(len(df.x)))).T, silo_points)))
+    particles.create_property('Radius', data=np.concatenate((df.radius, np.full(len(silo_points), 0.2))))
     particles.create_property('Force',
-                              data=np.array((df.vx, df.vy, np.zeros(len(df.x)))).T
+                              data=np.concatenate((np.array((df.vx, df.vy, np.zeros(len(df.x)))).T,
+                                                   np.zeros((len(silo_points), 3))))
+                              )
+    particles.create_property('Is Wall',
+                              data=np.concatenate((np.full(len(df.id), 0.2), np.full(len(silo_points), 0)))
                               )
     return particles
+
+
+def _generate_silo(L: int, w: int, D: int):
+    left_wall = [[0, y, 0] for y in np.arange(0, L, 0.5)]
+    right_wall = [[w, y, 0] for y in np.arange(0, L, 0.5)]
+    bottom_wall = [[x, 0, 0] for x in np.arange(0, w, 0.5)]
+
+    return np.array(left_wall + right_wall + bottom_wall)
 
 
 def get_particles_data(static_file: str, results_file: str) -> List[EventData]:

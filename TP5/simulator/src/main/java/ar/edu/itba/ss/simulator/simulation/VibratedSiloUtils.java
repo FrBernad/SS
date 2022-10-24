@@ -175,18 +175,17 @@ class VibratedSiloUtils {
                     final double etX = -enY;
                     final double etY = enX;
 
-                    final double overlapX = radiusDistance - abs(deltaR0X);
-                    final double overlapY = radiusDistance - abs(deltaR0Y);
+                    final double overlap = radiusDistance - centerDistance;
 
-                    final double fNX = -kn * overlapX * enX;
-                    final double fNY = -kn * overlapY * enY;
+                    final double fNX = -kn * overlap * enX;
+                    final double fNY = -kn * overlap * enY;
 
                     // Segun teorica es i - j pero la colision en la diapo q sigue es j - i
                     final double R1relX = particleIR1.getX() - particleJRs.get(R1.ordinal()).getX();
                     final double R1relY = particleIR1.getY() - particleJRs.get(R1.ordinal()).getY();
 
-                    final double fTX = -kt * overlapX * (R1relX * etX) * etX;
-                    final double fTY = -kt * overlapY * (R1relY * etY) * etY;
+                    final double fTX = -kt * overlap * (R1relX * etX) * etX;
+                    final double fTY = -kt * overlap * (R1relY * etY) * etY;
 
                     fx += fNX * enX + fTX * etX;
                     fy += fNY * enY + fTY * etY;

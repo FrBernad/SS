@@ -4,6 +4,7 @@ import ar.edu.itba.ss.simulator.simulation.VibratedSilo;
 import ar.edu.itba.ss.simulator.utils.ActionLogger;
 import ar.edu.itba.ss.simulator.utils.AlgorithmResults;
 import ar.edu.itba.ss.simulator.utils.BaseArguments;
+import ar.edu.itba.ss.simulator.utils.Particle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Paths;
+import java.util.Map;
 import java.util.Properties;
 
 import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrDefault;
@@ -71,16 +73,24 @@ public class Simulator {
 
         LOGGER.info("Writing Results ...");
         final File outResultsFile = new File(baseArguments.getOutResultsFilePath());
+
+        int index = 0;
+        double step = 100;
+
         try (PrintWriter pw = new PrintWriter(outResultsFile)) {
-            methodResults.getParticlesStates()
-                .forEach((time, states) -> {
+            for (Map.Entry<Double, Map<Particle, Particle.State>> entry : methodResults.getParticlesStates().entrySet()) {
+                Double time = entry.getKey();
+                Map<Particle, Particle.State> states = entry.getValue();
+                if (index % step == 0) {
                     pw.append(String.format("%f\n", time));
                     states.forEach((particle, state) ->
                         pw.printf("%d %.16f %.16f %.16f %.16f\n",
                             particle.getId(),
                             state.getPosition().getX(), state.getPosition().getY(),
                             state.getVelocityX(), state.getVelocityY()));
-                });
+                }
+                index++;
+            }
         }
 
         final File outTimeFile = new File(baseArguments.getOutTimeFilePath());
