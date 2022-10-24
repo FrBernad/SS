@@ -46,11 +46,12 @@ public class VibratedSilo {
                 LOGGER.info(String.format("Current Time: %f", t));
             }
 
-            currentRs = calculateNextRs(prevRs, currentRs, dt, L, kn, kt, w, A);
+            final Map<Particle, R> nextRs = calculateNextRs(prevRs, currentRs, dt, L, kn, kt, w, A);
 
-            storeStates(particlesStates, currentRs, t);
+            storeStates(particlesStates, nextRs, t);
 
             prevRs = currentRs;
+            currentRs = nextRs;
         }
 
         executionTimestamps.setAlgorithmEnd(LocalDateTime.now());
