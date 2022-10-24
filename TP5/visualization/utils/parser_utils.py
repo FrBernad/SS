@@ -4,15 +4,17 @@ from typing import List
 import numpy as np
 import ovito.data as od
 import pandas as pd
+from numpy._typing import NDArray
 from pandas import DataFrame
 
 EventData = namedtuple('EventData', ['time', 'data'])
 
 
-def get_frame_particles(df: DataFrame):
+def get_frame_particles(df: DataFrame, time_step: float):
     particles = od.Particles()
 
-    silo_points = _generate_silo(70, 20, 4)
+    time = np.arange(0, time_step * len(df.id), time_step)
+    silo_points = _generate_silo(70, 20, 4, 0, time)
 
     particles.create_property('Particle Identifier',
                               data=np.concatenate((df.id, np.full(len(silo_points), max(df.id) + 1))))
@@ -29,10 +31,12 @@ def get_frame_particles(df: DataFrame):
     return particles
 
 
-def _generate_silo(L: int, w: int, D: int):
+def _generate_silo(L: int, W: int, w: float, D: int, time: NDArray[float]):
+    y = 0.15 * np.sin(w * time)
+
     left_wall = [[0, y, 0] for y in np.arange(0, L, 0.5)]
-    right_wall = [[w, y, 0] for y in np.arange(0, L, 0.5)]
-    bottom_wall = [[x, 0, 0] for x in np.arange(0, w, 0.5)]
+    right_wall = [[W, y, 0] for y in np.arange(0, L, 0.5)]
+    bottom_wall = [[x, 0, 0] for x in np.arange(0, W, 0.5)]
 
     return np.array(left_wall + right_wall + bottom_wall)
 

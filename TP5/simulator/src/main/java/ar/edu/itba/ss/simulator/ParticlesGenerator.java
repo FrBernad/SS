@@ -80,7 +80,7 @@ public class ParticlesGenerator {
 
         final String delimiter = getPropertyOrDefault(properties, DELIMITER_P, DEFAULT_DELIMITER);
 
-        final int N = parseInt(getPropertyOrDefault(properties, N_P, "5"));
+        final int N = parseInt(getPropertyOrDefault(properties, N_P, "1"));
 
         final File staticFile = new File(staticFilePath);
         final File dynamicFile = new File(dynamicFilePath);
