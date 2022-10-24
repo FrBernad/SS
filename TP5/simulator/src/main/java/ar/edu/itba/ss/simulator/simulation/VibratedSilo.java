@@ -12,15 +12,14 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import static ar.edu.itba.ss.simulator.simulation.VibratedSiloUtils.*;
-import static ar.edu.itba.ss.simulator.utils.Particle.State;
 
 
 public class VibratedSilo {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VibratedSilo.class);
 
-    public static AlgorithmResults execute(final Map<Particle, State> initialStates,
-                                           final int L, final double reenterHeight,
+    public static AlgorithmResults execute(final Map<Particle, R> initialRs,
+                                           final int L, final int W, final double D, final double exitDistance,
                                            final double reenterMinHeight, final double reenterMaxHeight,
                                            final double kn, final double kt,
                                            final double w, final double A,
@@ -29,12 +28,12 @@ public class VibratedSilo {
         final ExecutionTimestamps executionTimestamps = new ExecutionTimestamps();
         executionTimestamps.setAlgorithmStart(LocalDateTime.now());
 
-        final Map<Double, Map<Particle, State>> particlesStates = new TreeMap<>();
+        final Map<Double, Map<Particle, R>> particlesStates = new TreeMap<>();
 
-        final Map<Particle, R> initialRs = calculateInitialRs(initialStates, L, kn, kt, w, A);
-        storeStates(particlesStates, initialRs, 0.0);
+        calculateInitialAccelerations(initialRs, W, D, kn, kt, w, A);
+        particlesStates.put(0.0, initialRs);
 
-        Map<Particle, R> prevRs = euler(initialRs, -dt, L, kn, kt, w, A);
+        Map<Particle, R> prevRs = euler(initialRs, -dt, W, D, kn, kt, w, A);
         Map<Particle, R> currentRs = initialRs;
 
         int iterations = 0;
@@ -46,11 +45,18 @@ public class VibratedSilo {
                 LOGGER.info(String.format("Current Time: %f", t));
             }
 
-            final Map<Particle, R> nextRs = calculateNextRs(prevRs, currentRs, dt, L, kn, kt, w, A);
+            final Map<Particle, R> nextRs = calculateNextRs(prevRs, currentRs, t, W, D, kn, kt, w, A);
 
-            storeStates(particlesStates, nextRs, t);
+            final Map<Particle, R> particlesOutsideOpeningRs = getParticlesOutsideOpening(currentRs, reenterMinHeight, reenterMaxHeight, exitDistance, W);
+            calculateInitialAccelerations(particlesOutsideOpeningRs, W, D, kn, kt, w, A);
+
+            nextRs.putAll(particlesOutsideOpeningRs);
+            particlesStates.put(t, nextRs);
 
             prevRs = currentRs;
+//          FIXME: asumimos que no choca con ninguna particula al ponerlos
+            prevRs.putAll(euler(particlesOutsideOpeningRs, -dt, W, D, kn, kt, w, A));
+
             currentRs = nextRs;
         }
 

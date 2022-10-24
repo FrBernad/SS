@@ -4,13 +4,10 @@ import ar.edu.itba.ss.simulator.utils.Pair;
 import ar.edu.itba.ss.simulator.utils.Particle;
 import ar.edu.itba.ss.simulator.utils.R;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
-import static ar.edu.itba.ss.simulator.utils.Particle.Position;
-import static ar.edu.itba.ss.simulator.utils.Particle.State;
+import static ar.edu.itba.ss.simulator.ParticlesGenerator.generateParticleState;
 import static ar.edu.itba.ss.simulator.utils.R.values.*;
 import static java.lang.Math.*;
 
@@ -18,38 +15,21 @@ class VibratedSiloUtils {
 
     private static final double GRAVITY = 9.8 * 100; //CGS
 
-    static Map<Particle, R> calculateInitialRs(final Map<Particle, State> initialStates, final int L,
-                                               final double kn, final double kt,
-                                               final double w, final double A) {
+    static void calculateInitialAccelerations(final Map<Particle, R> initialStates,
+                                              final int W, final double D,
+                                              final double kn, final double kt,
+                                              final double w, final double A) {
 
-        final Map<Particle, R> rStates = new HashMap<>();
-        initialStates.forEach((p, s) -> {
-            final R r = new R();
-            r.add(s.getPosition().getX(), s.getPosition().getY());
-            r.add(s.getVelocityX(), s.getVelocityY());
-            rStates.put(p, r);
+        initialStates.forEach((p, r) -> {
+            final Pair r2 = calculateAcceleration(p, r.get(R0.ordinal()), r.get(R1.ordinal()), initialStates, W, D, kn, kt, calculateWallR0Y(A, w, 0), calculateWallR1Y(A, w, 0));
+            r.add(r2.getX(), r2.getY());
         });
 
-        final Map<Particle, R> initialRs = new HashMap<>();
-
-        initialStates.forEach((p, s) -> {
-            final R initialR = new R();
-            //r0
-            initialR.add(s.getPosition().getX(), s.getPosition().getY());
-            //r1
-            initialR.add(s.getVelocityX(), s.getVelocityY());
-            //r2
-            final Pair r2 = calculateAcceleration(p, initialR.get(R0.ordinal()), initialR.get(R1.ordinal()), rStates, L, kn, kt, calculateWallR0Y(A, w, 0), calculateWallR1Y(A, w, 0));
-            initialR.add(r2.getX(), r2.getY());
-
-            initialRs.put(p, initialR);
-        });
-
-        return initialRs;
     }
 
     static Map<Particle, R> euler(final Map<Particle, R> Rs,
-                                  final double dt, final int L,
+                                  final double dt,
+                                  final int W, final double D,
                                   final double kn, final double kt,
                                   final double w, final double A) {
 
@@ -71,7 +51,7 @@ class VibratedSiloUtils {
             double r1y = r1.getY() + (dt / p.getMass()) * r2.getY() * p.getMass();
             eulerR.add(r1x, r1y);
 
-            final Pair eulerR2 = calculateAcceleration(p, eulerR.get(R0.ordinal()), eulerR.get(R1.ordinal()), Rs, L, kn, kt, calculateWallR0Y(A, w, dt), calculateWallR1Y(A, w, dt));
+            final Pair eulerR2 = calculateAcceleration(p, eulerR.get(R0.ordinal()), eulerR.get(R1.ordinal()), Rs, W, D, kn, kt, calculateWallR0Y(A, w, dt), calculateWallR1Y(A, w, dt));
             eulerR.add(eulerR2.getX(), eulerR2.getY());
 
             rStates.put(p, eulerR);
@@ -82,7 +62,8 @@ class VibratedSiloUtils {
 
     static Map<Particle, R> calculateNextRs(final Map<Particle, R> prevRs,
                                             final Map<Particle, R> currentRs,
-                                            final double dt, final int L,
+                                            final double t,
+                                            final int W, final double D,
                                             final double kn, final double kt,
                                             final double w, final double A) {
 
@@ -101,30 +82,30 @@ class VibratedSiloUtils {
 
             final R nextR = new R();
 
-            final double r0x = currentR.get(R0.ordinal()).getX() + currentR.get(R1.ordinal()).getX() * dt +
-                ((2.0 / 3) * currentR.get(R2.ordinal()).getX() - (1.0 / 6) * prevR.get(R2.ordinal()).getX()) * dt * dt;
-            final double r0y = currentR.get(R0.ordinal()).getY() + currentR.get(R1.ordinal()).getY() * dt +
-                ((2.0 / 3) * currentR.get(R2.ordinal()).getY() - (1.0 / 6) * prevR.get(R2.ordinal()).getY()) * dt * dt;
+            final double r0x = currentR.get(R0.ordinal()).getX() + currentR.get(R1.ordinal()).getX() * t +
+                ((2.0 / 3) * currentR.get(R2.ordinal()).getX() - (1.0 / 6) * prevR.get(R2.ordinal()).getX()) * t * t;
+            final double r0y = currentR.get(R0.ordinal()).getY() + currentR.get(R1.ordinal()).getY() * t +
+                ((2.0 / 3) * currentR.get(R2.ordinal()).getY() - (1.0 / 6) * prevR.get(R2.ordinal()).getY()) * t * t;
             nextR.add(r0x, r0y);
 
             //Velocity predictions
             final double r1Px = currentR.get(R1.ordinal()).getX() +
-                ((3.0 / 2) * currentR.get(R2.ordinal()).getX() - (1.0 / 2) * prevR.get(R2.ordinal()).getX()) * dt;
+                ((3.0 / 2) * currentR.get(R2.ordinal()).getX() - (1.0 / 2) * prevR.get(R2.ordinal()).getX()) * t;
             final double r1Py = currentR.get(R1.ordinal()).getY() +
-                ((3.0 / 2) * currentR.get(R2.ordinal()).getY() - (1.0 / 2) * prevR.get(R2.ordinal()).getY()) * dt;
+                ((3.0 / 2) * currentR.get(R2.ordinal()).getY() - (1.0 / 2) * prevR.get(R2.ordinal()).getY()) * t;
 
-            final Pair r2P = calculateAcceleration(particle, nextR.get(R0.ordinal()), new Pair(r1Px, r1Py), currentRs, L, kn, kt, calculateWallR0Y(A, w, dt), calculateWallR1Y(A, w, dt));
+            final Pair r2P = calculateAcceleration(particle, nextR.get(R0.ordinal()), new Pair(r1Px, r1Py), currentRs, W, D, kn, kt, calculateWallR0Y(A, w, t), calculateWallR1Y(A, w, t));
 
             //Velocity correction
             final double r1Cx = currentR.get(R1.ordinal()).getX() +
                 ((1.0 / 3) * r2P.getX() + (5.0 / 6) * currentR.get(R2.ordinal()).getX() -
-                    (1.0 / 6) * prevR.get(R2.ordinal()).getX()) * dt;
+                    (1.0 / 6) * prevR.get(R2.ordinal()).getX()) * t;
             final double r1Cy = currentR.get(R1.ordinal()).getY() +
                 ((1.0 / 3) * r2P.getY() + (5.0 / 6) * currentR.get(R2.ordinal()).getY() -
-                    (1.0 / 6) * prevR.get(R2.ordinal()).getY()) * dt;
+                    (1.0 / 6) * prevR.get(R2.ordinal()).getY()) * t;
             nextR.add(r1Cx, r1Cy);
 
-            final Pair r2C = calculateAcceleration(particle, nextR.get(R0.ordinal()), nextR.get(R1.ordinal()), currentRs, L, kn, kt, calculateWallR0Y(A, w, dt), calculateWallR1Y(A, w, dt));
+            final Pair r2C = calculateAcceleration(particle, nextR.get(R0.ordinal()), nextR.get(R1.ordinal()), currentRs, W, D, kn, kt, calculateWallR0Y(A, w, t), calculateWallR1Y(A, w, t));
             nextR.add(r2C.getX(), r2C.getY());
 
             rStates.put(particle, nextR);
@@ -134,23 +115,10 @@ class VibratedSiloUtils {
     }
 
 
-    static void storeStates(final Map<Double, Map<Particle, State>> particlesState,
-                            final Map<Particle, R> rMap,
-                            final double instant) {
-
-        Map<Particle, State> state = new HashMap<>();
-
-        rMap.forEach((p, r) -> {
-            Position position = new Position(r.get(R0.ordinal()).getX(), r.get(R0.ordinal()).getY());
-            state.put(p, new State(position, r.get(R1.ordinal()).getX(), r.get(R1.ordinal()).getY()));
-        });
-
-        particlesState.put(instant, state);
-    }
-
     private static Pair calculateAcceleration(final Particle particleI,
                                               final Pair particleIR0, final Pair particleIR1,
-                                              final Map<Particle, R> currentRs, final int L,
+                                              final Map<Particle, R> currentRs,
+                                              final int W, final double D,
                                               final double kn, final double kt,
                                               final double wallR0Y, final double wallR1Y) {
         double fx = 0;
@@ -195,16 +163,25 @@ class VibratedSiloUtils {
         // Check collision with walls
 
         // Left Wall
-        final State leftWall = new State(new Position(0, particleIR0.getY()), 0, wallR1Y);
+        final R leftWall = new R();
+        leftWall.add(0, particleIR0.getY());
+        leftWall.add(0, wallR1Y);
         Pair leftWallForce = calculateWallForce(leftWall, particleI, particleIR0, particleIR1, kt, kn);
 
-        // Right Wall
-        final State rightWall = new State(new Position(L, particleIR0.getY()), 0, wallR1Y);
+        // Right Wall\
+        final R rightWall = new R();
+        rightWall.add(W, particleIR0.getY());
+        rightWall.add(0, wallR1Y);
         Pair rightWallForce = calculateWallForce(rightWall, particleI, particleIR0, particleIR1, kt, kn);
 
         // Bottom Wall
-        final State bottomWall = new State(new Position(particleIR0.getX(), 0), 0, wallR1Y);
-        Pair bottomWallForce = calculateWallForce(bottomWall, particleI, particleIR0, particleIR1, kt, kn);
+        Pair bottomWallForce = new Pair(0.0, 0.0);
+        if (!isInOpening(particleI, particleIR0, W, D)) {
+            final R bottomWall = new R();
+            bottomWall.add(particleIR0.getX(), wallR0Y);
+            bottomWall.add(0, wallR1Y);
+            bottomWallForce = calculateWallForce(bottomWall, particleI, particleIR0, particleIR1, kt, kn);
+        }
 
         fx += leftWallForce.getX() + rightWallForce.getX() + bottomWallForce.getX();
         fy += leftWallForce.getY() + rightWallForce.getY() + bottomWallForce.getY();
@@ -212,14 +189,16 @@ class VibratedSiloUtils {
         // Gravity Force
         fy -= particleI.getMass() * GRAVITY;
 
-//      if (particleIR0.getX() > (L / 2.0 - D / 2.0) && particleIR0.getX() < (L / 2.0 + D / 2.0)) {
 
         return new Pair(fx / particleI.getMass(), fy / particleI.getMass());
     }
 
-    private static Pair calculateWallForce(State wall, Particle particle, Pair particleIR0, Pair particleIR1, double kt, double kn) {
-        final double deltaR0XWall = wall.getPosition().getX() - particleIR0.getX();
-        final double deltaR0YWall = wall.getPosition().getY() - particleIR0.getY();
+    private static Pair calculateWallForce(final R wall, final Particle particle, final Pair particleIR0, final Pair particleIR1, double kt, double kn) {
+        Pair wallPosition = wall.get(R0.ordinal());
+        Pair wallVelocity = wall.get(R1.ordinal());
+
+        final double deltaR0XWall = wallPosition.getX() - particleIR0.getX();
+        final double deltaR0YWall = wallPosition.getY() - particleIR0.getY();
         final double centerDistanceWall = hypot(deltaR0XWall, deltaR0YWall);
         final double overlap = particle.getRadius() - centerDistanceWall;
 
@@ -234,8 +213,8 @@ class VibratedSiloUtils {
 
             final double fN = -kn * overlap;
 
-            final double R1relX = particleIR1.getX() - wall.getVelocityX();
-            final double R1relY = particleIR1.getY() - wall.getVelocityY();
+            final double R1relX = particleIR1.getX() - wallVelocity.getX();
+            final double R1relY = particleIR1.getY() - wallVelocity.getY();
 
             final double prod = R1relX * etX + R1relY * etY;
 
@@ -248,7 +227,6 @@ class VibratedSiloUtils {
         return new Pair(fx, fy);
     }
 
-
     private static double calculateWallR1Y(final double A, final double w, final double t) {
         return A * w * cos(w * t);
     }
@@ -256,4 +234,28 @@ class VibratedSiloUtils {
     private static double calculateWallR0Y(final double A, final double w, final double t) {
         return A * sin(w * t);
     }
+
+    private static boolean isInOpening(final Particle particle, final Pair particleR0, final int W, final double D) {
+        return (particleR0.getX() - particle.getRadius()) > (W / 2.0 - D / 2.0) && (particleR0.getX() + particle.getRadius()) < (W / 2.0 + D / 2.0);
+    }
+
+    static Map<Particle, R> getParticlesOutsideOpening(final Map<Particle, R> currentRs,
+                                                       final double reenterMinHeight, final double reenterMaxHeight,
+                                                       final double exitDistance, final int W) {
+
+        final Map<Particle, R> particlesOutsideOpeningRs = new HashMap<>();
+        currentRs.forEach((p, r) -> {
+            Pair position = r.get(R0.ordinal());
+            if (position.getY() - p.getRadius() < -exitDistance) {
+                final R newR = generateParticleState(reenterMinHeight + p.getRadius(), reenterMaxHeight - p.getRadius(),
+                    p.getRadius(), W - p.getRadius(), p, currentRs);
+
+                particlesOutsideOpeningRs.put(p, newR);
+            }
+        });
+
+        return particlesOutsideOpeningRs;
+    }
+
+
 }

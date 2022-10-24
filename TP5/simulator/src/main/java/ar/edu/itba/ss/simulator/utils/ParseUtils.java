@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import static ar.edu.itba.ss.simulator.utils.Particle.State;
 import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
 
@@ -19,7 +18,7 @@ public class ParseUtils {
         final int N = parseInt(staticScanner.nextLine().split(delimiter)[0]);
         final int L = parseInt(staticScanner.nextLine().split(delimiter)[0]);
 
-        final List<Map<Particle, State>> particlesPerTime = new ArrayList<>();
+        final List<Map<Particle, R>> particlesPerTime = new ArrayList<>();
 
         final List<Particle> particles = new ArrayList<>();
 
@@ -45,20 +44,18 @@ public class ParseUtils {
                 particlesPerTime.add(new HashMap<>());
             }
 
-            final Map<Particle, State> currentParticlesPerTime = particlesPerTime.get(timeIndex);
+            final Map<Particle, R> currentParticlesPerTime = particlesPerTime.get(timeIndex);
 
             final Particle currentParticle = particles.get(particleIndex);
 
-            final State currentParticleState = new State(
-                new Position(
-                    parseDouble(dynamicArray.get(DynamicFields.X.getValue())),
-                    parseDouble(dynamicArray.get(DynamicFields.Y.getValue()))
-                ),
-                parseDouble(dynamicArray.get(DynamicFields.VELOCITY_X.getValue())),
-                parseDouble(dynamicArray.get(DynamicFields.VELOCITY_Y.getValue()))
-            );
+            final R currentParticleRs = new R();
+            currentParticleRs.add(parseDouble(dynamicArray.get(DynamicFields.X.getValue())),
+                parseDouble(dynamicArray.get(DynamicFields.Y.getValue())));
 
-            currentParticlesPerTime.put(currentParticle, currentParticleState);
+            currentParticleRs.add(parseDouble(dynamicArray.get(DynamicFields.VELOCITY_X.getValue())),
+                parseDouble(dynamicArray.get(DynamicFields.VELOCITY_Y.getValue())));
+
+            currentParticlesPerTime.put(currentParticle, currentParticleRs);
 
             particleIndex++;
         }
@@ -69,11 +66,11 @@ public class ParseUtils {
     }
 
     public static class ParticlesParserResult {
-        private final List<Map<Particle, State>> particlesPerTime;
+        private final List<Map<Particle, R>> particlesPerTime;
         private final int N;
         private final int L;
 
-        public ParticlesParserResult(int N, int L, List<Map<Particle, State>> particlesPerTime) {
+        public ParticlesParserResult(int N, int L, List<Map<Particle, R>> particlesPerTime) {
             this.N = N;
             this.L = L;
             this.particlesPerTime = particlesPerTime;
@@ -87,7 +84,7 @@ public class ParseUtils {
             return L;
         }
 
-        public List<Map<Particle, State>> getParticlesPerTime() {
+        public List<Map<Particle, R>> getParticlesPerTime() {
             return particlesPerTime;
         }
     }

@@ -1,20 +1,24 @@
 from collections import namedtuple
+from math import sin
 from typing import List
 
 import numpy as np
 import ovito.data as od
 import pandas as pd
-from numpy._typing import NDArray
 from pandas import DataFrame
 
 EventData = namedtuple('EventData', ['time', 'data'])
 
 
-def get_frame_particles(df: DataFrame, time_step: float):
+def get_frame_particles(df: DataFrame, time: float):
     particles = od.Particles()
 
-    time = np.arange(0, time_step * len(df.id), time_step)
-    silo_points = _generate_silo(70, 20, 4, 0, time)
+    L = 70
+    W = 20
+    w = 5
+    D = 3
+
+    silo_points = _generate_silo(L, W, w, D, time)
 
     particles.create_property('Particle Identifier',
                               data=np.concatenate((df.id, np.full(len(silo_points), max(df.id) + 1))))
@@ -31,14 +35,15 @@ def get_frame_particles(df: DataFrame, time_step: float):
     return particles
 
 
-def _generate_silo(L: int, W: int, w: float, D: int, time: NDArray[float]):
-    y = 0.15 * np.sin(w * time)
+def _generate_silo(L: int, W: int, w: float, D: int, time: float):
+    oscillator_y = 0.15 * sin(w * time)
 
-    left_wall = [[0, y, 0] for y in np.arange(0, L, 0.5)]
-    right_wall = [[W, y, 0] for y in np.arange(0, L, 0.5)]
-    bottom_wall = [[x, 0, 0] for x in np.arange(0, W, 0.5)]
+    left_wall = np.array([[0, y + oscillator_y, 0] for y in np.arange(0, L, 0.5)])
+    right_wall = np.array([[W, y + oscillator_y, 0] for y in np.arange(0, L, 0.5)])
+    bottom_wall_left = np.array([[x, oscillator_y, 0] for x in np.arange(0, W / 2 - D / 2, 0.5)])
+    bottom_wall_right = np.array([[x, oscillator_y, 0] for x in np.arange(W / 2 + D / 2, W, 0.5)])
 
-    return np.array(left_wall + right_wall + bottom_wall)
+    return np.concatenate((left_wall, right_wall, bottom_wall_left, bottom_wall_right))
 
 
 def get_particles_data(static_file: str, results_file: str) -> List[EventData]:

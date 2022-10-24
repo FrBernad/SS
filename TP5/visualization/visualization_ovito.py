@@ -1,5 +1,6 @@
 import sys
 
+import numpy as np
 from ovito.data import DataCollection, SimulationCell
 from ovito.io import export_file
 from ovito.pipeline import Pipeline, StaticSource
@@ -18,10 +19,11 @@ def visualization_ovito(config_file: str):
     print("Getting Particles Data ...")
     dfs = get_particles_data(config.static_file, config.results_file)
     sim_step = dfs[1].time - dfs[0].time
-    # time_step = 5
+    # time_step = 0.1
     time_step = sim_step
     step = int(time_step / sim_step)
     dfs = dfs[::step]
+    time = np.arange(0, time_step * len(dfs), time_step)
     pipeline = Pipeline(source=StaticSource(data=DataCollection()))
 
     def create_particle_pos(frame, data):
@@ -31,7 +33,7 @@ def visualization_ovito(config_file: str):
         cell[:, 2] = (0, 0, 2)
         data.objects.append(cell)
 
-        particles = get_frame_particles(dfs[frame].data, time_step)
+        particles = get_frame_particles(dfs[frame].data, time[frame])
         data.objects.append(particles)
 
     pipeline.modifiers.append(create_particle_pos)

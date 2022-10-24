@@ -1,7 +1,9 @@
 package ar.edu.itba.ss.simulator;
 
 import ar.edu.itba.ss.simulator.utils.FileGeneratorArguments;
+import ar.edu.itba.ss.simulator.utils.Pair;
 import ar.edu.itba.ss.simulator.utils.Particle;
+import ar.edu.itba.ss.simulator.utils.R;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,8 +14,8 @@ import java.util.*;
 
 import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrDefault;
 import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrFail;
-import static ar.edu.itba.ss.simulator.utils.Particle.Position;
-import static ar.edu.itba.ss.simulator.utils.Particle.State;
+import static ar.edu.itba.ss.simulator.utils.R.values.*;
+
 import static java.lang.Integer.parseInt;
 import static java.lang.Math.pow;
 
@@ -48,7 +50,7 @@ public class ParticlesGenerator {
 
         LOGGER.info("Generating files ...");
 
-        Map<Particle, State> particles = generateParticles(fileArguments.getN(), L, W);
+        Map<Particle, R> particles = generateParticles(fileArguments.getN(), L, W);
 
         //Static File
         try (PrintWriter pw = new PrintWriter(fileArguments.getStaticFile())) {
@@ -56,7 +58,7 @@ public class ParticlesGenerator {
             pw.println(fileArguments.getN());
             pw.println(L);
 
-            for (Map.Entry<Particle, State> entry : particles.entrySet()) {
+            for (Map.Entry<Particle, R> entry : particles.entrySet()) {
                 pw.printf("%f %f\n", entry.getKey().getRadius(), entry.getKey().getMass());
             }
         }
@@ -64,9 +66,9 @@ public class ParticlesGenerator {
         //Dynamic File
         try (PrintWriter pw = new PrintWriter(fileArguments.getDynamicFile())) {
             pw.println(0);
-            for (Map.Entry<Particle, State> entry : particles.entrySet()) {
-                pw.printf("%f %f %f %f\n", entry.getValue().getPosition().getX(), entry.getValue().getPosition().getY(),
-                    entry.getValue().getVelocityX(), entry.getValue().getVelocityX());
+            for (Map.Entry<Particle, R> entry : particles.entrySet()) {
+                pw.printf("%f %f %f %f\n", entry.getValue().get(R0.ordinal()).getX(), entry.getValue().get(R0.ordinal()).getY(),
+                    entry.getValue().get(R1.ordinal()).getX(), entry.getValue().get(R1.ordinal()).getY());
             }
         }
 
@@ -88,9 +90,9 @@ public class ParticlesGenerator {
         return new FileGeneratorArguments(staticFile, dynamicFile, N, delimiter);
     }
 
-    public static Map<Particle, State> generateParticles(final int N, final int L, final int W) {
+    public static Map<Particle, R> generateParticles(final int N, final int L, final int W) {
 
-        final Map<Particle, State> particles = new TreeMap<>((Comparator.comparingInt(Particle::getId)));
+        final Map<Particle, R> particles = new TreeMap<>((Comparator.comparingInt(Particle::getId)));
         final Random random = new Random();
 
         // Particle state
@@ -104,18 +106,19 @@ public class ParticlesGenerator {
             Particle particle = new Particle(particleId, radius, PARTICLE_MASS);
             particleId++;
 
-            final State particleState = generateParticleState(radius, L - radius, radius, W - radius, particle, particles);
+            final R particleState = generateParticleState(radius, L - radius, radius, W - radius, particle, particles);
             particles.put(particle, particleState);
         }
         return particles;
     }
 
-    public static State generateParticleState(final double minHeight, final double maxHeight,
-                                              final double minWidth, final double maxWidth,
-                                              final Particle particle, Map<Particle, State> particles) {
+    public static R generateParticleState(final double minHeight, final double maxHeight,
+                                          final double minWidth, final double maxWidth,
+                                          final Particle particle, Map<Particle, R> particles) {
         final Random random = new Random();
 
-        State newState = null;
+        Pair r0 = null;
+        Pair r1 = null;
 
         boolean success = false;
         while (!success) {
@@ -123,12 +126,12 @@ public class ParticlesGenerator {
 
             final double x = random.nextDouble() * (maxWidth - minWidth) + minWidth;
             final double y = random.nextDouble() * (maxHeight - minHeight) + minHeight;
+            r0 = new Pair(x, y);
+            r1 = new Pair(INITIAL_VELOCITY, INITIAL_VELOCITY);
 
-            newState = new State(new Position(x, y), INITIAL_VELOCITY, INITIAL_VELOCITY);
-
-            for (Map.Entry<Particle, State> entry : particles.entrySet()) {
+            for (Map.Entry<Particle, R> entry : particles.entrySet()) {
                 final Particle otherParticle = entry.getKey();
-                final Position otherPosition = entry.getValue().getPosition();
+                final Pair otherPosition = entry.getValue().get(R0.ordinal());
                 final double radiusDistance = pow(otherParticle.getRadius() + particle.getRadius(), 2);
                 final double particlesDistance = pow(otherPosition.getX() - x, 2) + pow(otherPosition.getY() - y, 2);
 
@@ -138,7 +141,10 @@ public class ParticlesGenerator {
                 }
             }
         }
-        return newState;
+        final R newR = new R();
+        newR.add(r0.getX(), r0.getY());
+        newR.add(r1.getX(), r1.getY());
+        return newR;
     }
 
 
