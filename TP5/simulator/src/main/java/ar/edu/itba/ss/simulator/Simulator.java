@@ -74,7 +74,7 @@ public class Simulator {
         final File outResultsFile = new File(baseArguments.getOutResultsFilePath());
 
         int index = 0;
-        double step = 1;
+        double step = 500;
 
         try (PrintWriter pw = new PrintWriter(outResultsFile)) {
             for (Map.Entry<Double, Map<Particle, R>> entry : methodResults.getParticlesStates().entrySet()) {

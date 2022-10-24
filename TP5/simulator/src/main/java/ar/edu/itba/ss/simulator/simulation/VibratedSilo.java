@@ -33,7 +33,7 @@ public class VibratedSilo {
         calculateInitialAccelerations(initialRs, W, D, kn, kt, w, A);
         particlesStates.put(0.0, initialRs);
 
-        Map<Particle, R> prevRs = euler(initialRs, -dt, W, D, kn, kt, w, A);
+        Map<Particle, R> prevRs = euler(initialRs, -dt, -dt, W, D, kn, kt, w, A);
         Map<Particle, R> currentRs = initialRs;
 
         int iterations = 0;
@@ -42,12 +42,12 @@ public class VibratedSilo {
         for (double t = dt; iterations < totalIterations; t += dt, iterations += 1) {
 
             if ((iterations + 1) % loggingStep == 0) {
-                LOGGER.info(String.format("Current Time: %f", t));
+                LOGGER.info(String.format("Current Time: %.1f s", t));
             }
 
-            final Map<Particle, R> nextRs = calculateNextRs(prevRs, currentRs, t, W, D, kn, kt, w, A);
+            final Map<Particle, R> nextRs = calculateNextRs(prevRs, currentRs, t, dt, W, D, kn, kt, w, A);
 
-            final Map<Particle, R> particlesOutsideOpeningRs = getParticlesOutsideOpening(currentRs, reenterMinHeight, reenterMaxHeight, exitDistance, W);
+            final Map<Particle, R> particlesOutsideOpeningRs = respawnParticlesOutsideOpening(currentRs, reenterMinHeight, reenterMaxHeight, exitDistance, W);
             calculateInitialAccelerations(particlesOutsideOpeningRs, W, D, kn, kt, w, A);
 
             nextRs.putAll(particlesOutsideOpeningRs);
@@ -55,7 +55,7 @@ public class VibratedSilo {
 
             prevRs = currentRs;
 //          FIXME: asumimos que no choca con ninguna particula al ponerlos
-            prevRs.putAll(euler(particlesOutsideOpeningRs, -dt, W, D, kn, kt, w, A));
+            prevRs.putAll(euler(particlesOutsideOpeningRs, -dt, t - dt, W, D, kn, kt, w, A));
 
             currentRs = nextRs;
         }

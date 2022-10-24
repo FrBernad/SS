@@ -26,6 +26,8 @@ public class ParticlesGenerator {
     private static final String N_P = "N";
     private static final String DELIMITER_P = "delimiter";
     private static final String DEFAULT_DELIMITER = " ";
+
+    private static final String DEFAULT_N = "1";
     private static final int L = 70;
     private static final int W = 20;
     private static final double PARTICLE_MASS = 1;
@@ -82,7 +84,7 @@ public class ParticlesGenerator {
 
         final String delimiter = getPropertyOrDefault(properties, DELIMITER_P, DEFAULT_DELIMITER);
 
-        final int N = parseInt(getPropertyOrDefault(properties, N_P, "1"));
+        final int N = parseInt(getPropertyOrDefault(properties, N_P, DEFAULT_N));
 
         final File staticFile = new File(staticFilePath);
         final File dynamicFile = new File(dynamicFilePath);

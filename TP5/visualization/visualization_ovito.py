@@ -18,12 +18,6 @@ def visualization_ovito(config_file: str):
 
     print("Getting Particles Data ...")
     dfs = get_particles_data(config.static_file, config.results_file)
-    sim_step = dfs[1].time - dfs[0].time
-    # time_step = 0.1
-    time_step = sim_step
-    step = int(time_step / sim_step)
-    dfs = dfs[::step]
-    time = np.arange(0, time_step * len(dfs), time_step)
     pipeline = Pipeline(source=StaticSource(data=DataCollection()))
 
     def create_particle_pos(frame, data):
@@ -33,17 +27,20 @@ def visualization_ovito(config_file: str):
         cell[:, 2] = (0, 0, 2)
         data.objects.append(cell)
 
-        particles = get_frame_particles(dfs[frame].data, time[frame])
+        if frame % 1000 == 0:
+            print(f'''Parsing frame {frame}''')
+
+        particles = get_frame_particles(dfs[frame])
         data.objects.append(particles)
 
     pipeline.modifiers.append(create_particle_pos)
 
-    print("Exporting File ...")
     export_file(pipeline, '../results/visualization.dump', 'lammps/dump',
                 columns=["Particle Identifier", "Position.X", "Position.Y", "Position.Z", "Radius",
                          "Force.X", "Force.Y", "Force.Z", "Is Wall"],
                 multiple_frames=True, start_frame=0, end_frame=len(dfs) - 1)
 
+    print("Exporting File ...")
     print("Done!")
 
 
