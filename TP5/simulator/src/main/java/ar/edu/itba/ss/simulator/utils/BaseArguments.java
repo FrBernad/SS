@@ -54,7 +54,7 @@ public class BaseArguments {
         return dt;
     }
 
-    public double getw() {
+    public double getW() {
         return w;
     }
 

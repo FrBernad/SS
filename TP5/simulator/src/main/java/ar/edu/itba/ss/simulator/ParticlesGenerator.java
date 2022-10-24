@@ -15,7 +15,7 @@ import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrFail;
 import static ar.edu.itba.ss.simulator.utils.Particle.Position;
 import static ar.edu.itba.ss.simulator.utils.Particle.State;
 import static java.lang.Integer.parseInt;
-import static java.lang.Math.*;
+import static java.lang.Math.pow;
 
 public class ParticlesGenerator {
     private static final Logger LOGGER = LoggerFactory.getLogger(ParticlesGenerator.class);
@@ -80,7 +80,7 @@ public class ParticlesGenerator {
 
         final String delimiter = getPropertyOrDefault(properties, DELIMITER_P, DEFAULT_DELIMITER);
 
-        final int N = parseInt(getPropertyOrDefault(properties, N_P, "200"));
+        final int N = parseInt(getPropertyOrDefault(properties, N_P, "5"));
 
         final File staticFile = new File(staticFilePath);
         final File dynamicFile = new File(dynamicFilePath);

@@ -16,11 +16,10 @@ def visualization_ovito(config_file: str):
     config = get_config(config_file)
 
     print("Getting Particles Data ...")
-    dfs = get_particles_data(config.static_file, config.results_file)  # 12 horas en 300 segs, dame cada 12 hrs de viaje
-    hrs_step = 12
+    dfs = get_particles_data(config.static_file, config.results_file)
+    secs_step = 5
     sim_step = dfs[1].time - dfs[0].time
-    step = int((60 * 60 * hrs_step) / sim_step)
-    # step = 1
+    step = int(secs_step / sim_step)
     dfs = dfs[::step]
     pipeline = Pipeline(source=StaticSource(data=DataCollection()))
 
