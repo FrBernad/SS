@@ -1,5 +1,6 @@
 package ar.edu.itba.ss.simulator.simulation;
 
+import ar.edu.itba.ss.simulator.Algorithms.CellIndex.CellIndexMethod;
 import ar.edu.itba.ss.simulator.utils.AlgorithmResults;
 import ar.edu.itba.ss.simulator.utils.ExecutionTimestamps;
 import ar.edu.itba.ss.simulator.utils.Particle;
@@ -16,6 +17,8 @@ import static ar.edu.itba.ss.simulator.simulation.VibratedSiloUtils.*;
 public class VibratedSilo {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VibratedSilo.class);
+
+    private static final double INTERACTION_RADIUS = 1;
 
     public static AlgorithmResults execute(final Map<Particle, R> initialRs,
                                            final int L, final int W, final double D, final double exitDistance,
@@ -37,6 +40,9 @@ public class VibratedSilo {
         int iterations = 0;
         int totalIterations = (int) Math.ceil(tf / dt);
         int loggingStep = (int) Math.floor(50 / dt);
+
+//        final int M = 5;
+//        final int N = 4;
 
         final List<Boolean> mustPrint = new ArrayList<>(totalIterations);
         mustPrint.add(false);

@@ -74,7 +74,8 @@ public class Simulator {
         final File outResultsFile = new File(baseArguments.getOutResultsFilePath());
 
         int index = 0;
-        double step = 100;
+        double secondsStep = 0.1;
+        double step = secondsStep / baseArguments.getDt();
 
         LOGGER.info(String.format("Writing Results every %.2f seconds", step * baseArguments.getDt()));
 

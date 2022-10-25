@@ -26,13 +26,14 @@ public class ParticlesGenerator {
     private static final String N_P = "N";
     private static final String DELIMITER_P = "delimiter";
     private static final String DEFAULT_DELIMITER = " ";
-    private static final String DEFAULT_N = "25";
+    private static final String DEFAULT_N = "40";
     private static final int L = 70;
     private static final int W = 20;
     private static final double PARTICLE_MASS = 1;
     private static final double MIN_RADIUS = 0.85;
     private static final double MAX_RADIUS = 1.15;
-    private static final double INITIAL_VELOCITY = 0;
+    private static final double INITIAL_VELOCITY_Y = 0;
+    private static final double INITIAL_VELOCITY_X = 0;
 
     public static void main(String[] args) throws IOException {
         LOGGER.info("Files Generator Starting ...");
@@ -106,8 +107,9 @@ public class ParticlesGenerator {
 
             Particle particle = new Particle(particleId, radius, PARTICLE_MASS);
             particleId++;
-
-            final R particleState = generateParticleState(radius, L - radius, radius, W - radius, particle, particles);
+            //FIXME: Altura maxima de spawneo preguntar pq agregar mucha velocidad (estaba L-radius)
+            final R particleState = generateParticleState(radius, L -radius, radius, W - radius, particle, particles);
+//            final R particleState = generateParticleState(radius, L - L / 10.0, radius, W - radius, particle, particles);
             particles.put(particle, particleState);
         }
         return particles;
@@ -128,7 +130,7 @@ public class ParticlesGenerator {
             final double x = random.nextDouble() * (maxWidth - minWidth) + minWidth;
             final double y = random.nextDouble() * (maxHeight - minHeight) + minHeight;
             r0 = new Pair(x, y);
-            r1 = new Pair(INITIAL_VELOCITY, INITIAL_VELOCITY);
+            r1 = new Pair(INITIAL_VELOCITY_X, INITIAL_VELOCITY_Y);
 
             for (Map.Entry<Particle, R> entry : particles.entrySet()) {
                 final Particle otherParticle = entry.getKey();

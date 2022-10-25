@@ -38,7 +38,7 @@ def get_frame_particles(frame_data: EventData):
     return particles
 
 
-def _generate_silo(L: int, W: int, w: float, D: int, time: float):
+def _generate_silo(L: float, W: float, w: float, D: float, time: float):
     oscillator_y = 0.15 * sin(w * time)
 
     left_wall = np.array([[0, y + oscillator_y, 0] for y in np.arange(0, L, 0.5)])

@@ -43,22 +43,4 @@ public class Particle implements Comparable<Particle> {
         return Integer.compare(id, o.id);
     }
 
-    public static class Position {
-        private final double x;
-        private final double y;
-
-        public Position(double x, double y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        public double getX() {
-            return x;
-        }
-
-        public double getY() {
-            return y;
-        }
-
-    }
 }
