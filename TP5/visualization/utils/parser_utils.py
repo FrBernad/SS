@@ -12,8 +12,8 @@ EventData = namedtuple('EventData', ['time', 'data'])
 
 def get_frame_particles(frame_data: EventData):
     df = frame_data.data
-    # time = frame_data.time
-    time = 0
+    time = frame_data.time
+    # time = 0
     particles = od.Particles()
 
     L = 70

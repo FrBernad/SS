@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -70,17 +71,20 @@ public class Simulator {
 
         LOGGER.info(String.format("Finished Simulation In %d Iterations", methodResults.getIterations()));
 
-        LOGGER.info("Writing Results ...");
         final File outResultsFile = new File(baseArguments.getOutResultsFilePath());
 
         int index = 0;
-        double step = 500;
+        double step = 100;
+
+        LOGGER.info(String.format("Writing Results every %.2f seconds", step * baseArguments.getDt()));
+
+        final List<Boolean> mustPrint = methodResults.getMustPrint();
 
         try (PrintWriter pw = new PrintWriter(outResultsFile)) {
             for (Map.Entry<Double, Map<Particle, R>> entry : methodResults.getParticlesStates().entrySet()) {
                 Double time = entry.getKey();
                 Map<Particle, R> states = entry.getValue();
-                if (index % step == 0) {
+                if (index % step == 0 || mustPrint.get(index)) {
                     pw.append(String.format("%f\n", time));
                     states.forEach((particle, state) ->
                         pw.printf("%d %.16f %.16f %.16f %.16f\n",

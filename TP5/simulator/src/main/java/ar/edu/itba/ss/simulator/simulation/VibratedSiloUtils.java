@@ -228,10 +228,12 @@ class VibratedSiloUtils {
     }
 
     private static double calculateWallR1Y(final double A, final double w, final double t) {
+//        return 0;
         return A * w * cos(w * t);
     }
 
     private static double calculateWallR0Y(final double A, final double w, final double t) {
+//        return 0;
         return A * sin(w * t);
     }
 

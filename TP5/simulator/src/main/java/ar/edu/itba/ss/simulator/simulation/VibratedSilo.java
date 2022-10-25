@@ -8,8 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 import static ar.edu.itba.ss.simulator.simulation.VibratedSiloUtils.*;
 
@@ -29,7 +28,6 @@ public class VibratedSilo {
         executionTimestamps.setAlgorithmStart(LocalDateTime.now());
 
         final Map<Double, Map<Particle, R>> particlesStates = new TreeMap<>();
-
         calculateInitialAccelerations(initialRs, W, D, kn, kt, w, A);
         particlesStates.put(0.0, initialRs);
 
@@ -39,6 +37,10 @@ public class VibratedSilo {
         int iterations = 0;
         int totalIterations = (int) Math.ceil(tf / dt);
         int loggingStep = (int) Math.floor(50 / dt);
+
+        final List<Boolean> mustPrint = new ArrayList<>(totalIterations);
+        mustPrint.add(false);
+
         for (double t = dt; iterations < totalIterations; t += dt, iterations += 1) {
 
             if ((iterations + 1) % loggingStep == 0) {
@@ -48,7 +50,12 @@ public class VibratedSilo {
             final Map<Particle, R> nextRs = calculateNextRs(prevRs, currentRs, t, dt, W, D, kn, kt, w, A);
 
             final Map<Particle, R> particlesOutsideOpeningRs = respawnParticlesOutsideOpening(currentRs, reenterMinHeight, reenterMaxHeight, exitDistance, W);
-            calculateInitialAccelerations(particlesOutsideOpeningRs, W, D, kn, kt, w, A);
+            if (particlesOutsideOpeningRs.size() > 0) {
+                calculateInitialAccelerations(particlesOutsideOpeningRs, W, D, kn, kt, w, A);
+                mustPrint.add(true);
+            } else {
+                mustPrint.add(false);
+            }
 
             nextRs.putAll(particlesOutsideOpeningRs);
             particlesStates.put(t, nextRs);
@@ -62,7 +69,7 @@ public class VibratedSilo {
 
         executionTimestamps.setAlgorithmEnd(LocalDateTime.now());
 
-        return new AlgorithmResults(executionTimestamps, iterations, particlesStates);
+        return new AlgorithmResults(executionTimestamps, iterations, particlesStates, mustPrint);
     }
 
 }
