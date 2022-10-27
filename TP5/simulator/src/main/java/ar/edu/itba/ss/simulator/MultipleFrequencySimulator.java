@@ -1,7 +1,8 @@
 package ar.edu.itba.ss.simulator;
 
 import ar.edu.itba.ss.simulator.simulation.VibratedSilo;
-import ar.edu.itba.ss.simulator.utils.*;
+import ar.edu.itba.ss.simulator.utils.AlgorithmResults;
+import ar.edu.itba.ss.simulator.utils.BaseArguments;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,8 +53,8 @@ public class MultipleFrequencySimulator {
 
         LOGGER.info("Parsing Particles ...");
         final ParticlesParserResult particlesParserResult = parseParticlesList(baseArguments.getStaticFile(),
-                baseArguments.getDynamicFile(),
-                baseArguments.getDelimiter());
+            baseArguments.getDynamicFile(),
+            baseArguments.getDelimiter());
 
         double secondsStep = 0.1;
         double printStep = secondsStep / baseArguments.getDt();
@@ -73,11 +74,12 @@ public class MultipleFrequencySimulator {
             LOGGER.info(String.format("Writing Results every %.2f seconds", printStep * baseArguments.getDt()));
 
             final AlgorithmResults methodResults = VibratedSilo.execute(
-                    particlesParserResult.getParticlesPerTime().get(0),
-                    L, W, baseArguments.getD(), EXIT_DISTANCE, REENTER_MIN_HEIGHT, REENTER_MAX_HEIGHT,
-                    KN, KT, w, A,
-                    baseArguments.getDt(), baseArguments.getMaxTime(),
-                    printStep, resultsWriter, exitTimeWriter
+                particlesParserResult.getParticlesPerTime().get(0),
+                L, W, baseArguments.getD(),
+                EXIT_DISTANCE, REENTER_MIN_HEIGHT, REENTER_MAX_HEIGHT,
+                KN, KT, w, A,
+                baseArguments.getDt(), baseArguments.getMaxTime(),
+                printStep, resultsWriter, exitTimeWriter
             );
 
             resultsWriter.close();
@@ -85,7 +87,6 @@ public class MultipleFrequencySimulator {
             LOGGER.info(String.format("Finished Simulation In %d Iterations", methodResults.getIterations()));
 
         }
-
 
         LOGGER.info("Done!");
     }
@@ -109,7 +110,7 @@ public class MultipleFrequencySimulator {
 
     private static void printClientUsage() {
         System.out.println("Invalid simulator invocation.\n" +
-                "Usage: ./simulator -DstaticFile='path/to/static/file' -DdynamicFile='path/to/dynamic/file' -DresultsDir='path/to/results/dir' -Ddt=dt -Dtf=tf -DD=D"
+            "Usage: ./simulator -DstaticFile='path/to/static/file' -DdynamicFile='path/to/dynamic/file' -DresultsDir='path/to/results/dir' -Ddt=dt -Dtf=tf -DD=D"
         );
     }
 }

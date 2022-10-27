@@ -14,8 +14,8 @@ import java.util.*;
 
 import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrDefault;
 import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrFail;
-import static ar.edu.itba.ss.simulator.utils.R.values.*;
-
+import static ar.edu.itba.ss.simulator.utils.R.values.R0;
+import static ar.edu.itba.ss.simulator.utils.R.values.R1;
 import static java.lang.Integer.parseInt;
 import static java.lang.Math.pow;
 
@@ -26,7 +26,7 @@ public class ParticlesGenerator {
     private static final String N_P = "N";
     private static final String DELIMITER_P = "delimiter";
     private static final String DEFAULT_DELIMITER = " ";
-    private static final String DEFAULT_N = "20";
+    private static final String DEFAULT_N = "200";
     private static final int L = 70;
     private static final int W = 20;
     private static final double PARTICLE_MASS = 1;

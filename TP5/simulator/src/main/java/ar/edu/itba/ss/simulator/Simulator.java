@@ -1,7 +1,8 @@
 package ar.edu.itba.ss.simulator;
 
 import ar.edu.itba.ss.simulator.simulation.VibratedSilo;
-import ar.edu.itba.ss.simulator.utils.*;
+import ar.edu.itba.ss.simulator.utils.AlgorithmResults;
+import ar.edu.itba.ss.simulator.utils.BaseArguments;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,15 +10,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrDefault;
 import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrFail;
 import static ar.edu.itba.ss.simulator.utils.ParseUtils.ParticlesParserResult;
 import static ar.edu.itba.ss.simulator.utils.ParseUtils.parseParticlesList;
-import static ar.edu.itba.ss.simulator.utils.R.values.*;
 import static java.lang.Double.parseDouble;
 
 public class Simulator {
@@ -75,7 +73,8 @@ public class Simulator {
 
         final AlgorithmResults methodResults = VibratedSilo.execute(
             particlesParserResult.getParticlesPerTime().get(0),
-            L, W, baseArguments.getD(), EXIT_DISTANCE, REENTER_MIN_HEIGHT, REENTER_MAX_HEIGHT,
+            L, W, baseArguments.getD(),
+            EXIT_DISTANCE, REENTER_MIN_HEIGHT, REENTER_MAX_HEIGHT,
             KN, KT, baseArguments.getW(), A,
             baseArguments.getDt(), baseArguments.getMaxTime(),
             printStep, resultsWriter, exitTimeWriter

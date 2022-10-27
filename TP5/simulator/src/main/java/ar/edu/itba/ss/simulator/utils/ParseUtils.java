@@ -4,7 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import static ar.edu.itba.ss.simulator.utils.R.values.*;
+import static ar.edu.itba.ss.simulator.utils.R.values.R0;
+import static ar.edu.itba.ss.simulator.utils.R.values.R1;
 import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
 

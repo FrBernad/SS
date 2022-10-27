@@ -1,8 +1,5 @@
 package ar.edu.itba.ss.simulator.utils;
 
-import java.util.List;
-import java.util.Map;
-
 public class AlgorithmResults {
 
     private final ExecutionTimestamps executionTimestamps;

@@ -10,10 +10,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Map;
 
 import static ar.edu.itba.ss.simulator.simulation.VibratedSiloUtils.*;
-import static ar.edu.itba.ss.simulator.utils.R.values.*;
+import static ar.edu.itba.ss.simulator.utils.R.values.R0;
+import static ar.edu.itba.ss.simulator.utils.R.values.R1;
 
 
 public class VibratedSilo {
