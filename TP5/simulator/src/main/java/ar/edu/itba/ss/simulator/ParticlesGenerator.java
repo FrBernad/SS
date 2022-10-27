@@ -10,7 +10,10 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Random;
 
 import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrDefault;
 import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrFail;
@@ -94,7 +97,7 @@ public class ParticlesGenerator {
 
     public static Map<Particle, R> generateParticles(final int N, final int L, final int W) {
 
-        final Map<Particle, R> particles = new TreeMap<>((Comparator.comparingInt(Particle::getId)));
+        final Map<Particle, R> particles = new HashMap<>();
         final Random random = new Random();
 
         // Particle state
@@ -129,6 +132,7 @@ public class ParticlesGenerator {
             success = true;
 
             final double x = random.nextDouble() * (maxWidth - minWidth) + minWidth;
+
             final double y = random.nextDouble() * (maxHeight - minHeight) + minHeight;
             r0 = new Pair(x, y);
             r1 = new Pair(INITIAL_VELOCITY_X, INITIAL_VELOCITY_Y);

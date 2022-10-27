@@ -138,17 +138,25 @@ class VibratedSiloUtils {
     }
 
     static Map<Particle, R> respawnParticlesOutsideOpening(final Map<Particle, R> currentRs,
+                                                           final Set<Particle> particlesJustOutside,
+                                                           final Set<Particle> particlesAlreadyOutside,
                                                            final double reenterMinHeight, final double reenterMaxHeight,
                                                            final double exitDistance, final int W) {
 
         final Map<Particle, R> particlesOutsideOpeningRs = new HashMap<>();
         currentRs.forEach((p, r) -> {
             Pair position = r.get(R0.ordinal());
+            if (position.getY() < -p.getRadius() && !particlesAlreadyOutside.contains(p)) {
+                particlesJustOutside.add(p);
+                particlesAlreadyOutside.add(p);
+            }
+
             if (position.getY() - p.getRadius() < -exitDistance) {
                 final double offset = new Random().nextDouble();
                 final R newR = generateParticleState(reenterMinHeight + p.getRadius(), reenterMaxHeight - p.getRadius(),
                     p.getRadius() + offset, W - p.getRadius() - offset, p, currentRs);
 
+                particlesAlreadyOutside.remove(p);
                 particlesOutsideOpeningRs.put(p, newR);
             }
         });

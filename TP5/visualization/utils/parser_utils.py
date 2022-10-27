@@ -17,7 +17,7 @@ def get_frame_particles(frame_data: EventData):
 
     L = 70
     W = 20
-    w = 5
+    w = 30
     D = 3
 
     silo_points = _generate_silo(L, W, w, D, time)
@@ -66,6 +66,26 @@ def get_particles_data(static_file: str, results_file: str) -> List[EventData]:
                 current_frame_time = float_vals[0]
         df = pd.DataFrame(np.array(current_frame), columns=["id", "x", "y", "vx", "vy"])
         dfs.append(EventData(current_frame_time, pd.concat([df, static_df], axis=1)))
+
+    return dfs
+
+
+def get_particles_states(results_file: str) -> List[EventData]:
+    dfs = []
+    with open(results_file, "r") as results:
+        current_frame_time = float(next(results))
+        current_frame = []
+        for line in results:
+            float_vals = list(map(lambda v: float(v), line.split()))
+            if len(float_vals) > 1:
+                current_frame.append(float_vals)
+            elif len(float_vals) == 1:
+                df = pd.DataFrame(np.array(current_frame), columns=["id", "x", "y", "vx", "vy"])
+                dfs.append(EventData(current_frame_time, df))
+                current_frame = []
+                current_frame_time = float_vals[0]
+        df = pd.DataFrame(np.array(current_frame), columns=["id", "x", "y", "vx", "vy"])
+        dfs.append(EventData(current_frame_time, df))
 
     return dfs
 

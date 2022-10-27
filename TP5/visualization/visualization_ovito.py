@@ -1,7 +1,6 @@
 import sys
 from datetime import datetime
 
-import numpy as np
 from ovito.data import DataCollection, SimulationCell
 from ovito.io import export_file
 from ovito.pipeline import Pipeline, StaticSource
