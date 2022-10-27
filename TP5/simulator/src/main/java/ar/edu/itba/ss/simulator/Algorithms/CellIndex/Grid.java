@@ -21,6 +21,7 @@ public class Grid {
     private final int M;
     private final int N;
     private final int L;
+    private final int W;
     private final double incrementX;
     private final double incrementY;
 
@@ -29,6 +30,7 @@ public class Grid {
         this.M = M;
         this.N = N;
         this.L = L;
+        this.W = W;
 
         this.grid = new ArrayList<>();
         incrementX = W / (double) N;

@@ -26,7 +26,6 @@ public class MultipleFrequencySimulator {
     private static final String DELIMITER_P = "delimiter";
     private static final String DEFAULT_DELIMITER = " ";
     private static final String D_P = "D";
-
     private static final List<Integer> FREQUENCIES = List.of(5, 10, 15, 20, 30, 50);
     private static final int L = 70;
     private static final int W = 20;
@@ -69,7 +68,8 @@ public class MultipleFrequencySimulator {
             PrintWriter resultsWriter = new PrintWriter(outResultsFile);
             PrintWriter exitTimeWriter = new PrintWriter(outExitTimeFile);
 
-            LOGGER.info(String.format("Executing Simulator with %d particles %d...", particlesParserResult.getN(), w));
+            System.out.println();
+            LOGGER.info(String.format("Executing Simulator with %d particles - Frequency: %d", particlesParserResult.getN(), w));
             LOGGER.info(String.format("Writing Results every %.2f seconds", printStep * baseArguments.getDt()));
 
             final AlgorithmResults methodResults = VibratedSilo.execute(

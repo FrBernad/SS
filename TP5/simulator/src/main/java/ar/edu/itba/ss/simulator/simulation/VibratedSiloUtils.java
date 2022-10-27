@@ -59,7 +59,7 @@ class VibratedSiloUtils {
                                             final double kn, final double kt,
                                             final double w, final double A) {
 
-        final Map<Particle, R> rStates = new HashMap<>();
+        final Map<Particle, R> nextRs = new HashMap<>();
 
         final Map<Particle, Set<Particle>> neighbors = CellIndexMethod.calculateNeighbors(currentRs, grid, INTERACTION_RADIUS);
 
@@ -93,7 +93,7 @@ class VibratedSiloUtils {
 
             nextR.set(R1.ordinal(), r1Px, r1Py);
 
-            rStates.put(particle, nextR);
+            nextRs.put(particle, nextR);
         }
 
         prevIt = prevRs.entrySet().iterator();
@@ -106,11 +106,11 @@ class VibratedSiloUtils {
             final R prevR = prevPair.getValue();
             final R currentR = currentPair.getValue();
 
-            final R nextR = rStates.get(particle);
+            final R nextR = nextRs.get(particle);
 
             final Set<Particle> particleNeighbors = neighbors.get(particle);
 
-            final Pair r2P = calculateAcceleration(particle, particleNeighbors, currentRs, W, D, kn, kt, wallR0Y, wallR1Y);
+            final Pair r2P = calculateAcceleration(particle, particleNeighbors, nextRs, W, D, kn, kt, wallR0Y, wallR1Y);
 
             //Velocity correction
             final double r1Cx = currentR.get(R1.ordinal()).getX() +
@@ -121,21 +121,20 @@ class VibratedSiloUtils {
                     (1.0 / 6) * prevR.get(R2.ordinal()).getY()) * dt;
 
             nextR.set(R1.ordinal(), r1Cx, r1Cy);
-
         }
 
         for (Particle particle : currentRs.keySet()) {
-            final R nextR = rStates.get(particle);
+            final R nextR = nextRs.get(particle);
 
             final Set<Particle> particleNeighbors = neighbors.get(particle);
 
-            final Pair r2C = calculateAcceleration(particle, particleNeighbors, currentRs, W, D, kn, kt, wallR0Y, wallR1Y);
+            final Pair r2C = calculateAcceleration(particle, particleNeighbors, nextRs, W, D, kn, kt, wallR0Y, wallR1Y);
             nextR.set(R2.ordinal(), r2C.getX(), r2C.getY());
 
-            rStates.put(particle, nextR);
+            nextRs.put(particle, nextR);
         }
 
-        return rStates;
+        return nextRs;
     }
 
     static Map<Particle, R> respawnParticlesOutsideOpening(final Map<Particle, R> currentRs,
@@ -146,8 +145,9 @@ class VibratedSiloUtils {
         currentRs.forEach((p, r) -> {
             Pair position = r.get(R0.ordinal());
             if (position.getY() - p.getRadius() < -exitDistance) {
+                final double offset = new Random().nextDouble();
                 final R newR = generateParticleState(reenterMinHeight + p.getRadius(), reenterMaxHeight - p.getRadius(),
-                    p.getRadius(), W - p.getRadius(), p, currentRs);
+                    p.getRadius() + offset, W - p.getRadius() - offset, p, currentRs);
 
                 particlesOutsideOpeningRs.put(p, newR);
             }

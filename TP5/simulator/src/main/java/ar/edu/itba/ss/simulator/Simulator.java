@@ -28,7 +28,6 @@ public class Simulator {
     private static final String RESULTS_OUT_PATH_P = "resultsFile";
     private static final String DELIMITER_P = "delimiter";
     private static final String DEFAULT_DELIMITER = " ";
-
     private static final String DT_P = "dt";
     private static final String TF_P = "tf";
     private static final String w_P = "w";
@@ -70,7 +69,8 @@ public class Simulator {
         PrintWriter resultsWriter = new PrintWriter(outResultsFile);
         PrintWriter exitTimeWriter = new PrintWriter(outExitTimeFile);
 
-        LOGGER.info(String.format("Executing Simulator with %d particles...", particlesParserResult.getN()));
+        LOGGER.info(String.format("Executing Simulator with %d particles / w = %f / d = %f", particlesParserResult.getN(),
+            baseArguments.getW(), baseArguments.getD()));
         LOGGER.info(String.format("Writing Results every %.2f seconds", printStep * baseArguments.getDt()));
 
         final AlgorithmResults methodResults = VibratedSilo.execute(
@@ -98,7 +98,7 @@ public class Simulator {
         final String delimiter = getPropertyOrDefault(properties, DELIMITER_P, DEFAULT_DELIMITER);
 
         final double dt = parseDouble(getPropertyOrFail(properties, DT_P));
-        final double tf = parseDouble(getPropertyOrDefault(properties, TF_P, "5"));
+        final double tf = parseDouble(getPropertyOrFail(properties, TF_P));
         final double D = parseDouble(getPropertyOrFail(properties, D_P));
         final double w = parseDouble(getPropertyOrFail(properties, w_P));
 
