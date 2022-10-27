@@ -1,4 +1,5 @@
 import sys
+from datetime import datetime
 
 import numpy as np
 from ovito.data import DataCollection, SimulationCell
@@ -16,7 +17,7 @@ def visualization_ovito(config_file: str):
 
     config = get_config(config_file)
 
-    print("Getting Particles Data ...")
+    print(f'''{datetime.now().strftime("%H:%M:%S")} - Getting Particles Data ...''')
     dfs = get_particles_data(config.static_file, config.results_file)
     pipeline = Pipeline(source=StaticSource(data=DataCollection()))
 
@@ -28,7 +29,7 @@ def visualization_ovito(config_file: str):
         data.objects.append(cell)
 
         if frame % 1000 == 0:
-            print(f'''Parsing frame {frame}''')
+            print(f'''{datetime.now().strftime("%H:%M:%S")} - Parsing frame {frame}''')
 
         particles = get_frame_particles(dfs[frame])
         data.objects.append(particles)
@@ -40,8 +41,8 @@ def visualization_ovito(config_file: str):
                          "Force.X", "Force.Y", "Force.Z", "Is Wall"],
                 multiple_frames=True, start_frame=0, end_frame=len(dfs) - 1)
 
-    print("Exporting File ...")
-    print("Done!")
+    print(f'''{datetime.now().strftime("%H:%M:%S")} - Exporting File ...''')
+    print(f'''{datetime.now().strftime("%H:%M:%S")} - Done!''')
 
 
 if __name__ == "__main__":

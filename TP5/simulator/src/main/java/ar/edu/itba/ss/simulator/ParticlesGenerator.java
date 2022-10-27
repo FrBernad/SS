@@ -26,7 +26,7 @@ public class ParticlesGenerator {
     private static final String N_P = "N";
     private static final String DELIMITER_P = "delimiter";
     private static final String DEFAULT_DELIMITER = " ";
-    private static final String DEFAULT_N = "40";
+    private static final String DEFAULT_N = "200";
     private static final int L = 70;
     private static final int W = 20;
     private static final double PARTICLE_MASS = 1;
@@ -108,7 +108,7 @@ public class ParticlesGenerator {
             Particle particle = new Particle(particleId, radius, PARTICLE_MASS);
             particleId++;
             //FIXME: Altura maxima de spawneo preguntar pq agregar mucha velocidad (estaba L-radius)
-            final R particleState = generateParticleState(radius, L -radius, radius, W - radius, particle, particles);
+            final R particleState = generateParticleState(radius, L - radius, radius, W - radius, particle, particles);
 //            final R particleState = generateParticleState(radius, L - L / 10.0, radius, W - radius, particle, particles);
             particles.put(particle, particleState);
         }
@@ -145,8 +145,8 @@ public class ParticlesGenerator {
             }
         }
         final R newR = new R();
-        newR.add(r0.getX(), r0.getY());
-        newR.add(r1.getX(), r1.getY());
+        newR.set(R0.ordinal(), r0.getX(), r0.getY());
+        newR.set(R1.ordinal(), r1.getX(), r1.getY());
         return newR;
     }
 

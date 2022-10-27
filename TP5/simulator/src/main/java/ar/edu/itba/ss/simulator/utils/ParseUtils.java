@@ -1,11 +1,10 @@
 package ar.edu.itba.ss.simulator.utils;
 
-import ar.edu.itba.ss.simulator.utils.Particle.Position;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import static ar.edu.itba.ss.simulator.utils.R.values.*;
 import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
 
@@ -49,10 +48,10 @@ public class ParseUtils {
             final Particle currentParticle = particles.get(particleIndex);
 
             final R currentParticleRs = new R();
-            currentParticleRs.add(parseDouble(dynamicArray.get(DynamicFields.X.getValue())),
+            currentParticleRs.set(R0.ordinal(),parseDouble(dynamicArray.get(DynamicFields.X.getValue())),
                 parseDouble(dynamicArray.get(DynamicFields.Y.getValue())));
 
-            currentParticleRs.add(parseDouble(dynamicArray.get(DynamicFields.VELOCITY_X.getValue())),
+            currentParticleRs.set(R1.ordinal(),parseDouble(dynamicArray.get(DynamicFields.VELOCITY_X.getValue())),
                 parseDouble(dynamicArray.get(DynamicFields.VELOCITY_Y.getValue())));
 
             currentParticlesPerTime.put(currentParticle, currentParticleRs);

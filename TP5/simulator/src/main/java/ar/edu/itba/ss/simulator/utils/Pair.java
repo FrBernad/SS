@@ -1,8 +1,8 @@
 package ar.edu.itba.ss.simulator.utils;
 
 public class Pair {
-    public final Double x;
-    public final Double y;
+    public Double x;
+    public Double y;
 
     public Pair(Double x, Double y) {
         this.x = x;
@@ -15,5 +15,13 @@ public class Pair {
 
     public Double getY() {
         return y;
+    }
+
+    public void setX(Double x) {
+        this.x = x;
+    }
+
+    public void setY(Double y) {
+        this.y = y;
     }
 }

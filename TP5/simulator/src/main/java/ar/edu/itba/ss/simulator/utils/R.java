@@ -1,16 +1,14 @@
 package ar.edu.itba.ss.simulator.utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class R {
-    private final ArrayList<Pair> ri;
+    private final List<Pair> ri;
 
     public R() {
-        this.ri = new ArrayList<>();
-    }
-
-    public void add(final double x, final double y) {
-        ri.add(new Pair(x, y));
+        this.ri = Arrays.asList(new Pair(0.0, 0.0), new Pair(0.0, 0.0), new Pair(0.0, 0.0));
     }
 
     public void set(final int index, final double x, final double y) {

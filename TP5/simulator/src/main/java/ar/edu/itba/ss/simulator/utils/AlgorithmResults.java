@@ -8,14 +8,9 @@ public class AlgorithmResults {
     private final ExecutionTimestamps executionTimestamps;
     private final int iterations;
 
-    private final Map<Double, Map<Particle, R>> particlesStates;
-    private final List<Boolean> mustPrint;
-
-    public AlgorithmResults(ExecutionTimestamps executionTimestamps, int iterations, Map<Double, Map<Particle, R>> particlesStates, List<Boolean> mustPrint) {
+    public AlgorithmResults(ExecutionTimestamps executionTimestamps, int iterations) {
         this.executionTimestamps = executionTimestamps;
         this.iterations = iterations;
-        this.particlesStates = particlesStates;
-        this.mustPrint = mustPrint;
     }
 
     public ExecutionTimestamps getExecutionTimestamps() {
@@ -26,11 +21,4 @@ public class AlgorithmResults {
         return iterations;
     }
 
-    public Map<Double, Map<Particle, R>> getParticlesStates() {
-        return particlesStates;
-    }
-
-    public List<Boolean> getMustPrint() {
-        return mustPrint;
-    }
 }

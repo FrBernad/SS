@@ -11,7 +11,7 @@ def visualization_plotly(config_file: str):
 
     df = get_particles_initial_data(config.static_file, config.dynamic_file)
 
-    make_particles_plot(df)
+    make_particles_plot(df, M=16, N=8, dx=2.5, dy=2.5, R=0.1)
 
 
 if __name__ == "__main__":

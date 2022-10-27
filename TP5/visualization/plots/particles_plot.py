@@ -1,9 +1,10 @@
+import numpy as np
 import plotly.colors
 import plotly.graph_objects as go
 from pandas import DataFrame
 
 
-def make_particles_plot(df: DataFrame):
+def make_particles_plot(df: DataFrame, M: int, N: int, dx: float, dy: float, R: float):
     indexes = range(1, len(df.x) + 1)
 
     fig = go.Figure()
@@ -25,6 +26,11 @@ def make_particles_plot(df: DataFrame):
                       fillcolor=colors[i - 1],
                       line=dict(color=colors[i - 1]),
                       )
+        fig.add_shape(type="circle",
+                      xref="x", yref="y",
+                      x0=x0 - R, y0=y0 - R, x1=x1 + R, y1=y1 + R,
+                      line=dict(color=colors[i - 1]),
+                      )
 
     # Create scatter trace of text labels
     fig.add_trace(go.Scatter(
@@ -40,6 +46,12 @@ def make_particles_plot(df: DataFrame):
     ))
 
     fig.update_shapes(opacity=0.4, xref="x", yref="y")
+
+    for i in np.arange(0, int(M * dy) + dy, dy):
+        fig.add_hline(y=i, line_width=1, line_dash='dash')
+
+    for i in np.arange(0, int(N * dx) + dx, dx):
+        fig.add_vline(x=i, line_width=1, line_dash='dash')
 
     fig.update_yaxes(
         scaleanchor="x",

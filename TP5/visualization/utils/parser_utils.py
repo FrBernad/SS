@@ -13,7 +13,6 @@ EventData = namedtuple('EventData', ['time', 'data'])
 def get_frame_particles(frame_data: EventData):
     df = frame_data.data
     time = frame_data.time
-    # time = 0
     particles = od.Particles()
 
     L = 70
@@ -43,8 +42,8 @@ def _generate_silo(L: float, W: float, w: float, D: float, time: float):
 
     left_wall = np.array([[0, y + oscillator_y, 0] for y in np.arange(0, L, 0.5)])
     right_wall = np.array([[W, y + oscillator_y, 0] for y in np.arange(0, L, 0.5)])
-    bottom_wall_left = np.array([[x, oscillator_y, 0] for x in np.arange(0, W / 2 - D / 2, 0.5)])
-    bottom_wall_right = np.array([[x, oscillator_y, 0] for x in np.arange(W / 2 + D / 2, W, 0.5)])
+    bottom_wall_left = np.array([[x, oscillator_y, 0] for x in np.arange(0, W / 2 - D / 2 + 0.5, 0.5)])
+    bottom_wall_right = np.array([[x, oscillator_y, 0] for x in np.arange(W / 2 + D / 2, W + 0.5, 0.5)])
 
     return np.concatenate((left_wall, right_wall, bottom_wall_left, bottom_wall_right))
 
@@ -71,7 +70,7 @@ def get_particles_data(static_file: str, results_file: str) -> List[EventData]:
     return dfs
 
 
-def get_particles_initial_data(static_file: str, dynamic_file: str) -> List[DataFrame]:
+def get_particles_initial_data(static_file: str, dynamic_file: str) -> DataFrame:
     dynamic_df = pd.read_csv(dynamic_file, skiprows=1, sep=" ", names=["x", "y", "vx", "vy"])
     static_df = pd.read_csv(static_file, skiprows=2, sep=" ", names=["radius", "mass"])
 

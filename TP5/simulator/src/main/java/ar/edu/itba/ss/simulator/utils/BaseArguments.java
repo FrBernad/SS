@@ -7,18 +7,20 @@ public class BaseArguments {
     private final File staticFile;
     private final File dynamicFile;
     private final String outResultsFilePath;
-    private final String outTimeFilePath;
+
+    private final String outExitTimeFile;
     private final String delimiter;
     private final double maxTime;
     private final double dt;
     private final double w;
     private final double D;
 
-    public BaseArguments(File staticFile, File dynamicFile, String outResultsFilePath, String outTimeFilePath, String delimiter, double maxTime, double dt, double w, double d) {
+
+    public BaseArguments(File staticFile, File dynamicFile, String outResultsFilePath, String outExitTimeFile, String delimiter, double maxTime, double dt, double w, double d) {
         this.staticFile = staticFile;
         this.dynamicFile = dynamicFile;
         this.outResultsFilePath = outResultsFilePath;
-        this.outTimeFilePath = outTimeFilePath;
+        this.outExitTimeFile = outExitTimeFile;
         this.delimiter = delimiter;
         this.maxTime = maxTime;
         this.dt = dt;
@@ -38,8 +40,8 @@ public class BaseArguments {
         return outResultsFilePath;
     }
 
-    public String getOutTimeFilePath() {
-        return outTimeFilePath;
+    public String getOutExitTimeFile() {
+        return outExitTimeFile;
     }
 
     public String getDelimiter() {
