@@ -18,16 +18,16 @@ import static ar.edu.itba.ss.simulator.utils.ParseUtils.ParticlesParserResult;
 import static ar.edu.itba.ss.simulator.utils.ParseUtils.parseParticlesList;
 import static java.lang.Double.parseDouble;
 
-public class MultipleFrequencySimulator {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MultipleFrequencySimulator.class);
+public class MultipleOpeningSimulator {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MultipleOpeningSimulator.class);
     private static final String RESULTS_DIR_PATH_P = "resultsDir";
     private static final String STATIC_FILE_PATH_P = "staticFile";
     private static final String DYNAMIC_FILE_PATH_P = "dynamicFile";
     private static final String DELIMITER_P = "delimiter";
     private static final String DEFAULT_DELIMITER = " ";
-    private static final String D_P = "D";
+    private static final List<Integer> OPENINGS = List.of(4, 5, 6);
 
-    private static final List<Integer> FREQUENCIES = List.of(5, 10, 15, 20, 30, 50);
+    private static final String w_P = "w";
     private static final int L = 70;
     private static final int W = 20;
     private static final double EXIT_DISTANCE = L / 10.0;
@@ -38,7 +38,7 @@ public class MultipleFrequencySimulator {
     private static final double A = 0.15;
 
     public static void main(String[] args) throws IOException {
-        LOGGER.info("MultipleFrequencySimulator Starting ...");
+        LOGGER.info("MultipleOpeningSimulator Starting ...");
 
         final Properties properties = System.getProperties();
         final BaseArguments baseArguments;
@@ -59,9 +59,9 @@ public class MultipleFrequencySimulator {
         double secondsStep = 0.1;
         double printStep = secondsStep / baseArguments.getDt();
 
-        for (Integer w : FREQUENCIES) {
-            final String outResultsFilePath = String.format("%s/results%d", baseArguments.getOutResultsFilePath(), w);
-            final String outExitTimeFilePath = String.format("%s/exitTime%d", baseArguments.getOutResultsFilePath(), w);
+        for (Integer D : OPENINGS) {
+            final String outResultsFilePath = String.format("%s/results%d", baseArguments.getOutResultsFilePath(), D);
+            final String outExitTimeFilePath = String.format("%s/exitTime%d", baseArguments.getOutResultsFilePath(), D);
 
             final File outResultsFile = new File(outResultsFilePath);
             final File outExitTimeFile = new File(outExitTimeFilePath);
@@ -69,13 +69,14 @@ public class MultipleFrequencySimulator {
             PrintWriter resultsWriter = new PrintWriter(outResultsFile);
             PrintWriter exitTimeWriter = new PrintWriter(outExitTimeFile);
 
-            LOGGER.info(String.format("Executing Simulator with %d particles %d...", particlesParserResult.getN(), w));
+            LOGGER.info(String.format("Executing Simulator with %d particles (opening %d - frecuency %f)  ...",
+                    particlesParserResult.getN(), D, baseArguments.getW()));
             LOGGER.info(String.format("Writing Results every %.2f seconds", printStep * baseArguments.getDt()));
 
             final AlgorithmResults methodResults = VibratedSilo.execute(
                     particlesParserResult.getParticlesPerTime().get(0),
-                    L, W, baseArguments.getD(), EXIT_DISTANCE, REENTER_MIN_HEIGHT, REENTER_MAX_HEIGHT,
-                    KN, KT, w, A,
+                    L, W, D, EXIT_DISTANCE, REENTER_MIN_HEIGHT, REENTER_MAX_HEIGHT,
+                    KN, KT, baseArguments.getW(), A,
                     baseArguments.getDt(), baseArguments.getMaxTime(),
                     printStep, resultsWriter, exitTimeWriter
             );
@@ -99,12 +100,12 @@ public class MultipleFrequencySimulator {
 
         final double dt = 0.001;
         final double tf = 1000;
-        final double D = parseDouble(getPropertyOrDefault(properties, D_P, "3"));
+        final double w = parseDouble(getPropertyOrFail(properties, w_P));
 
         final File staticFile = Paths.get(staticFilePath).toFile();
         final File dynamicFile = Paths.get(dynamicFilePath).toFile();
 
-        return new BaseArguments(staticFile, dynamicFile, outResultsDir, null, delimiter, tf, dt, 0, D);
+        return new BaseArguments(staticFile, dynamicFile, outResultsDir, null, delimiter, tf, dt, w, 0);
     }
 
     private static void printClientUsage() {
