@@ -47,10 +47,10 @@ public class CellIndexMethod {
 
         final List<Optional<Cell>> surroundingCells = List.of(topCell, rightCell, topRightCell, bottomRightCell);
 
-        final Pair particlePosition = particles.get(particle).get(R0.ordinal());
+        final Pair<Double, Double> particlePosition = particles.get(particle).get(R0.ordinal());
 
         for (Particle otherParticle : cell.getParticles()) {
-            Pair otherParticlePosition = particles.get(otherParticle).get(R0.ordinal());
+            Pair<Double, Double> otherParticlePosition = particles.get(otherParticle).get(R0.ordinal());
 
             if (!particle.equals(otherParticle)) {
                 addIfInRadius(particle, particlePosition, otherParticle, otherParticlePosition, neighbors, R);
@@ -59,18 +59,18 @@ public class CellIndexMethod {
 
         surroundingCells.stream().filter(c -> c.isPresent() && !c.get().isEmpty()).forEach(c -> {
             for (Particle otherParticle : c.get().getParticles()) {
-                Pair otherParticlePosition = particles.get(otherParticle).get(R0.ordinal());
+                Pair<Double, Double> otherParticlePosition = particles.get(otherParticle).get(R0.ordinal());
                 addIfInRadius(particle, particlePosition, otherParticle, otherParticlePosition, neighbors, R);
             }
         });
     }
 
 
-    private static void addIfInRadius(final Particle particle, final Pair particlePosition,
-                                      final Particle otherParticle, final Pair otherParticlePosition,
+    private static void addIfInRadius(final Particle particle, final Pair<Double, Double> particlePosition,
+                                      final Particle otherParticle, final Pair<Double, Double> otherParticlePosition,
                                       final Map<Particle, Set<Particle>> neighbors, final double R) {
-        final double deltaX = particlePosition.getX() - otherParticlePosition.getX();
-        final double deltaY = particlePosition.getY() - otherParticlePosition.getY();
+        final double deltaX = particlePosition.getKey() - otherParticlePosition.getKey();
+        final double deltaY = particlePosition.getValue() - otherParticlePosition.getValue();
         final double distanceBetween = hypot(deltaX, deltaY) - particle.getRadius() - otherParticle.getRadius();
         if (distanceBetween <= R) {
             neighbors.get(particle).add(otherParticle);

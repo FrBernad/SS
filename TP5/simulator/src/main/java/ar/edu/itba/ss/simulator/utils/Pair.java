@@ -1,27 +1,27 @@
 package ar.edu.itba.ss.simulator.utils;
 
-public class Pair {
-    public Double x;
-    public Double y;
+public class Pair<K, V> {
+    public K key;
+    public V value;
 
-    public Pair(Double x, Double y) {
-        this.x = x;
-        this.y = y;
+    public Pair(K key, V value) {
+        this.key = key;
+        this.value = value;
     }
 
-    public Double getX() {
-        return x;
+    public K getKey() {
+        return key;
     }
 
-    public Double getY() {
-        return y;
+    public V getValue() {
+        return value;
     }
 
-    public void setX(Double x) {
-        this.x = x;
+    public void setKey(K key) {
+        this.key = key;
     }
 
-    public void setY(Double y) {
-        this.y = y;
+    public void setValue(V value) {
+        this.value = value;
     }
 }

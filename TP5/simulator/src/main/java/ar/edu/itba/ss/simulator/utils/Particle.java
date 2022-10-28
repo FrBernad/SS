@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public class Particle implements Comparable<Particle> {
     private final int id;
-    private final double radius;
+    private double radius;
     private final double mass;
 
     public Particle(int id, double radius, double mass) {
@@ -19,6 +19,10 @@ public class Particle implements Comparable<Particle> {
 
     public double getRadius() {
         return radius;
+    }
+
+    public void setRadius(double radius) {
+        this.radius = radius;
     }
 
     public double getMass() {

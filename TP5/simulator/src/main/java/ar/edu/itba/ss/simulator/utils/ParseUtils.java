@@ -49,10 +49,10 @@ public class ParseUtils {
             final Particle currentParticle = particles.get(particleIndex);
 
             final R currentParticleRs = new R();
-            currentParticleRs.set(R0.ordinal(),parseDouble(dynamicArray.get(DynamicFields.X.getValue())),
+            currentParticleRs.set(R0.ordinal(), parseDouble(dynamicArray.get(DynamicFields.X.getValue())),
                 parseDouble(dynamicArray.get(DynamicFields.Y.getValue())));
 
-            currentParticleRs.set(R1.ordinal(),parseDouble(dynamicArray.get(DynamicFields.VELOCITY_X.getValue())),
+            currentParticleRs.set(R1.ordinal(), parseDouble(dynamicArray.get(DynamicFields.VELOCITY_X.getValue())),
                 parseDouble(dynamicArray.get(DynamicFields.VELOCITY_Y.getValue())));
 
             currentParticlesPerTime.put(currentParticle, currentParticleRs);
@@ -63,6 +63,64 @@ public class ParseUtils {
         dynamicScanner.close();
 
         return new ParticlesParserResult(N, L, particlesPerTime);
+    }
+
+    public static ParticlesWithPhaseParserResult parseParticlesListWithPhase(final File staticFile, final File dynamicFile, final String delimiter) throws IOException {
+        final Scanner staticScanner = new Scanner(staticFile);
+        final Scanner dynamicScanner = new Scanner(dynamicFile);
+
+        final int N = parseInt(staticScanner.nextLine().split(delimiter)[0]);
+        final int L = parseInt(staticScanner.nextLine().split(delimiter)[0]);
+
+        final List<Map<Particle, R>> particlesPerTime = new ArrayList<>();
+
+        final List<Particle> particles = new ArrayList<>();
+
+        while (staticScanner.hasNextLine()) {
+            final List<String> staticArray = Arrays.asList(staticScanner.nextLine().split(delimiter));
+
+            particles.add(new ParticleWithPhase(particles.size() + 1,
+                parseDouble(staticArray.get(StaticFieldsWithPhase.RADIUS.getValue())),
+                parseDouble(staticArray.get(StaticFieldsWithPhase.MASS.getValue())),
+                parseDouble(staticArray.get(StaticFieldsWithPhase.PHASE.getValue()))
+            ));
+        }
+
+        staticScanner.close();
+
+        int particleIndex = 0;
+        int timeIndex = -1;
+        while (dynamicScanner.hasNextLine()) {
+
+            List<String> dynamicArray = Arrays.asList(dynamicScanner.nextLine().split(delimiter));
+            if (dynamicArray.size() == 1) {
+                particleIndex = 0;
+                timeIndex++;
+
+                dynamicArray = Arrays.asList(dynamicScanner.nextLine().split(delimiter));
+
+                particlesPerTime.add(new HashMap<>());
+            }
+
+            final Map<Particle, R> currentParticlesPerTime = particlesPerTime.get(timeIndex);
+
+            final Particle currentParticle = particles.get(particleIndex);
+
+            final R currentParticleRs = new R();
+            currentParticleRs.set(R0.ordinal(), parseDouble(dynamicArray.get(DynamicFields.X.getValue())),
+                parseDouble(dynamicArray.get(DynamicFields.Y.getValue())));
+
+            currentParticleRs.set(R1.ordinal(), parseDouble(dynamicArray.get(DynamicFields.VELOCITY_X.getValue())),
+                parseDouble(dynamicArray.get(DynamicFields.VELOCITY_Y.getValue())));
+
+            currentParticlesPerTime.put(currentParticle, currentParticleRs);
+
+            particleIndex++;
+        }
+
+        dynamicScanner.close();
+
+        return new ParticlesWithPhaseParserResult(N, L, particlesPerTime);
     }
 
     public static class ParticlesParserResult {
@@ -89,12 +147,50 @@ public class ParseUtils {
         }
     }
 
+    public static class ParticlesWithPhaseParserResult {
+        private final List<Map<Particle, R>> particlesPerTime;
+        private final int N;
+        private final int L;
+
+        public ParticlesWithPhaseParserResult(int N, int L, List<Map<Particle, R>> particlesPerTime) {
+            this.N = N;
+            this.L = L;
+            this.particlesPerTime = particlesPerTime;
+        }
+
+        public int getN() {
+            return N;
+        }
+
+        public int getL() {
+            return L;
+        }
+
+        public List<Map<Particle, R>> getParticlesPerTime() {
+            return particlesPerTime;
+        }
+    }
+
     public enum StaticFields {
         RADIUS(0), MASS(1);
 
         private final int value;
 
         StaticFields(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+    }
+
+    public enum StaticFieldsWithPhase {
+        RADIUS(0), MASS(1), PHASE(2);
+
+        private final int value;
+
+        StaticFieldsWithPhase(int value) {
             this.value = value;
         }
 

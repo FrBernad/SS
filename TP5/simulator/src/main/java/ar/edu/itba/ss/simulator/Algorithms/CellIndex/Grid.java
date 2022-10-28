@@ -46,10 +46,10 @@ public class Grid {
 
     public void fillGrid(Map<Particle, R> particles) {
         for (Map.Entry<Particle, R> entry : particles.entrySet()) {
-            Pair position = entry.getValue().get(R0.ordinal());
-            if (position.getY() >= 0 && position.getY() < L) {
-                int x_index = (int) Math.floor(position.getX() / incrementX);
-                int y_index = (int) Math.floor(position.getY() / incrementY);
+            Pair<Double, Double> position = entry.getValue().get(R0.ordinal());
+            if (position.getValue() >= 0 && position.getValue() < L) {
+                int x_index = (int) Math.floor(position.getKey() / incrementX);
+                int y_index = (int) Math.floor(position.getValue() / incrementY);
 
                 grid.get(y_index).get(x_index).addParticle(entry.getKey());
             }

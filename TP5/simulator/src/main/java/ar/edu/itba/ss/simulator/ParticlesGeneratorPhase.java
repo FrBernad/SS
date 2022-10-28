@@ -20,9 +20,10 @@ import static ar.edu.itba.ss.simulator.utils.R.values.R1;
 import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
 import static java.lang.Math.pow;
+import static java.lang.Math.sin;
 
-public class ParticlesGenerator {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ParticlesGenerator.class);
+public class ParticlesGeneratorPhase {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ParticlesGeneratorPhase.class);
     private static final String STATIC_FILE_PATH_P = "staticFile";
     private static final String DYNAMIC_FILE_PATH_P = "dynamicFile";
 
@@ -30,10 +31,13 @@ public class ParticlesGenerator {
     private static final String N_P = "N";
     private static final String L_P = "L";
     private static final String W_P = "W";
+    private static final String w_P = "w";
+    private static final String A_P = "A";
+    private static final String R0_P = "r0";
     private static final String DELIMITER_P = "delimiter";
     private static final String PARTICLE_MASS_P = "mass";
-    private static final String R0_P = "r0";
-    private static final String DR_P = "dr";
+    private static final String MIN_THETA_P = "minTheta";
+    private static final String MAX_THETA_P = "maxTheta";
     private static final String INITIAL_VX_P = "vx";
     private static final String INITIAL_VY_P = "vy";
     private static final String SEED_P = "seed";
@@ -46,7 +50,7 @@ public class ParticlesGenerator {
     public static void main(String[] args) throws IOException {
         LOGGER.info("Files Generator Starting ...");
 
-        FileGeneratorArguments fileArguments;
+        FileGeneratorArgumentsPhase fileArguments;
 
         final Properties properties = System.getProperties();
 
@@ -63,18 +67,17 @@ public class ParticlesGenerator {
         RandomGenerator.setInstance(fileArguments.getSeed());
 
         Map<Particle, R> particles = generateParticles(fileArguments.getN(), fileArguments.getL(),
-            fileArguments.getW(), fileArguments.getMass(),
-            fileArguments.getR0(), fileArguments.getDr(),
-            fileArguments.getVx(), fileArguments.getVy());
+            fileArguments.getW(), fileArguments.getA(), fileArguments.getMass(),
+            fileArguments.getR0(), fileArguments.getMinTheta(), fileArguments.getMaxTheta(),
+            fileArguments.getFrequency(), fileArguments.getVx(), fileArguments.getVy(), 0);
 
         //Static File
         try (PrintWriter pw = new PrintWriter(fileArguments.getStaticFile())) {
-
             pw.println(fileArguments.getN());
             pw.println(fileArguments.getL());
 
             for (Map.Entry<Particle, R> entry : particles.entrySet()) {
-                pw.printf("%f %f\n", entry.getKey().getRadius(), entry.getKey().getMass());
+                pw.printf("%f %f %f\n", entry.getKey().getRadius(), entry.getKey().getMass(), ((ParticleWithPhase) entry.getKey()).getPhase());
             }
         }
 
@@ -91,26 +94,24 @@ public class ParticlesGenerator {
 
     }
 
-    private static FileGeneratorArguments getAndParseBaseArguments(final Properties properties) throws IllegalArgumentException {
+    private static FileGeneratorArgumentsPhase getAndParseBaseArguments(final Properties properties) throws IllegalArgumentException {
         final String staticFilePath = getPropertyOrFail(properties, STATIC_FILE_PATH_P);
         final String dynamicFilePath = getPropertyOrFail(properties, DYNAMIC_FILE_PATH_P);
 
         final String delimiter = getPropertyOrDefault(properties, DELIMITER_P, DEFAULT_DELIMITER);
 
-
         final int N = parseInt(getPropertyOrFail(properties, N_P));
         final int L = parseInt(getPropertyOrFail(properties, L_P));
-
         final int W = parseInt(getPropertyOrFail(properties, W_P));
-
-        final double mass = parseDouble(getPropertyOrFail(properties, PARTICLE_MASS_P));
-
+        final double A = parseDouble(getPropertyOrFail(properties, A_P));
         final double r0 = parseDouble(getPropertyOrFail(properties, R0_P));
+        final double mass = parseDouble(getPropertyOrFail(properties, PARTICLE_MASS_P));
+        final double frequency = parseDouble(getPropertyOrFail(properties, w_P));
 
-        final double dr = parseDouble(getPropertyOrFail(properties, DR_P));
+        final double minTheta = parseDouble(getPropertyOrFail(properties, MIN_THETA_P));
+        final double maxTheta = parseDouble(getPropertyOrFail(properties, MAX_THETA_P));
 
         final double vx = parseDouble(getPropertyOrFail(properties, INITIAL_VX_P));
-
         final double vy = parseDouble(getPropertyOrFail(properties, INITIAL_VY_P));
 
         Long seed;
@@ -123,13 +124,15 @@ public class ParticlesGenerator {
         final File staticFile = new File(staticFilePath);
         final File dynamicFile = new File(dynamicFilePath);
 
-        return new FileGeneratorArguments(staticFile, dynamicFile, delimiter, N, L, W, mass, r0, dr, vx, vy, seed);
+        return new FileGeneratorArgumentsPhase(staticFile, dynamicFile, delimiter, N, L, W, A, mass, r0, minTheta, maxTheta, frequency, vx, vy, seed);
     }
 
     public static Map<Particle, R> generateParticles(final int N, final double L,
-                                                     final double W, final double mass,
-                                                     final double r0, final double dr,
-                                                     final double initialVx, final double initialVy) {
+                                                     final double W, final double A,
+                                                     final double mass, final double r0,
+                                                     final double minTheta, final double maxTheta,
+                                                     final double frequency,
+                                                     final double initialVx, final double initialVy, final double t) {
 
         final Map<Particle, R> particles = new HashMap<>();
 
@@ -137,11 +140,9 @@ public class ParticlesGenerator {
 
         // Particle state
         int particleId = 0;
-        final double maxRadius = r0 + dr;
-        final double minRadius = r0 - dr;
 
-        double scale1 = BigDecimal.valueOf(maxRadius).scale();
-        double scale2 = BigDecimal.valueOf(minRadius).scale();
+        double scale1 = BigDecimal.valueOf(minTheta).scale();
+        double scale2 = BigDecimal.valueOf(maxTheta).scale();
 
         double scale = Math.max(scale1, scale2);
         scale = 1 / pow(10, scale);
@@ -150,10 +151,11 @@ public class ParticlesGenerator {
         // Generate particles positions
         for (int j = 0; j < N; j++) {
 
-            final double radius = random.nextDouble() * ((maxRadius - minRadius) + scale) + minRadius;
+            final double phase = random.nextDouble() * ((maxTheta - minTheta) + scale) + minTheta;
+            final double radius = r0 * (1 + A * sin(frequency * t + phase));
             final double offset = random.nextDouble();
 
-            Particle particle = new Particle(particleId, radius, mass);
+            Particle particle = new ParticleWithPhase(particleId, radius, mass, phase);
             particleId++;
 
             final R particleState = generateParticleState(radius + offset, L - radius,
@@ -206,6 +208,6 @@ public class ParticlesGenerator {
             "Usage: ./generator " +
             "-DstaticFile='path/to/static/file' " +
             "-DdynamicFile='path/to/dynamic/file' " +
-            "-DN=N -DL=L -DW=W -Dmass=mass -Dr0=r0 -Ddr=dr -Dvx=vx -Dvy=vy -Dseed=seed");
+            "-DN=N -DL=L -DW=W -DA=A -Dmass=mass -Dw=w -Dr0=r0 -DminTheta=minTheta -DmaxTheta=maxTheta -Dvx=vx -Dvy=vy -Dseed=seed");
     }
 }

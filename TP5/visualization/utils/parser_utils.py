@@ -17,7 +17,7 @@ def get_frame_particles(frame_data: EventData):
 
     L = 70
     W = 20
-    w = 50
+    w = 0
     D = 3
 
     silo_points = _generate_silo(L, W, w, D, time)
@@ -65,6 +65,28 @@ def get_particles_data(static_file: str, results_file: str) -> List[EventData]:
                 current_frame = []
                 current_frame_time = float_vals[0]
         df = pd.DataFrame(np.array(current_frame), columns=["id", "x", "y", "vx", "vy"])
+        dfs.append(EventData(current_frame_time, pd.concat([df, static_df], axis=1)))
+
+    return dfs
+
+
+def get_particles_data_phase(static_file: str, results_file: str) -> List[EventData]:
+    static_df = pd.read_csv(static_file, skiprows=2, sep=" ", names=["radius", "mass"])
+    static_df.drop('radius', inplace=True, axis=1)
+    dfs = []
+    with open(results_file, "r") as results:
+        current_frame_time = float(next(results))
+        current_frame = []
+        for line in results:
+            float_vals = list(map(lambda v: float(v), line.split()))
+            if len(float_vals) > 1:
+                current_frame.append(float_vals)
+            elif len(float_vals) == 1:
+                df = pd.DataFrame(np.array(current_frame), columns=["id", "x", "y", "vx", "vy", "radius"])
+                dfs.append(EventData(current_frame_time, pd.concat([df, static_df], axis=1)))
+                current_frame = []
+                current_frame_time = float_vals[0]
+        df = pd.DataFrame(np.array(current_frame), columns=["id", "x", "y", "vx", "vy", "radius"])
         dfs.append(EventData(current_frame_time, pd.concat([df, static_df], axis=1)))
 
     return dfs
