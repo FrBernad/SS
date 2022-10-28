@@ -25,8 +25,12 @@ public class BaseArguments {
     private final double tf;
     private final double vx;
     private final double vy;
+    private final Long seed;
 
-    public BaseArguments(File staticFile, File dynamicFile, String outResultsFile, String outExitTimeFile, String delimiter, int L, int W, int D, double frequency, double kn, double kt, double A, double exitDistance, double reenterMinHeight, double reenterMaxHeight, double gravity, double dt, double dt2, double tf, double vx, double vy) {
+    public BaseArguments(File staticFile, File dynamicFile, String outResultsFile, String outExitTimeFile,
+                         String delimiter, int L, int W, int D, double frequency, double kn, double kt, double A,
+                         double exitDistance, double reenterMinHeight, double reenterMaxHeight, double gravity,
+                         double dt, double dt2, double tf, double vx, double vy, Long seed) {
         this.staticFile = staticFile;
         this.dynamicFile = dynamicFile;
         this.outResultsFile = outResultsFile;
@@ -48,6 +52,7 @@ public class BaseArguments {
         this.tf = tf;
         this.vx = vx;
         this.vy = vy;
+        this.seed = seed;
     }
 
     public File getStaticFile() {
@@ -133,6 +138,11 @@ public class BaseArguments {
     public double getVy() {
         return vy;
     }
+
+    public Long getSeed() {
+        return seed;
+    }
+
 }
 
 

@@ -3,3 +3,7 @@
 .idea/
 
 TP5/visualization/utils/__pycache__/
+
+TP5/simulator/src/main/resources/META-INF/
+
+TP5/visualization/Simulator/__pycache__/

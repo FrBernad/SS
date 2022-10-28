@@ -23,7 +23,7 @@ import static ar.edu.itba.ss.simulator.utils.R.values.R1;
 public class VibratedSilo {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VibratedSilo.class);
-    public static final double INTERACTION_RADIUS = 0.1;
+    public static final double INTERACTION_RADIUS = 0.0;
     public static final int GRID_HEIGHT_RESTRICTION = 30;
 
     public static AlgorithmResults execute(final Map<Particle, R> initialRs,

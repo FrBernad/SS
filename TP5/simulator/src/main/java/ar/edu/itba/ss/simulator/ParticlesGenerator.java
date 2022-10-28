@@ -1,9 +1,6 @@
 package ar.edu.itba.ss.simulator;
 
-import ar.edu.itba.ss.simulator.utils.FileGeneratorArguments;
-import ar.edu.itba.ss.simulator.utils.Pair;
-import ar.edu.itba.ss.simulator.utils.Particle;
-import ar.edu.itba.ss.simulator.utils.R;
+import ar.edu.itba.ss.simulator.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +26,6 @@ public class ParticlesGenerator {
     private static final String STATIC_FILE_PATH_P = "staticFile";
     private static final String DYNAMIC_FILE_PATH_P = "dynamicFile";
 
-
     /*Java Properties*/
     private static final String N_P = "N";
     private static final String L_P = "L";
@@ -37,10 +33,10 @@ public class ParticlesGenerator {
     private static final String DELIMITER_P = "delimiter";
     private static final String PARTICLE_MASS_P = "mass";
     private static final String R0_P = "r0";
-    private static final String DR_P = "dR";
+    private static final String DR_P = "dr";
     private static final String INITIAL_VX_P = "vx";
     private static final String INITIAL_VY_P = "vy";
-
+    private static final String SEED_P = "seed";
 
     /*Default Properties*/
 
@@ -64,10 +60,12 @@ public class ParticlesGenerator {
 
         LOGGER.info("Generating files ...");
 
+        RandomGenerator.setInstance(fileArguments.getSeed());
+
         Map<Particle, R> particles = generateParticles(fileArguments.getN(), fileArguments.getL(),
-                fileArguments.getW(), fileArguments.getMass(),
-                fileArguments.getR0(), fileArguments.getDr(),
-                fileArguments.getVx(), fileArguments.getVy());
+            fileArguments.getW(), fileArguments.getMass(),
+            fileArguments.getR0(), fileArguments.getDr(),
+            fileArguments.getVx(), fileArguments.getVy());
 
         //Static File
         try (PrintWriter pw = new PrintWriter(fileArguments.getStaticFile())) {
@@ -85,7 +83,7 @@ public class ParticlesGenerator {
             pw.println(0);
             for (Map.Entry<Particle, R> entry : particles.entrySet()) {
                 pw.printf("%f %f %f %f\n", entry.getValue().get(R0.ordinal()).getX(), entry.getValue().get(R0.ordinal()).getY(),
-                        entry.getValue().get(R1.ordinal()).getX(), entry.getValue().get(R1.ordinal()).getY());
+                    entry.getValue().get(R1.ordinal()).getX(), entry.getValue().get(R1.ordinal()).getY());
             }
         }
 
@@ -96,21 +94,37 @@ public class ParticlesGenerator {
     private static FileGeneratorArguments getAndParseBaseArguments(final Properties properties) throws IllegalArgumentException {
         final String staticFilePath = getPropertyOrFail(properties, STATIC_FILE_PATH_P);
         final String dynamicFilePath = getPropertyOrFail(properties, DYNAMIC_FILE_PATH_P);
+
         final String delimiter = getPropertyOrDefault(properties, DELIMITER_P, DEFAULT_DELIMITER);
+
 
         final int N = parseInt(getPropertyOrFail(properties, N_P));
         final int L = parseInt(getPropertyOrFail(properties, L_P));
+
         final int W = parseInt(getPropertyOrFail(properties, W_P));
+
         final double mass = parseDouble(getPropertyOrFail(properties, PARTICLE_MASS_P));
+
         final double r0 = parseDouble(getPropertyOrFail(properties, R0_P));
+
         final double dr = parseDouble(getPropertyOrFail(properties, DR_P));
+
         final double vx = parseDouble(getPropertyOrFail(properties, INITIAL_VX_P));
+
         final double vy = parseDouble(getPropertyOrFail(properties, INITIAL_VY_P));
+
+        Long seed;
+        try {
+            seed = Long.parseLong(getPropertyOrFail(properties, SEED_P));
+        } catch (Exception e) {
+            seed = null;
+        }
+
 
         final File staticFile = new File(staticFilePath);
         final File dynamicFile = new File(dynamicFilePath);
 
-        return new FileGeneratorArguments(staticFile, dynamicFile, delimiter, N, L, W, mass, r0, dr, vx, vy);
+        return new FileGeneratorArguments(staticFile, dynamicFile, delimiter, N, L, W, mass, r0, dr, vx, vy, seed);
     }
 
     public static Map<Particle, R> generateParticles(final int N, final double L,
@@ -119,7 +133,8 @@ public class ParticlesGenerator {
                                                      final double initialVx, final double initialVy) {
 
         final Map<Particle, R> particles = new HashMap<>();
-        final Random random = new Random();
+
+        final Random random = RandomGenerator.getInstance().getRandom();
 
         // Particle state
         int particleId = 0;
@@ -143,7 +158,7 @@ public class ParticlesGenerator {
             particleId++;
 
             final R particleState = generateParticleState(radius + offset, L - radius,
-                    radius + offset, W - radius - offset, initialVx, initialVy, particle, particles);
+                radius + offset, W - radius - offset, initialVx, initialVy, particle, particles);
             particles.put(particle, particleState);
         }
         return particles;
@@ -153,7 +168,7 @@ public class ParticlesGenerator {
                                           final double minWidth, final double maxWidth,
                                           final double initialVx, final double initialVy,
                                           final Particle particle, final Map<Particle, R> particles) {
-        final Random random = new Random();
+        final Random random = RandomGenerator.getInstance().getRandom();
 
         Pair r0 = null;
         Pair r1 = null;
@@ -189,9 +204,9 @@ public class ParticlesGenerator {
 
     private static void printClientUsage() {
         System.out.println("Invalid generator invocation.\n" +
-                "Usage: ./files_generator " +
-                "-DstaticFile='path/to/static/file' " +
-                "-DdynamicFile='path/to/dynamic/file'" +
-                "-DN=N -DL=L -DW=W -Dmass=mass -Dr0=r0 -DdR=dR -Dvx=vx -Dvy=vy");
+            "Usage: ./generator " +
+            "-DstaticFile='path/to/static/file' " +
+            "-DdynamicFile='path/to/dynamic/file' " +
+            "-DN=N -DL=L -DW=W -Dmass=mass -Dr0=r0 -Ddr=dr -Dvx=vx -Dvy=vy -Dseed=seed");
     }
 }

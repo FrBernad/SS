@@ -6,11 +6,11 @@
   <parent>
     <artifactId>TP5-parent</artifactId>
     <groupId>ar.edu.itba.ss</groupId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
   </parent>
 
   <artifactId>TP5-simulator</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
 
   <name>TP5-simulator</name>
 
@@ -53,8 +53,8 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
             <configuration>
-                <source>10</source>
-                <target>10</target>
+                <source>11</source>
+                <target>11</target>
             </configuration>
         </plugin>
 

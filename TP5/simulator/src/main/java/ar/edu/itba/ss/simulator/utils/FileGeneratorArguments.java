@@ -14,9 +14,11 @@ public class FileGeneratorArguments {
     private final double dr;
     private final double vx;
     private final double vy;
+    private final Long seed;
 
 
-    public FileGeneratorArguments(File staticFile, File dynamicFile, String delimiter, int N, int L, int W, double mass, double r0, double dr, double vx, double vy) {
+    public FileGeneratorArguments(File staticFile, File dynamicFile, String delimiter, int N, int L, int W, double mass,
+                                  double r0, double dr, double vx, double vy, Long seed) {
         this.staticFile = staticFile;
         this.dynamicFile = dynamicFile;
         this.delimiter = delimiter;
@@ -28,6 +30,7 @@ public class FileGeneratorArguments {
         this.dr = dr;
         this.vx = vx;
         this.vy = vy;
+        this.seed = seed;
     }
 
     public File getStaticFile() {
@@ -73,5 +76,10 @@ public class FileGeneratorArguments {
     public double getVy() {
         return vy;
     }
+
+    public Long getSeed() {
+        return seed;
+    }
+
 }
 

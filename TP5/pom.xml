@@ -5,7 +5,7 @@
 
   <groupId>ar.edu.itba.ss</groupId>
   <artifactId>TP5-parent</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
 
   <packaging>pom</packaging>
 
@@ -103,8 +103,8 @@
         <version>3.8.1</version>
         <configuration>
           <verbose>false</verbose>
-          <source>1.8</source>
-          <target>1.8</target>
+          <source>1.10</source>
+          <target>1.10</target>
           <encoding>utf-8</encoding>
         </configuration>
       </plugin>

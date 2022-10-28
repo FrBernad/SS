@@ -3,6 +3,7 @@ package ar.edu.itba.ss.simulator;
 import ar.edu.itba.ss.simulator.simulation.VibratedSilo;
 import ar.edu.itba.ss.simulator.utils.AlgorithmResults;
 import ar.edu.itba.ss.simulator.utils.BaseArguments;
+import ar.edu.itba.ss.simulator.utils.RandomGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,8 +34,6 @@ public class Simulator {
     private static final String DT_P = "dt";
     private static final String DT2_P = "dt2";
     private static final String TF_P = "tf";
-    private static final String INITIAL_VX_P = "vx";
-    private static final String INITIAL_VY_P = "vy";
     private static final String w_P = "w";
     private static final String D_P = "D";
     private static final String KN_P = "kn";
@@ -43,7 +42,10 @@ public class Simulator {
     private static final String EXIT_DISTANCE_P = "exitDistance";
     private static final String REENTER_MIN_HEIGHT_P = "reenterMinHeight";
     private static final String REENTER_MAX_HEIGHT_P = "reenterMaxHeight";
+    private static final String INITIAL_VX_P = "vx";
+    private static final String INITIAL_VY_P = "vy";
     private static final String GRAVITY_P = "gravity";
+    private static final String SEED_P = "seed";
 
 
     /*Default Properties*/
@@ -66,8 +68,8 @@ public class Simulator {
 
         LOGGER.info("Parsing Particles ...");
         final ParticlesParserResult particlesParserResult = parseParticlesList(baseArguments.getStaticFile(),
-                baseArguments.getDynamicFile(),
-                baseArguments.getDelimiter());
+            baseArguments.getDynamicFile(),
+            baseArguments.getDelimiter());
 
         final File outResultsFile = new File(baseArguments.getOutResultsFile());
         final File outExitTimeFile = new File(baseArguments.getOutExitTimeFile());
@@ -78,25 +80,28 @@ public class Simulator {
         PrintWriter resultsWriter = new PrintWriter(outResultsFile);
         PrintWriter exitTimeWriter = new PrintWriter(outExitTimeFile);
 
-        LOGGER.info(String.format("Executing Simulator with %d particles / w = %f / d = %d", particlesParserResult.getN(),
-                baseArguments.getFrequency(), baseArguments.getD()));
+        LOGGER.info(String.format("Executing Simulator with N = %d / w = %f / d = %d",
+            particlesParserResult.getN(), baseArguments.getFrequency(), baseArguments.getD()));
         LOGGER.info(String.format("Writing Results every %.2f seconds", printStep * baseArguments.getDt()));
 
+        RandomGenerator.setInstance(baseArguments.getSeed());
+
         final AlgorithmResults methodResults = VibratedSilo.execute(
-                particlesParserResult.getParticlesPerTime().get(0),
-                baseArguments.getL(), baseArguments.getW(), baseArguments.getD(),
-                baseArguments.getExitDistance(), baseArguments.getReenterMinHeight(),
-                baseArguments.getReenterMaxHeight(), baseArguments.getKn(), baseArguments.getKt(),
-                baseArguments.getFrequency(), baseArguments.getA(), baseArguments.getGravity(),
-                baseArguments.getDt(), baseArguments.getMaxTime(),
-                baseArguments.getVx(), baseArguments.getVy(),
-                printStep, resultsWriter, exitTimeWriter
+            particlesParserResult.getParticlesPerTime().get(0),
+            baseArguments.getL(), baseArguments.getW(), baseArguments.getD(),
+            baseArguments.getExitDistance(), baseArguments.getReenterMinHeight(),
+            baseArguments.getReenterMaxHeight(), baseArguments.getKn(), baseArguments.getKt(),
+            baseArguments.getFrequency(), baseArguments.getA(), baseArguments.getGravity(),
+            baseArguments.getDt(), baseArguments.getMaxTime(),
+            baseArguments.getVx(), baseArguments.getVy(),
+            printStep, resultsWriter, exitTimeWriter
         );
 
         resultsWriter.close();
         exitTimeWriter.close();
 
-        LOGGER.info(String.format("Finished Simulation In %d Iterations", methodResults.getIterations()));
+        LOGGER.info(String.format("Finished Simulation In %d Iterations / %s",
+            methodResults.getIterations(), methodResults.getExecutionTimestamps().getAlgorithmTotalTime().toString()));
 
         LOGGER.info("Done!");
     }
@@ -126,19 +131,27 @@ public class Simulator {
         final double vx = parseDouble(getPropertyOrFail(properties, INITIAL_VX_P));
         final double vy = parseDouble(getPropertyOrFail(properties, INITIAL_VY_P));
 
+        Long seed;
+        try {
+            seed = Long.parseLong(getPropertyOrFail(properties, SEED_P));
+        } catch (Exception e) {
+            seed = null;
+        }
+
         final File staticFile = Paths.get(staticFilePath).toFile();
         final File dynamicFile = Paths.get(dynamicFilePath).toFile();
 
-        return new BaseArguments(staticFile, dynamicFile, outResultsFile, outExitTimeFile, delimiter, L, W, D, w, kn, kt, A, exitDistance, reenterMinHeight, reenterMaxHeight, gravity, dt, dt2, tf, vx, vy);
+        return new BaseArguments(staticFile, dynamicFile, outResultsFile, outExitTimeFile, delimiter, L, W, D, w, kn,
+            kt, A, exitDistance, reenterMinHeight, reenterMaxHeight, gravity, dt, dt2, tf, vx, vy, seed);
     }
 
     private static void printClientUsage() {
         System.out.println("Invalid simulator invocation.\n" +
-                "Usage: ./simulator -DstaticFile='path/to/static/file' -DdynamicFile='path/to/dynamic/file' " +
-                "-DresultsFile='path/to/results/file' -DexitTimeFile='path/to/exitTime/file' " +
-                "-DL=L -DW=W -DD=D -Dw=w -Dkn=kn -Dkt=kt -DA=A -DexitDistance=exitDistance" +
-                "-DreenterMinHeight=reenterMinHeight -DreenterMaxHeight=reenterMaxHeight" +
-                "-Dgravity=gravity -Ddt=dt -Ddt2=dt2 -Dtf=tf -Dvx=vx -Dvy=vy"
+            "Usage: ./simulator -DstaticFile='path/to/static/file' -DdynamicFile='path/to/dynamic/file' " +
+            "-DresultsFile='path/to/results/file' -DexitTimeFile='path/to/exitTime/file' " +
+            "-DL=L -DW=W -DD=D -Dw=w -Dkn=kn -Dkt=kt -DA=A -DexitDistance=exitDistance" +
+            "-DreenterMinHeight=reenterMinHeight -DreenterMaxHeight=reenterMaxHeight" +
+            "-Dgravity=gravity -Ddt=dt -Ddt2=dt2 -Dtf=tf -Dvx=vx -Dvy=vy -Dseed=seed"
         );
     }
 }

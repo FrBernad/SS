@@ -5,6 +5,7 @@ import ar.edu.itba.ss.simulator.Algorithms.CellIndex.Grid;
 import ar.edu.itba.ss.simulator.utils.Pair;
 import ar.edu.itba.ss.simulator.utils.Particle;
 import ar.edu.itba.ss.simulator.utils.R;
+import ar.edu.itba.ss.simulator.utils.RandomGenerator;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -152,7 +153,7 @@ class VibratedSiloUtils {
             }
 
             if (position.getY() - p.getRadius() < -exitDistance) {
-                final double offset = new Random().nextDouble();
+                final double offset = RandomGenerator.getInstance().getRandom().nextDouble();
                 final R newR = generateParticleState(reenterMinHeight + p.getRadius(), reenterMaxHeight - p.getRadius(),
                         p.getRadius() + offset, W - p.getRadius() - offset, initialVx, initialVy, p, currentRs);
 
