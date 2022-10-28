@@ -20,24 +20,50 @@ import static java.lang.Double.parseDouble;
 
 public class Simulator {
     private static final Logger LOGGER = LoggerFactory.getLogger(Simulator.class);
+
+    /*Java Properties*/
     private static final String STATIC_FILE_PATH_P = "staticFile";
     private static final String DYNAMIC_FILE_PATH_P = "dynamicFile";
     private static final String EXIT_TIME_PATH_P = "exitTimeFile";
     private static final String RESULTS_OUT_PATH_P = "resultsFile";
     private static final String DELIMITER_P = "delimiter";
-    private static final String DEFAULT_DELIMITER = " ";
+    private static final String L_P = "L";
+    private static final String W_P = "W";
     private static final String DT_P = "dt";
+    private static final String DT2_P = "dt2";
     private static final String TF_P = "tf";
+    private static final String INITIAL_VX_P = "vx";
+    private static final String INITIAL_VY_P = "vy";
     private static final String w_P = "w";
     private static final String D_P = "D";
-    private static final int L = 70;
-    private static final int W = 20;
-    private static final double EXIT_DISTANCE = L / 10.0;
-    private static final double REENTER_MIN_HEIGHT = 40;
-    private static final double REENTER_MAX_HEIGHT = 70;
-    private static final double KN = 250;
-    private static final double KT = 2 * KN;
-    private static final double A = 0.15;
+    private static final String KN_P = "kn";
+    private static final String KT_P = "kt";
+    private static final String A_P = "A";
+    private static final String EXIT_DISTANCE_P = "exitDistance";
+    private static final String RENTER_MIN_HEIGHT_P = "renterMinHeight";
+    private static final String RENTER_MAX_HEIGHT_P = "renterMaxHeight";
+    private static final String GRAVITY_P = "G";
+
+
+    /*Default Properties*/
+    private static final String DEFAULT_DELIMITER = " ";
+    private static final String DEFAULT_L = "70";
+    private static final String DEFAULT_W = "20";
+    private static final String DEFAULT_DT = "0.001";
+    private static final String DEFAULT_DT2 = "0.1";
+    private static final String DEFAULT_TF = "1000";
+    private static final String DEFAULT_INITIAL_VX = "0";
+    private static final String DEFAULT_INITIAL_VY = "0";
+    private static final String DEFAULT_w = "5";
+    private static final String DEFAULT_D = "3";
+    private static final String DEFAULT_KN = "250";
+    private static final String DEFAULT_KT = "500";
+    private static final String DEFAULT_A = "0.15";
+    private static final String DEFAULT_EXIT_DISTANCE = "7";
+    private static final String DEFAULT_RENTER_MIN_HEIGHT = "40";
+    private static final String DEFAULT_RENTER_MAX_HEIGHT = "70";
+    private static final String DEFAULT_GRAVITY = "5";
+
 
     public static void main(String[] args) throws IOException {
         LOGGER.info("Simulator Starting ...");
@@ -96,15 +122,28 @@ public class Simulator {
         final String outExitTimeFile = getPropertyOrFail(properties, EXIT_TIME_PATH_P);
         final String delimiter = getPropertyOrDefault(properties, DELIMITER_P, DEFAULT_DELIMITER);
 
-        final double dt = parseDouble(getPropertyOrFail(properties, DT_P));
-        final double tf = parseDouble(getPropertyOrFail(properties, TF_P));
-        final double D = parseDouble(getPropertyOrFail(properties, D_P));
-        final double w = parseDouble(getPropertyOrFail(properties, w_P));
+        final double L = parseDouble(getPropertyOrDefault(properties, L_P, DEFAULT_L));
+        final double W = parseDouble(getPropertyOrDefault(properties, W_P, DEFAULT_W));
+        final double dt = parseDouble(getPropertyOrDefault(properties, DT_P, DEFAULT_DT));
+        final double dt2 = parseDouble(getPropertyOrDefault(properties, DT2_P, DEFAULT_DT2));
+        final double tf = parseDouble(getPropertyOrDefault(properties, TF_P, DEFAULT_TF));
+        final double vx = parseDouble(getPropertyOrDefault(properties, INITIAL_VX_P, DEFAULT_INITIAL_VX));
+        final double vy = parseDouble(getPropertyOrDefault(properties, INITIAL_VY_P, DEFAULT_INITIAL_VY));
+        final double w = parseDouble(getPropertyOrDefault(properties, w_P, DEFAULT_w));
+        final double D = parseDouble(getPropertyOrDefault(properties, D_P, DEFAULT_D));
+        final double kn = parseDouble(getPropertyOrDefault(properties, KN_P, DEFAULT_KN));
+        final double kt = parseDouble(getPropertyOrDefault(properties, KT_P, DEFAULT_KT));
+        final double A = parseDouble(getPropertyOrDefault(properties, A_P, DEFAULT_A));
+        final double exitDistance = parseDouble(getPropertyOrDefault(properties, EXIT_DISTANCE_P, DEFAULT_EXIT_DISTANCE));
+        final double renterMinHeight = parseDouble(getPropertyOrDefault(properties, RENTER_MIN_HEIGHT_P, DEFAULT_RENTER_MIN_HEIGHT));
+        final double renterMaxHeight = parseDouble(getPropertyOrDefault(properties, RENTER_MAX_HEIGHT_P, DEFAULT_RENTER_MAX_HEIGHT));
+        final double gravity = parseDouble(getPropertyOrDefault(properties, GRAVITY_P, DEFAULT_GRAVITY));
+
 
         final File staticFile = Paths.get(staticFilePath).toFile();
         final File dynamicFile = Paths.get(dynamicFilePath).toFile();
 
-        return new BaseArguments(staticFile, dynamicFile, outResultsFile, outExitTimeFile, delimiter, tf, dt, w, D);
+        return new BaseArguments(staticFile, dynamicFile, outResultsFile, outExitTimeFile, delimiter, L, W, dt, dt2, tf, vx, vy, w, D, kn, kt, A, exitDistance, renterMinHeight, renterMaxHeight, gravity);
     }
 
     private static void printClientUsage() {

@@ -17,7 +17,7 @@ import static java.lang.Math.*;
 class VibratedSiloUtils {
 
     private static final double GRAVITY = 5;
-    private static final double OPENING_PARTICLE_RADIUS = 0.1;
+    private static final double OPENING_PARTICLE_RADIUS = 0.0;
 
     static void calculateInitialAccelerations(final Map<Particle, R> initialStates) {
         initialStates.forEach((p, r) -> r.set(R2.ordinal(), 0.0, -GRAVITY));
