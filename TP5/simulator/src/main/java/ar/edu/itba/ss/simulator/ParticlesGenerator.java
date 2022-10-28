@@ -41,16 +41,10 @@ public class ParticlesGenerator {
     private static final String INITIAL_VX_P = "vx";
     private static final String INITIAL_VY_P = "vy";
 
+
     /*Default Properties*/
-    private static final String DEFAULT_N = "200";
-    private static final String DEFAULT_L = "70";
-    private static final String DEFAULT_W = "20";
+
     private static final String DEFAULT_DELIMITER = " ";
-    private static final String DEFAULT_PARTICLE_MASS = "1";
-    private static final String DEFAULT_R0 = "1";
-    private static final String DEFAULT_DR = "0.15";
-    private static final String DEFAULT_INITIAL_VX = "0";
-    private static final String DEFAULT_INITIAL_VY = "0";
 
 
     public static void main(String[] args) throws IOException {
@@ -104,14 +98,14 @@ public class ParticlesGenerator {
         final String dynamicFilePath = getPropertyOrFail(properties, DYNAMIC_FILE_PATH_P);
         final String delimiter = getPropertyOrDefault(properties, DELIMITER_P, DEFAULT_DELIMITER);
 
-        final int N = parseInt(getPropertyOrDefault(properties, N_P, DEFAULT_N));
-        final int L = parseInt(getPropertyOrDefault(properties, L_P, DEFAULT_L));
-        final int W = parseInt(getPropertyOrDefault(properties, W_P, DEFAULT_W));
-        final double mass = parseDouble(getPropertyOrDefault(properties, PARTICLE_MASS_P, DEFAULT_PARTICLE_MASS));
-        final double r0 = parseDouble(getPropertyOrDefault(properties, R0_P, DEFAULT_R0));
-        final double dr = parseDouble(getPropertyOrDefault(properties, DR_P, DEFAULT_DR));
-        final double vx = parseDouble(getPropertyOrDefault(properties, INITIAL_VX_P, DEFAULT_INITIAL_VX));
-        final double vy = parseDouble(getPropertyOrDefault(properties, INITIAL_VY_P, DEFAULT_INITIAL_VY));
+        final int N = parseInt(getPropertyOrFail(properties, N_P));
+        final int L = parseInt(getPropertyOrFail(properties, L_P));
+        final int W = parseInt(getPropertyOrFail(properties, W_P));
+        final double mass = parseDouble(getPropertyOrFail(properties, PARTICLE_MASS_P));
+        final double r0 = parseDouble(getPropertyOrFail(properties, R0_P));
+        final double dr = parseDouble(getPropertyOrFail(properties, DR_P));
+        final double vx = parseDouble(getPropertyOrFail(properties, INITIAL_VX_P));
+        final double vy = parseDouble(getPropertyOrFail(properties, INITIAL_VY_P));
 
         final File staticFile = new File(staticFilePath);
         final File dynamicFile = new File(dynamicFilePath);

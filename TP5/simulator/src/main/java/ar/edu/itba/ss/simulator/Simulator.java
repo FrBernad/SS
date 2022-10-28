@@ -41,29 +41,13 @@ public class Simulator {
     private static final String KT_P = "kt";
     private static final String A_P = "A";
     private static final String EXIT_DISTANCE_P = "exitDistance";
-    private static final String REENTER_MIN_HEIGHT_P = "renterMinHeight";
-    private static final String REENTER_MAX_HEIGHT_P = "renterMaxHeight";
-    private static final String GRAVITY_P = "G";
+    private static final String REENTER_MIN_HEIGHT_P = "reenterMinHeight";
+    private static final String REENTER_MAX_HEIGHT_P = "reenterMaxHeight";
+    private static final String GRAVITY_P = "gravity";
 
 
     /*Default Properties*/
     private static final String DEFAULT_DELIMITER = " ";
-    private static final String DEFAULT_L = "70";
-    private static final String DEFAULT_W = "20";
-    private static final String DEFAULT_DT = "0.001";
-    private static final String DEFAULT_DT2 = "0.1";
-    private static final String DEFAULT_TF = "1000";
-    private static final String DEFAULT_INITIAL_VX = "0";
-    private static final String DEFAULT_INITIAL_VY = "0";
-    private static final String DEFAULT_w = "5";
-    private static final String DEFAULT_D = "3";
-    private static final String DEFAULT_KN = "250";
-    private static final String DEFAULT_KT = "500";
-    private static final String DEFAULT_A = "0.15";
-    private static final String DEFAULT_EXIT_DISTANCE = "7";
-    private static final String DEFAULT_REENTER_MIN_HEIGHT = "40";
-    private static final String DEFAULT_REENTER_MAX_HEIGHT = "70";
-    private static final String DEFAULT_GRAVITY = "5";
 
 
     public static void main(String[] args) throws IOException {
@@ -125,22 +109,22 @@ public class Simulator {
         final String outExitTimeFile = getPropertyOrFail(properties, EXIT_TIME_PATH_P);
         final String delimiter = getPropertyOrDefault(properties, DELIMITER_P, DEFAULT_DELIMITER);
 
-        final int L = parseInt(getPropertyOrDefault(properties, L_P, DEFAULT_L));
-        final int W = parseInt(getPropertyOrDefault(properties, W_P, DEFAULT_W));
-        final int D = parseInt(getPropertyOrDefault(properties, D_P, DEFAULT_D));
-        final double w = parseDouble(getPropertyOrDefault(properties, w_P, DEFAULT_w));
-        final double kn = parseDouble(getPropertyOrDefault(properties, KN_P, DEFAULT_KN));
-        final double kt = parseDouble(getPropertyOrDefault(properties, KT_P, DEFAULT_KT));
-        final double A = parseDouble(getPropertyOrDefault(properties, A_P, DEFAULT_A));
-        final double exitDistance = parseDouble(getPropertyOrDefault(properties, EXIT_DISTANCE_P, DEFAULT_EXIT_DISTANCE));
-        final double reenterMinHeight = parseDouble(getPropertyOrDefault(properties, REENTER_MIN_HEIGHT_P, DEFAULT_REENTER_MIN_HEIGHT));
-        final double reenterMaxHeight = parseDouble(getPropertyOrDefault(properties, REENTER_MAX_HEIGHT_P, DEFAULT_REENTER_MAX_HEIGHT));
-        final double gravity = parseDouble(getPropertyOrDefault(properties, GRAVITY_P, DEFAULT_GRAVITY));
-        final double dt = parseDouble(getPropertyOrDefault(properties, DT_P, DEFAULT_DT));
-        final double dt2 = parseDouble(getPropertyOrDefault(properties, DT2_P, DEFAULT_DT2));
-        final double tf = parseDouble(getPropertyOrDefault(properties, TF_P, DEFAULT_TF));
-        final double vx = parseDouble(getPropertyOrDefault(properties, INITIAL_VX_P, DEFAULT_INITIAL_VX));
-        final double vy = parseDouble(getPropertyOrDefault(properties, INITIAL_VY_P, DEFAULT_INITIAL_VY));
+        final int L = parseInt(getPropertyOrFail(properties, L_P));
+        final int W = parseInt(getPropertyOrFail(properties, W_P));
+        final int D = parseInt(getPropertyOrFail(properties, D_P));
+        final double w = parseDouble(getPropertyOrFail(properties, w_P));
+        final double kn = parseDouble(getPropertyOrFail(properties, KN_P));
+        final double kt = parseDouble(getPropertyOrFail(properties, KT_P));
+        final double A = parseDouble(getPropertyOrFail(properties, A_P));
+        final double exitDistance = parseDouble(getPropertyOrFail(properties, EXIT_DISTANCE_P));
+        final double reenterMinHeight = parseDouble(getPropertyOrFail(properties, REENTER_MIN_HEIGHT_P));
+        final double reenterMaxHeight = parseDouble(getPropertyOrFail(properties, REENTER_MAX_HEIGHT_P));
+        final double gravity = parseDouble(getPropertyOrFail(properties, GRAVITY_P));
+        final double dt = parseDouble(getPropertyOrFail(properties, DT_P));
+        final double dt2 = parseDouble(getPropertyOrFail(properties, DT2_P));
+        final double tf = parseDouble(getPropertyOrFail(properties, TF_P));
+        final double vx = parseDouble(getPropertyOrFail(properties, INITIAL_VX_P));
+        final double vy = parseDouble(getPropertyOrFail(properties, INITIAL_VY_P));
 
         final File staticFile = Paths.get(staticFilePath).toFile();
         final File dynamicFile = Paths.get(dynamicFilePath).toFile();
