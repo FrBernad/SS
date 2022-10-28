@@ -17,6 +17,7 @@ import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrFail;
 import static ar.edu.itba.ss.simulator.utils.ParseUtils.ParticlesParserResult;
 import static ar.edu.itba.ss.simulator.utils.ParseUtils.parseParticlesList;
 import static java.lang.Double.parseDouble;
+import static java.lang.Integer.parseInt;
 
 public class Simulator {
     private static final Logger LOGGER = LoggerFactory.getLogger(Simulator.class);
@@ -40,8 +41,8 @@ public class Simulator {
     private static final String KT_P = "kt";
     private static final String A_P = "A";
     private static final String EXIT_DISTANCE_P = "exitDistance";
-    private static final String RENTER_MIN_HEIGHT_P = "renterMinHeight";
-    private static final String RENTER_MAX_HEIGHT_P = "renterMaxHeight";
+    private static final String REENTER_MIN_HEIGHT_P = "renterMinHeight";
+    private static final String REENTER_MAX_HEIGHT_P = "renterMaxHeight";
     private static final String GRAVITY_P = "G";
 
 
@@ -60,8 +61,8 @@ public class Simulator {
     private static final String DEFAULT_KT = "500";
     private static final String DEFAULT_A = "0.15";
     private static final String DEFAULT_EXIT_DISTANCE = "7";
-    private static final String DEFAULT_RENTER_MIN_HEIGHT = "40";
-    private static final String DEFAULT_RENTER_MAX_HEIGHT = "70";
+    private static final String DEFAULT_REENTER_MIN_HEIGHT = "40";
+    private static final String DEFAULT_REENTER_MAX_HEIGHT = "70";
     private static final String DEFAULT_GRAVITY = "5";
 
 
@@ -81,29 +82,31 @@ public class Simulator {
 
         LOGGER.info("Parsing Particles ...");
         final ParticlesParserResult particlesParserResult = parseParticlesList(baseArguments.getStaticFile(),
-            baseArguments.getDynamicFile(),
-            baseArguments.getDelimiter());
+                baseArguments.getDynamicFile(),
+                baseArguments.getDelimiter());
 
-        final File outResultsFile = new File(baseArguments.getOutResultsFilePath());
+        final File outResultsFile = new File(baseArguments.getOutResultsFile());
         final File outExitTimeFile = new File(baseArguments.getOutExitTimeFile());
 
-        double secondsStep = 0.1;
+        double secondsStep = baseArguments.getDt2();
         double printStep = secondsStep / baseArguments.getDt();
 
         PrintWriter resultsWriter = new PrintWriter(outResultsFile);
         PrintWriter exitTimeWriter = new PrintWriter(outExitTimeFile);
 
-        LOGGER.info(String.format("Executing Simulator with %d particles / w = %f / d = %f", particlesParserResult.getN(),
-            baseArguments.getW(), baseArguments.getD()));
+        LOGGER.info(String.format("Executing Simulator with %d particles / w = %f / d = %d", particlesParserResult.getN(),
+                baseArguments.getFrequency(), baseArguments.getD()));
         LOGGER.info(String.format("Writing Results every %.2f seconds", printStep * baseArguments.getDt()));
 
         final AlgorithmResults methodResults = VibratedSilo.execute(
-            particlesParserResult.getParticlesPerTime().get(0),
-            L, W, baseArguments.getD(),
-            EXIT_DISTANCE, REENTER_MIN_HEIGHT, REENTER_MAX_HEIGHT,
-            KN, KT, baseArguments.getW(), A,
-            baseArguments.getDt(), baseArguments.getMaxTime(),
-            printStep, resultsWriter, exitTimeWriter
+                particlesParserResult.getParticlesPerTime().get(0),
+                baseArguments.getL(), baseArguments.getW(), baseArguments.getD(),
+                baseArguments.getExitDistance(), baseArguments.getReenterMinHeight(),
+                baseArguments.getReenterMaxHeight(), baseArguments.getKn(), baseArguments.getKt(),
+                baseArguments.getFrequency(), baseArguments.getA(), baseArguments.getGravity(),
+                baseArguments.getDt(), baseArguments.getMaxTime(),
+                baseArguments.getVx(), baseArguments.getVy(),
+                printStep, resultsWriter, exitTimeWriter
         );
 
         resultsWriter.close();
@@ -122,34 +125,36 @@ public class Simulator {
         final String outExitTimeFile = getPropertyOrFail(properties, EXIT_TIME_PATH_P);
         final String delimiter = getPropertyOrDefault(properties, DELIMITER_P, DEFAULT_DELIMITER);
 
-        final double L = parseDouble(getPropertyOrDefault(properties, L_P, DEFAULT_L));
-        final double W = parseDouble(getPropertyOrDefault(properties, W_P, DEFAULT_W));
+        final int L = parseInt(getPropertyOrDefault(properties, L_P, DEFAULT_L));
+        final int W = parseInt(getPropertyOrDefault(properties, W_P, DEFAULT_W));
+        final int D = parseInt(getPropertyOrDefault(properties, D_P, DEFAULT_D));
+        final double w = parseDouble(getPropertyOrDefault(properties, w_P, DEFAULT_w));
+        final double kn = parseDouble(getPropertyOrDefault(properties, KN_P, DEFAULT_KN));
+        final double kt = parseDouble(getPropertyOrDefault(properties, KT_P, DEFAULT_KT));
+        final double A = parseDouble(getPropertyOrDefault(properties, A_P, DEFAULT_A));
+        final double exitDistance = parseDouble(getPropertyOrDefault(properties, EXIT_DISTANCE_P, DEFAULT_EXIT_DISTANCE));
+        final double reenterMinHeight = parseDouble(getPropertyOrDefault(properties, REENTER_MIN_HEIGHT_P, DEFAULT_REENTER_MIN_HEIGHT));
+        final double reenterMaxHeight = parseDouble(getPropertyOrDefault(properties, REENTER_MAX_HEIGHT_P, DEFAULT_REENTER_MAX_HEIGHT));
+        final double gravity = parseDouble(getPropertyOrDefault(properties, GRAVITY_P, DEFAULT_GRAVITY));
         final double dt = parseDouble(getPropertyOrDefault(properties, DT_P, DEFAULT_DT));
         final double dt2 = parseDouble(getPropertyOrDefault(properties, DT2_P, DEFAULT_DT2));
         final double tf = parseDouble(getPropertyOrDefault(properties, TF_P, DEFAULT_TF));
         final double vx = parseDouble(getPropertyOrDefault(properties, INITIAL_VX_P, DEFAULT_INITIAL_VX));
         final double vy = parseDouble(getPropertyOrDefault(properties, INITIAL_VY_P, DEFAULT_INITIAL_VY));
-        final double w = parseDouble(getPropertyOrDefault(properties, w_P, DEFAULT_w));
-        final double D = parseDouble(getPropertyOrDefault(properties, D_P, DEFAULT_D));
-        final double kn = parseDouble(getPropertyOrDefault(properties, KN_P, DEFAULT_KN));
-        final double kt = parseDouble(getPropertyOrDefault(properties, KT_P, DEFAULT_KT));
-        final double A = parseDouble(getPropertyOrDefault(properties, A_P, DEFAULT_A));
-        final double exitDistance = parseDouble(getPropertyOrDefault(properties, EXIT_DISTANCE_P, DEFAULT_EXIT_DISTANCE));
-        final double renterMinHeight = parseDouble(getPropertyOrDefault(properties, RENTER_MIN_HEIGHT_P, DEFAULT_RENTER_MIN_HEIGHT));
-        final double renterMaxHeight = parseDouble(getPropertyOrDefault(properties, RENTER_MAX_HEIGHT_P, DEFAULT_RENTER_MAX_HEIGHT));
-        final double gravity = parseDouble(getPropertyOrDefault(properties, GRAVITY_P, DEFAULT_GRAVITY));
-
 
         final File staticFile = Paths.get(staticFilePath).toFile();
         final File dynamicFile = Paths.get(dynamicFilePath).toFile();
 
-        return new BaseArguments(staticFile, dynamicFile, outResultsFile, outExitTimeFile, delimiter, L, W, dt, dt2, tf, vx, vy, w, D, kn, kt, A, exitDistance, renterMinHeight, renterMaxHeight, gravity);
+        return new BaseArguments(staticFile, dynamicFile, outResultsFile, outExitTimeFile, delimiter, L, W, D, w, kn, kt, A, exitDistance, reenterMinHeight, reenterMaxHeight, gravity, dt, dt2, tf, vx, vy);
     }
 
     private static void printClientUsage() {
         System.out.println("Invalid simulator invocation.\n" +
-            "Usage: ./simulator -DstaticFile='path/to/static/file' -DdynamicFile='path/to/dynamic/file' " +
-            "-DresultsFile='path/to/results/file' -DexitTimeFile='path/to/exitTime/file' -Ddt=dt -Dtf=tf -DD=D -Dw=w"
+                "Usage: ./simulator -DstaticFile='path/to/static/file' -DdynamicFile='path/to/dynamic/file' " +
+                "-DresultsFile='path/to/results/file' -DexitTimeFile='path/to/exitTime/file' " +
+                "-DL=L -DW=W -DD=D -Dw=w -Dkn=kn -Dkt=kt -DA=A -DexitDistance=exitDistance" +
+                "-DreenterMinHeight=reenterMinHeight -DreenterMaxHeight=reenterMaxHeight" +
+                "-Dgravity=gravity -Ddt=dt -Ddt2=dt2 -Dtf=tf -Dvx=vx -Dvy=vy"
         );
     }
 }

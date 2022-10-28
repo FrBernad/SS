@@ -9,46 +9,45 @@ public class BaseArguments {
     private final String outResultsFile;
     private final String outExitTimeFile;
     private final String delimiter;
-    private final double L;
-    private final double W;
+    private final int L;
+    private final int W;
+    private final int D;
+    private final double frequency;
+    private final double kn;
+    private final double kt;
+    private final double A;
+    private final double exitDistance;
+    private final double reenterMinHeight;
+    private final double reenterMaxHeight;
+    private final double gravity;
     private final double dt;
     private final double dt2;
     private final double tf;
     private final double vx;
     private final double vy;
-    private final double w;
-    private final double D;
-    private final double kn;
-    private final double kt;
-    private final double A;
-    private final double exitDistance;
-    private final double renterMinHeight;
-    private final double renterMaxHeight;
-    private final double gravity;
 
-
-    public BaseArguments(File staticFile, File dynamicFile, String outResultsFile, String outExitTimeFile, String delimiter, double L, double W, double dt, double dt2, double tf, double vx, double vy, double w, double d, double kn, double kt, double a, double exitDistance, double renterMinHeight, double renterMaxHeight, double gravity) {
+    public BaseArguments(File staticFile, File dynamicFile, String outResultsFile, String outExitTimeFile, String delimiter, int L, int W, int D, double frequency, double kn, double kt, double A, double exitDistance, double reenterMinHeight, double reenterMaxHeight, double gravity, double dt, double dt2, double tf, double vx, double vy) {
         this.staticFile = staticFile;
         this.dynamicFile = dynamicFile;
         this.outResultsFile = outResultsFile;
         this.outExitTimeFile = outExitTimeFile;
         this.delimiter = delimiter;
         this.L = L;
-        this.W = w;
+        this.W = W;
+        this.D = D;
+        this.frequency = frequency;
+        this.kn = kn;
+        this.kt = kt;
+        this.A = A;
+        this.exitDistance = exitDistance;
+        this.reenterMinHeight = reenterMinHeight;
+        this.reenterMaxHeight = reenterMaxHeight;
+        this.gravity = gravity;
         this.dt = dt;
         this.dt2 = dt2;
         this.tf = tf;
         this.vx = vx;
         this.vy = vy;
-        this.w = w;
-        this.D = d;
-        this.kn = kn;
-        this.kt = kt;
-        this.A = a;
-        this.exitDistance = exitDistance;
-        this.renterMinHeight = renterMinHeight;
-        this.renterMaxHeight = renterMaxHeight;
-        this.gravity = gravity;
     }
 
     public File getStaticFile() {
@@ -71,16 +70,20 @@ public class BaseArguments {
         return delimiter;
     }
 
-    public double getL() {
+    public int getL() {
         return L;
     }
 
-    public double getW() {
+    public int getW() {
         return W;
     }
 
-    public double getD() {
+    public int getD() {
         return D;
+    }
+
+    public double getFrequency() {
+        return frequency;
     }
 
     public double getKn() {
@@ -99,12 +102,12 @@ public class BaseArguments {
         return exitDistance;
     }
 
-    public double getRenterMinHeight() {
-        return renterMinHeight;
+    public double getReenterMinHeight() {
+        return reenterMinHeight;
     }
 
-    public double getRenterMaxHeight() {
-        return renterMaxHeight;
+    public double getReenterMaxHeight() {
+        return reenterMaxHeight;
     }
 
     public double getGravity() {
@@ -119,7 +122,7 @@ public class BaseArguments {
         return dt2;
     }
 
-    public double getTf() {
+    public double getMaxTime() {
         return tf;
     }
 
