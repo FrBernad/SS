@@ -152,8 +152,8 @@ public class SimulatorPhase {
         System.out.println("Invalid simulator invocation.\n" +
             "Usage: ./simulator -DstaticFile='path/to/static/file' -DdynamicFile='path/to/dynamic/file' " +
             "-DresultsFile='path/to/results/file' -DexitTimeFile='path/to/exitTime/file' " +
-            "-DL=L -DW=W -DD=D -Dw=w -Dkn=kn -Dkt=kt -DA=A -DexitDistance=exitDistance" +
-            "-DreenterMinHeight=reenterMinHeight -DreenterMaxHeight=reenterMaxHeight" +
+            "-DL=L -DW=W -DD=D -Dw=w -Dkn=kn -Dkt=kt -DA=A -Dr0=r0 -DexitDistance=exitDistance " +
+            "-DreenterMinHeight=reenterMinHeight -DreenterMaxHeight=reenterMaxHeight " +
             "-Dgravity=gravity -Ddt=dt -Ddt2=dt2 -Dtf=tf -Dvx=vx -Dvy=vy -Dseed=seed"
         );
     }

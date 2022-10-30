@@ -85,8 +85,8 @@ public class MultipleFrequencySimulator {
             PrintWriter exitTimeWriter = new PrintWriter(outExitTimeFile);
 
             System.out.println();
-            LOGGER.info(String.format("Executing Simulator with N = %d / w = %f / d = %d",
-                particlesParserResult.getN(), baseArguments.getFrequency(), baseArguments.getD()));
+            LOGGER.info(String.format("Executing Simulator with N = %d / w = %d / d = %d",
+                particlesParserResult.getN(), frequency, baseArguments.getD()));
             LOGGER.info(String.format("Writing Results every %.2f seconds", printStep * baseArguments.getMaxTime()));
 
 

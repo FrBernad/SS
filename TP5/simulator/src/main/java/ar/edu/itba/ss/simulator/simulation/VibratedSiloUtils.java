@@ -64,8 +64,6 @@ class VibratedSiloUtils {
 
         final Map<Particle, R> nextRs = new HashMap<>();
 
-        final Map<Particle, Set<Particle>> neighbors = CellIndexMethod.calculateNeighbors(currentRs, grid, INTERACTION_RADIUS);
-
         final double wallR0Y = calculateWallR0Y(A, w, t);
         final double wallR1Y = calculateWallR1Y(A, w, t);
 
@@ -98,6 +96,8 @@ class VibratedSiloUtils {
 
             nextRs.put(particle, nextR);
         }
+
+        final Map<Particle, Set<Particle>> neighbors = CellIndexMethod.calculateNeighbors(nextRs, grid, INTERACTION_RADIUS);
 
         prevIt = prevRs.entrySet().iterator();
         currentIt = currentRs.entrySet().iterator();

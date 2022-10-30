@@ -4,7 +4,6 @@ from datetime import datetime
 
 import numpy as np
 import plotly.graph_objects as go
-from numpy._typing import NDArray
 
 from utils.parser_utils import get_particles_states
 
@@ -40,7 +39,7 @@ def plot_discharge_curves(position_per_date_folder: str):
                 # mode="markers+lines",
                 mode="lines",
                 marker=dict(size=10),
-                name=f'''w = {w}''',
+                name=f'w = {w} Hz',
                 x=dfs_time,
                 y=dfs_accum_count)
         )
@@ -79,10 +78,10 @@ def plot_discharge_curves(position_per_date_folder: str):
             ],
             layout=go.Layout(
                 title=dict(text=f'Error - Best Flow = {best_m} - w = {w}', x=0.5),
-                xaxis=dict(title=r'$\Large{\text{Pendiente }(\frac{\text{m}^{\text{2}}}{\text{s}})}$',
+                xaxis=dict(title=r'$\Large{\text{Pendiente }(\frac{\text{1}}{\text{s}})}$',
                            linecolor="#000000", ticks="outside",
                            tickwidth=2, tickcolor='black', ticklen=10),
-                yaxis=dict(title=r'$\Large{\text{Error }(\text{m}^{\text{2}})}$', exponentformat="power",
+                yaxis=dict(title=r'$\Large{\text{Error}}$', exponentformat="power",
                            linecolor="#000000", ticks="outside",
                            tickwidth=2, tickcolor='black', ticklen=10),
                 plot_bgcolor='rgba(0,0,0,0)',
@@ -92,7 +91,7 @@ def plot_discharge_curves(position_per_date_folder: str):
                 )
             )
         )
-        fig.update_layout(width=1400, height=1000)
+        fig.update_layout(width=1000, height=1000)
 
         fig.show()
 
@@ -116,7 +115,7 @@ def plot_discharge_curves(position_per_date_folder: str):
                 title=dict(text=f'Flow Lineal Approximation - Lowest error = {lowest_error} - w = {w}', x=0.5),
                 xaxis=dict(title=r'$\Large{\text{Tiempo (s)}}$',
                            linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
-                yaxis=dict(title=r'$\Large{\text{ECM }}$',
+                yaxis=dict(title=r'$\Large{\text{ECM}}$',
                            linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
                 plot_bgcolor='rgba(0,0,0,0)',
                 font=dict(
@@ -126,7 +125,7 @@ def plot_discharge_curves(position_per_date_folder: str):
             )
         )
 
-        fig.update_layout(width=1800, height=1000)
+        fig.update_layout(width=1000, height=1000)
 
         fig.show()
 
@@ -161,9 +160,9 @@ def plot_discharge_curves(position_per_date_folder: str):
                         ),
         layout=go.Layout(
             title=dict(text=f'Flow errors - D = 3', x=0.5),
-            xaxis=dict(title=r'$\Large{\text{Frecuencia }(\frac{\text{1}}{\text{s}})}$',
+            xaxis=dict(title=r'$\Large{\text{Frecuencia }(Hz)}$',
                        linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
-            yaxis=dict(title=r'$\Large{\text{Caudal }(\frac{\text{partículas}}{\text{segundo}})}$',
+            yaxis=dict(title=r'$\Large{\text{Caudal }(\frac{\text{1}}{\text{s}})}$',
                        exponentformat="power",
                        linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
             font=dict(
@@ -175,7 +174,7 @@ def plot_discharge_curves(position_per_date_folder: str):
 
     )
 
-    fig.update_layout(width=1300, height=1000)
+    fig.update_layout(width=1200, height=1000)
 
     fig.show()
 

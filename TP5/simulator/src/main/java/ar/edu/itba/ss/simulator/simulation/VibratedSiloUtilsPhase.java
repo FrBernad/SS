@@ -62,10 +62,6 @@ class VibratedSiloUtilsPhase {
                                                           final double w, final double A, final double gravity, final double radiusR0) {
 
         final Map<Particle, Pair<Double, R>> nextRs = new HashMap<>();
-        final Map<Particle, R> currentRPos = new HashMap<>();
-        currentRs.forEach((k, v) -> currentRPos.put(k, v.getValue()));
-
-        final Map<Particle, Set<Particle>> neighbors = CellIndexMethod.calculateNeighbors(currentRPos, grid, INTERACTION_RADIUS);
 
         Iterator<Entry<Particle, Pair<Double, R>>> prevIt = prevRs.entrySet().iterator();
         Iterator<Entry<Particle, Pair<Double, R>>> currentIt = currentRs.entrySet().iterator();
@@ -96,6 +92,13 @@ class VibratedSiloUtilsPhase {
 
             nextRs.put(particle, new Pair<>(calculateNewRadius(particle, A, w, t, radiusR0), nextR));
         }
+
+        final Map<Particle, R> nextRPos = new HashMap<>();
+        nextRs.forEach((k, v) -> {
+            nextRPos.put(k, v.getValue());
+            k.setRadius(v.getKey());
+        });
+        final Map<Particle, Set<Particle>> neighbors = CellIndexMethod.calculateNeighbors(nextRPos, grid, INTERACTION_RADIUS);
 
         prevIt = prevRs.entrySet().iterator();
         currentIt = currentRs.entrySet().iterator();
@@ -267,19 +270,23 @@ class VibratedSiloUtilsPhase {
 
         final Map<Particle, Pair<Double, R>> particlesOutsideOpeningRs = new HashMap<>();
         final Map<Particle, R> currentRPos = new HashMap<>();
-        currentRs.forEach((k, v) -> currentRPos.put(k, v.getValue()));
+        currentRs.forEach((k, v) -> {
+            currentRPos.put(k, v.getValue());
+            k.setRadius(v.getKey());
+        });
 
         currentRs.forEach((p, r) -> {
-            Pair<Double, Double> position = r.getValue().get(R0.ordinal());
-            if (position.getValue() < -p.getRadius() && !particlesAlreadyOutside.contains(p)) {
+            final Pair<Double, Double> position = r.getValue().get(R0.ordinal());
+            final Double radius = r.getKey();
+            if (position.getValue() < -radius && !particlesAlreadyOutside.contains(p)) {
                 particlesJustOutside.add(p);
                 particlesAlreadyOutside.add(p);
             }
 
             if (position.getValue() - r.getKey() < -exitDistance) {
                 final double offset = RandomGenerator.getInstance().getRandom().nextDouble();
-                final R newR = generateParticleState(reenterMinHeight + p.getRadius(), reenterMaxHeight - p.getRadius(),
-                    p.getRadius() + offset, W - p.getRadius() - offset, initialVx, initialVy, p, currentRPos);
+                final R newR = generateParticleState(reenterMinHeight + radius, reenterMaxHeight - radius,
+                    radius + offset, W - radius - offset, initialVx, initialVy, p, currentRPos);
 
                 particlesAlreadyOutside.remove(p);
                 r.setValue(newR);
