@@ -153,7 +153,7 @@ def plot_discharge_curves(position_per_date_folder: str):
     fig = go.Figure(
         data=go.Scatter(x=ws,
                         y=flows,
-                        error_y=dict(type='data', array=flow_errors),
+                        # error_y=dict(type='data', array=flow_errors),
                         mode="markers+lines",
                         marker=dict(size=10),
                         showlegend=False

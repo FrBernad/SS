@@ -69,6 +69,8 @@ public class MultipleFrequencyPhaseSimulator {
             return;
         }
 
+        RandomGenerator.setInstance(baseArguments.getSeed());
+
         LOGGER.info("Parsing Particles ...");
         final ParticlesWithPhaseParserResult particlesParserResult = parseParticlesListWithPhase(baseArguments.getStaticFile(),
             baseArguments.getDynamicFile(),
@@ -76,7 +78,6 @@ public class MultipleFrequencyPhaseSimulator {
 
         double secondsStep = baseArguments.getDt2();
         double printStep = secondsStep / baseArguments.getDt();
-
 
         for (Integer frequency : FREQUENCIES) {
             final String outResultsFilePath = String.format("%s/results%d", baseArguments.getOutResultsFile(), frequency);
@@ -92,8 +93,6 @@ public class MultipleFrequencyPhaseSimulator {
             LOGGER.info(String.format("Executing Simulator with N = %d / w = %d / d = %d",
                 particlesParserResult.getN(), frequency, baseArguments.getD()));
             LOGGER.info(String.format("Writing Results every %.2f seconds", printStep * baseArguments.getMaxTime()));
-
-            RandomGenerator.setInstance(baseArguments.getSeed());
 
             final AlgorithmResults methodResults = VibratedSiloPhase.execute(
                 particlesParserResult.getParticlesPerTime().get(0),

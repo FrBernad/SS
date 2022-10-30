@@ -3,6 +3,7 @@ package ar.edu.itba.ss.simulator;
 import ar.edu.itba.ss.simulator.simulation.VibratedSilo;
 import ar.edu.itba.ss.simulator.utils.AlgorithmResults;
 import ar.edu.itba.ss.simulator.utils.BaseArguments;
+import ar.edu.itba.ss.simulator.utils.RandomGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,6 +65,8 @@ public class MultipleFrequencySimulator {
             printClientUsage();
             return;
         }
+
+        RandomGenerator.setInstance(baseArguments.getSeed());
 
         LOGGER.info("Parsing Particles ...");
         final ParticlesParserResult particlesParserResult = parseParticlesList(baseArguments.getStaticFile(),
@@ -135,7 +138,12 @@ public class MultipleFrequencySimulator {
         final double tf = parseDouble(getPropertyOrFail(properties, TF_P));
         final double vx = parseDouble(getPropertyOrFail(properties, INITIAL_VX_P));
         final double vy = parseDouble(getPropertyOrFail(properties, INITIAL_VY_P));
-        final Long seed = Long.parseLong(getPropertyOrDefault(properties, SEED_P, null));
+        Long seed;
+        try {
+            seed = Long.parseLong(getPropertyOrFail(properties, SEED_P));
+        } catch (Exception e) {
+            seed = null;
+        }
 
         final File staticFile = Paths.get(staticFilePath).toFile();
         final File dynamicFile = Paths.get(dynamicFilePath).toFile();

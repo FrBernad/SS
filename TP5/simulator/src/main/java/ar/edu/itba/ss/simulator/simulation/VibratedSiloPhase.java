@@ -22,7 +22,7 @@ public class VibratedSiloPhase {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VibratedSiloPhase.class);
     public static final double INTERACTION_RADIUS = 0.0;
-    public static final int GRID_HEIGHT_RESTRICTION = 30;
+    public static final int GRID_HEIGHT_RESTRICTION = 0;
 
     public static AlgorithmResults execute(final Map<Particle, R> initialRs,
                                            final int L, final int W, final int D,
@@ -54,8 +54,8 @@ public class VibratedSiloPhase {
 
         int optimalM = getOptimalGridCondition(L - GRID_HEIGHT_RESTRICTION, maxRadius);
         int optimalN = getOptimalGridCondition(W, maxRadius);
-
         final Grid grid = new Grid(L - GRID_HEIGHT_RESTRICTION, W, optimalM, optimalN);
+
         final Set<Particle> particlesAlreadyOutside = new HashSet<>();
 
         for (double t = dt; iterations < totalIterations; t += dt, iterations += 1) {

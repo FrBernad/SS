@@ -33,7 +33,7 @@ def main(config_file: str):
                f'-Dvx={config.generator_config.vx} '
                f'-Dvy={config.generator_config.vy} '
                f'{"-Dseed=" + str(config.generator_config.seed) + " " if config.generator_config.seed is not None else ""}'
-               f'-jar jars/ParticleGenerator.jar ')
+               f'-cp jars/classes.jar ar.edu.itba.ss.simulator.ParticlesGenerator ')
         os.system(cmd)
     else:
         print(f'''{datetime.now().strftime("%H:%M:%S")} - Skipping particles generation''')
@@ -61,7 +61,7 @@ def main(config_file: str):
            f'-Dvx={config.simulator_config.vx} '
            f'-Dvy={config.simulator_config.vy} '
            f'{"-Dseed=" + str(config.generator_config.seed) + " " if config.generator_config.seed is not None else ""}'
-           f'-jar jars/Simulator.jar ')
+           f'-cp jars/classes.jar ar.edu.itba.ss.simulator.Simulator ')
     os.system(cmd)
 
 

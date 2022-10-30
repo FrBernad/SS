@@ -50,6 +50,13 @@ public class Grid {
             if (position.getValue() >= 0 && position.getValue() < L) {
                 int x_index = (int) Math.floor(position.getKey() / incrementX);
                 int y_index = (int) Math.floor(position.getValue() / incrementY);
+                if (x_index < 0 || x_index >= N) {
+                    x_index = 0;
+                    System.out.println("ERRORRR!!!");
+                    System.out.println("ERRORRR!!!");
+                    System.out.println("ERRORRR!!!");
+                    System.out.println("ERRORRR!!!");
+                }
 
                 grid.get(y_index).get(x_index).addParticle(entry.getKey());
             }
