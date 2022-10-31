@@ -6,7 +6,7 @@ import numpy as np
 import plotly.graph_objects as go
 from scipy.stats import linregress
 
-from utils.parser_utils import get_particles_states
+from utils.parser_utils import get_particles_states, get_particles_states_phase
 
 
 # En una figura mostrar las curvas de descarga (Nro. de partículas que salieron en función del
@@ -30,7 +30,7 @@ def plot_discharge_curves(position_per_date_folder: str):
 
         print(f'''{datetime.now().strftime("%H:%M:%S")} - File {i + 1} w = {w}''')
 
-        dfs = get_particles_states(file)
+        dfs = get_particles_states_phase(file)
         dfs_accum_count = np.cumsum(np.array(list(map(lambda df: len(df.data.id), dfs))))
         dfs_time = np.array(list(map(lambda df: df.time, dfs)))
 
@@ -48,6 +48,7 @@ def plot_discharge_curves(position_per_date_folder: str):
         regression = linregress(dfs_time, y=dfs_accum_count)
         flow_stds.append(regression.stderr)
         flows.append(regression.slope)
+
         ECM = (1 / len(dfs_time)) * sum((dfs_accum_count - dfs_time * regression.slope + regression.intercept) ** 2)
 
         fig = go.Figure(
@@ -135,5 +136,5 @@ def plot_discharge_curves(position_per_date_folder: str):
 
 
 if __name__ == "__main__":
-    dates_folder = '/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP5/results/frequencies'
+    dates_folder = '/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP5/results/frequenciesPhase'
     plot_discharge_curves(dates_folder)

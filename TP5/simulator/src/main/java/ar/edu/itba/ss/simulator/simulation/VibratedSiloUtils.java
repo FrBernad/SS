@@ -187,7 +187,7 @@ class VibratedSiloUtils {
             final R particleJRs = currentRs.get(particleJ);
             if (particleJ != particleI) {
                 final Pair<Double, Double> collisionForce = collisionForce(particleI.getRadius(), particleIR0, particleIR1,
-                    particleJ.getRadius(), particleJRs, kt, kn);
+                    particleJ.getRadius(), particleJRs, kn, kt);
                 fx += collisionForce.getKey();
                 fy += collisionForce.getValue();
             }
@@ -203,17 +203,17 @@ class VibratedSiloUtils {
         // Left Wall
         if (particleIR0.getKey() <= particleI.getRadius()) {
             final R leftWall = new R();
-            leftWall.set(R0.ordinal(), 0, particleIR0.getValue());
+            leftWall.set(R0.ordinal(), -particleI.getRadius(), particleIR0.getValue());
             leftWall.set(R1.ordinal(), 0, wallR1Y);
-            leftWallForce = collisionForce(particleI.getRadius(), particleIR0, particleIR1, 0, leftWall, kt, kn);
+            leftWallForce = collisionForce(particleI.getRadius(), particleIR0, particleIR1, particleI.getRadius(), leftWall, kn, kt);
         }
 
         // Right Wall
         if (particleIR0.getKey() + particleI.getRadius() >= W) {
             final R rightWall = new R();
-            rightWall.set(R0.ordinal(), W, particleIR0.getValue());
+            rightWall.set(R0.ordinal(), W + particleI.getRadius(), particleIR0.getValue());
             rightWall.set(R1.ordinal(), 0, wallR1Y);
-            rightWallForce = collisionForce(particleI.getRadius(), particleIR0, particleIR1, 0, rightWall, kt, kn);
+            rightWallForce = collisionForce(particleI.getRadius(), particleIR0, particleIR1, particleI.getRadius(), rightWall, kn, kt);
         }
 
         // Bottom Wall
@@ -221,9 +221,9 @@ class VibratedSiloUtils {
             // Outside Opening
             if (!isInOpening(particleIR0, W, D)) {
                 final R bottomWall = new R();
-                bottomWall.set(R0.ordinal(), particleIR0.getKey(), wallR0Y);
+                bottomWall.set(R0.ordinal(), particleIR0.getKey(), wallR0Y - particleI.getRadius());
                 bottomWall.set(R1.ordinal(), 0, wallR1Y);
-                bottomWallForce = collisionForce(particleI.getRadius(), particleIR0, particleIR1, 0, bottomWall, kt, kn);
+                bottomWallForce = collisionForce(particleI.getRadius(), particleIR0, particleIR1, particleI.getRadius(), bottomWall, kn, kt);
             }
             // Outside Opening
             else {
@@ -231,13 +231,13 @@ class VibratedSiloUtils {
                 final R leftOpeningParticleRs = new R();
                 leftOpeningParticleRs.set(R0.ordinal(), W / 2.0 - D / 2.0, 0);
                 leftOpeningParticleRs.set(R1.ordinal(), 0, wallR1Y);
-                leftOpeningParticleForce = collisionForce(particleI.getRadius(), particleIR0, particleIR1, OPENING_PARTICLE_RADIUS, leftOpeningParticleRs, kt, kn);
+                leftOpeningParticleForce = collisionForce(particleI.getRadius(), particleIR0, particleIR1, OPENING_PARTICLE_RADIUS, leftOpeningParticleRs, kn, kt);
 
                 // Right Opening
                 final R rightOpeningParticleRs = new R();
                 rightOpeningParticleRs.set(R0.ordinal(), W / 2.0 + D / 2.0, 0);
                 rightOpeningParticleRs.set(R1.ordinal(), 0, wallR1Y);
-                rightOpeningParticleForce = collisionForce(particleI.getRadius(), particleIR0, particleIR1, OPENING_PARTICLE_RADIUS, rightOpeningParticleRs, kt, kn);
+                rightOpeningParticleForce = collisionForce(particleI.getRadius(), particleIR0, particleIR1, OPENING_PARTICLE_RADIUS, rightOpeningParticleRs, kn, kt);
             }
         }
 
@@ -254,7 +254,7 @@ class VibratedSiloUtils {
     private static Pair<Double, Double> collisionForce(final double particleIRadius, final Pair<Double, Double> particleIR0,
                                                        final Pair<Double, Double> particleIR1,
                                                        final double particleJRadius, final R particleJRs,
-                                                       final double kt, final double kn) {
+                                                       final double kn, final double kt) {
         double fx = 0;
         double fy = 0;
 

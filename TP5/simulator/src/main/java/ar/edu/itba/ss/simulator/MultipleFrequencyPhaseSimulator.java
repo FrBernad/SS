@@ -40,7 +40,6 @@ public class MultipleFrequencyPhaseSimulator {
     private static final String KN_P = "kn";
     private static final String KT_P = "kt";
     private static final String A_P = "A";
-    private static final String w_P = "w";
     private static final String r0_P = "r0";
     private static final String EXIT_DISTANCE_P = "exitDistance";
     private static final String REENTER_MIN_HEIGHT_P = "reenterMinHeight";

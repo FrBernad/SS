@@ -39,7 +39,6 @@ public class Grid {
         LOGGER.info(String.format("Initializing grid with: M = %d / N = %d / Interaction Radius = %f / dx = %f / dy = %f",
             M, N, INTERACTION_RADIUS, incrementX, incrementY));
 
-
         buildGrid();
         setCellNeighbors();
     }
@@ -47,16 +46,9 @@ public class Grid {
     public void fillGrid(Map<Particle, R> particles) {
         for (Map.Entry<Particle, R> entry : particles.entrySet()) {
             Pair<Double, Double> position = entry.getValue().get(R0.ordinal());
-            if (position.getValue() >= 0 && position.getValue() < L) {
+            if (position.getValue() > 0 && position.getValue() < L && position.getKey() > 0 && position.getKey() < W) {
                 int x_index = (int) Math.floor(position.getKey() / incrementX);
                 int y_index = (int) Math.floor(position.getValue() / incrementY);
-                if (x_index < 0 || x_index >= N) {
-                    x_index = 0;
-                    System.out.println("ERRORRR!!!");
-                    System.out.println("ERRORRR!!!");
-                    System.out.println("ERRORRR!!!");
-                    System.out.println("ERRORRR!!!");
-                }
 
                 grid.get(y_index).get(x_index).addParticle(entry.getKey());
             }

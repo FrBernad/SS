@@ -10,7 +10,7 @@ pandas = "*"
 plotly = "*"
 pydantic = "*"
 pyyaml = "*"
-
+scipy= "*"
 [dev-packages]
 
 [requires]

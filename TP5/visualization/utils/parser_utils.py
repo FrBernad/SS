@@ -112,6 +112,26 @@ def get_particles_states(results_file: str) -> List[EventData]:
     return dfs
 
 
+def get_particles_states_phase(results_file: str) -> List[EventData]:
+    dfs = []
+    with open(results_file, "r") as results:
+        current_frame_time = float(next(results))
+        current_frame = []
+        for line in results:
+            float_vals = list(map(lambda v: float(v), line.split()))
+            if len(float_vals) > 1:
+                current_frame.append(float_vals)
+            elif len(float_vals) == 1:
+                df = pd.DataFrame(np.array(current_frame), columns=["id", "x", "y", "vx", "vy", "radius"])
+                dfs.append(EventData(current_frame_time, df))
+                current_frame = []
+                current_frame_time = float_vals[0]
+        df = pd.DataFrame(np.array(current_frame), columns=["id", "x", "y", "vx", "vy", "radius"])
+        dfs.append(EventData(current_frame_time, df))
+
+    return dfs
+
+
 def get_particles_initial_data(static_file: str, dynamic_file: str) -> DataFrame:
     dynamic_df = pd.read_csv(dynamic_file, skiprows=1, sep=" ", names=["x", "y", "vx", "vy"])
     static_df = pd.read_csv(static_file, skiprows=2, sep=" ", names=["radius", "mass"])
