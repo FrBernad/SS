@@ -187,7 +187,7 @@ class VibratedSiloUtils {
             final R particleJRs = currentRs.get(particleJ);
             if (particleJ != particleI) {
                 final Pair<Double, Double> collisionForce = collisionForce(particleI.getRadius(), particleIR0, particleIR1,
-                    particleJ.getRadius(), particleJRs, kn, kt);
+                    particleJ.getRadius(), particleJRs, kt, kn);
                 fx += collisionForce.getKey();
                 fy += collisionForce.getValue();
             }
@@ -254,7 +254,7 @@ class VibratedSiloUtils {
     private static Pair<Double, Double> collisionForce(final double particleIRadius, final Pair<Double, Double> particleIR0,
                                                        final Pair<Double, Double> particleIR1,
                                                        final double particleJRadius, final R particleJRs,
-                                                       final double kn, final double kt) {
+                                                       final double kt, final double kn) {
         double fx = 0;
         double fy = 0;
 
