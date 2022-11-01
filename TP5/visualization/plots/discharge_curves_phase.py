@@ -6,7 +6,7 @@ import numpy as np
 import plotly.graph_objects as go
 from scipy.stats import linregress
 
-from utils.parser_utils import get_particles_states, get_particles_states_phase
+from utils.parser_utils import get_particles_states_phase
 
 
 # En una figura mostrar las curvas de descarga (Nro. de partículas que salieron en función del
@@ -68,7 +68,7 @@ def plot_discharge_curves(position_per_date_folder: str):
                 ),
             ],
             layout=go.Layout(
-                title=dict(text=f'Flow Lineal Approximation - ECM = {ECM} - w = {w}', x=0.5),
+                title=dict(text=f'ECM = {ECM} - Q = {regression.slope} - w = {w}', x=0.5),
                 xaxis=dict(title=r'$\Large{\text{Tiempo (s)}}$',
                            linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
                 yaxis=dict(title=r'$\Large{\text{ECM}}$',

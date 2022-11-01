@@ -2,9 +2,9 @@
 config:
 
   generator:
-    generate: True
+    generate: False
 #    seed: 1
-    dynamic_file: "/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP5/results/dynamic3.txt"
+    dynamic_file: "/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP5/results/dynamic.txt"
     static_file: "/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP5/results/static3.txt"
     N: 30
     L: 70
@@ -19,10 +19,10 @@ config:
     vy: 0
 
   simulator:
-    results_file: "/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP5/results/results3.txt"
-    exit_time_file: "/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP5/results/exitTime3.txt"
-    dynamic_file: "/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP5/results/dynamic3.txt"
-    static_file: "/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP5/results/static3.txt"
+    results_file: "/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP5/results/resultsPhase.txt"
+    exit_time_file: "/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP5/results/exitTimePhase.txt"
+    dynamic_file: "/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP5/results/dynamicPhase.txt"
+    static_file: "/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP5/results/staticPhase.txt"
 #    seed: 1
     L: 70
     W: 20

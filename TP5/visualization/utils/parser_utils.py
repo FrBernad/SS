@@ -17,7 +17,7 @@ def get_frame_particles(frame_data: EventData):
 
     L = 70
     W = 20
-    w = 10
+    w = 5
     D = 3
 
     silo_points = _generate_silo(L, W, w, D, time)

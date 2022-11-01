@@ -45,7 +45,8 @@ public class SimulatorPhase {
     private static final String REENTER_MAX_HEIGHT_P = "reenterMaxHeight";
     private static final String INITIAL_VX_P = "vx";
     private static final String INITIAL_VY_P = "vy";
-    private static final String GRAVITY_P = "gravity";
+    private static final String VD_P = "vd";
+    private static final String TAU_P = "tau";
     private static final String SEED_P = "seed";
 
 
@@ -92,10 +93,10 @@ public class SimulatorPhase {
             baseArguments.getL(), baseArguments.getW(), baseArguments.getD(),
             baseArguments.getExitDistance(), baseArguments.getReenterMinHeight(),
             baseArguments.getReenterMaxHeight(), baseArguments.getKn(), baseArguments.getKt(),
-            baseArguments.getFrequency(), baseArguments.getA(), baseArguments.getGravity(),
+            baseArguments.getFrequency(), baseArguments.getA(),
             baseArguments.getDt(), baseArguments.getMaxTime(),
             baseArguments.getVx(), baseArguments.getVy(),
-            printStep, resultsWriter, exitTimeWriter, baseArguments.getR0()
+            printStep, resultsWriter, exitTimeWriter, baseArguments.getR0(), baseArguments.getVd(), baseArguments.getTau()
         );
 
         resultsWriter.close();
@@ -126,12 +127,13 @@ public class SimulatorPhase {
         final double exitDistance = parseDouble(getPropertyOrFail(properties, EXIT_DISTANCE_P));
         final double reenterMinHeight = parseDouble(getPropertyOrFail(properties, REENTER_MIN_HEIGHT_P));
         final double reenterMaxHeight = parseDouble(getPropertyOrFail(properties, REENTER_MAX_HEIGHT_P));
-        final double gravity = parseDouble(getPropertyOrFail(properties, GRAVITY_P));
         final double dt = parseDouble(getPropertyOrFail(properties, DT_P));
         final double dt2 = parseDouble(getPropertyOrFail(properties, DT2_P));
         final double tf = parseDouble(getPropertyOrFail(properties, TF_P));
         final double vx = parseDouble(getPropertyOrFail(properties, INITIAL_VX_P));
         final double vy = parseDouble(getPropertyOrFail(properties, INITIAL_VY_P));
+        final double vd = parseDouble(getPropertyOrFail(properties, VD_P));
+        final double tau = parseDouble(getPropertyOrFail(properties, TAU_P));
 
 
         Long seed;
@@ -145,7 +147,7 @@ public class SimulatorPhase {
         final File dynamicFile = Paths.get(dynamicFilePath).toFile();
 
         return new BaseArgumentsWithPhase(staticFile, dynamicFile, outResultsFile, outExitTimeFile, delimiter, L, W, D, w, kn,
-            kt, A, exitDistance, reenterMinHeight, reenterMaxHeight, gravity, dt, dt2, tf, vx, vy, seed, r0);
+            kt, A, exitDistance, reenterMinHeight, reenterMaxHeight, dt, dt2, tf, vx, vy, seed, r0, vd, tau);
     }
 
     private static void printClientUsage() {
@@ -154,7 +156,7 @@ public class SimulatorPhase {
             "-DresultsFile='path/to/results/file' -DexitTimeFile='path/to/exitTime/file' " +
             "-DL=L -DW=W -DD=D -Dw=w -Dkn=kn -Dkt=kt -DA=A -Dr0=r0 -DexitDistance=exitDistance " +
             "-DreenterMinHeight=reenterMinHeight -DreenterMaxHeight=reenterMaxHeight " +
-            "-Dgravity=gravity -Ddt=dt -Ddt2=dt2 -Dtf=tf -Dvx=vx -Dvy=vy -Dseed=seed"
+            "-Dvd=vd -Dtau=tau -Ddt=dt -Ddt2=dt2 -Dtf=tf -Dvx=vx -Dvy=vy -Dseed=seed"
         );
     }
 }

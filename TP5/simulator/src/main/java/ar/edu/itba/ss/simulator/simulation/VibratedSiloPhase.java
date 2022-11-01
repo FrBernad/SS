@@ -28,11 +28,12 @@ public class VibratedSiloPhase {
                                            final int L, final int W, final int D,
                                            final double exitDistance, final double reenterMinHeight,
                                            final double reenterMaxHeight, final double kn, final double kt,
-                                           final double frequency, final double A, final double gravity,
+                                           final double frequency, final double A,
                                            final double dt, final double tf,
                                            final double initialVx, final double initialVy,
                                            final double printStep, final PrintWriter resultsWriter,
-                                           final PrintWriter exitTimeWriter, final double radiusR0) {
+                                           final PrintWriter exitTimeWriter, final double radiusR0,
+                                           final double vd, final double tau) {
 
         final ExecutionTimestamps executionTimestamps = new ExecutionTimestamps();
         executionTimestamps.setAlgorithmStart(LocalDateTime.now());
@@ -40,10 +41,10 @@ public class VibratedSiloPhase {
         final Map<Particle, Pair<Double, R>> initialRWithPhases = new HashMap<>();
         initialRs.forEach((p, r) -> initialRWithPhases.put(p, new Pair<>(p.getRadius(), r)));
 
-        calculateInitialAccelerations(initialRWithPhases, gravity);
+        calculateInitialAccelerations(initialRWithPhases, vd, tau);
         printToFile(0.0, initialRWithPhases, resultsWriter);
 
-        Map<Particle, Pair<Double, R>> prevRs = euler(initialRWithPhases, -dt, -dt, gravity, A, frequency, radiusR0);
+        Map<Particle, Pair<Double, R>> prevRs = euler(initialRWithPhases, -dt, -dt, vd, tau, A, frequency, radiusR0);
         Map<Particle, Pair<Double, R>> currentRs = initialRWithPhases;
 
         int iterations = 0;
@@ -64,14 +65,14 @@ public class VibratedSiloPhase {
                 LOGGER.info(String.format("Current Time: %.1f s", t));
             }
 
-            final Map<Particle, Pair<Double, R>> nextRs = calculateNextRs(prevRs, currentRs, grid, t, dt, W, D, kn, kt, frequency, A, gravity, radiusR0);
+            final Map<Particle, Pair<Double, R>> nextRs = calculateNextRs(prevRs, currentRs, grid, t, dt, W, D, kn, kt, frequency, A, vd, tau, radiusR0);
 
             final Set<Particle> particlesJustOutside = new HashSet<>();
             final Map<Particle, Pair<Double, R>> particlesOutsideOpeningRs = respawnParticlesOutsideOpening(currentRs,
                 particlesJustOutside, particlesAlreadyOutside, reenterMinHeight, reenterMaxHeight, exitDistance,
                 W, initialVx, initialVy);
 
-            calculateInitialAccelerations(particlesOutsideOpeningRs, gravity);
+            calculateInitialAccelerations(particlesOutsideOpeningRs, vd, tau);
 
             nextRs.putAll(particlesOutsideOpeningRs);
 
@@ -88,7 +89,7 @@ public class VibratedSiloPhase {
             }
 
             prevRs = currentRs;
-            prevRs.putAll(euler(particlesOutsideOpeningRs, -dt, t - dt, gravity, A, frequency, radiusR0));
+            prevRs.putAll(euler(particlesOutsideOpeningRs, -dt, t - dt, vd, tau, A, frequency, radiusR0));
 
             currentRs = nextRs;
         }

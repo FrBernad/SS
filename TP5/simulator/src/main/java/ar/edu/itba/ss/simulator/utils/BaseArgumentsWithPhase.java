@@ -19,7 +19,6 @@ public class BaseArgumentsWithPhase {
     private final double exitDistance;
     private final double reenterMinHeight;
     private final double reenterMaxHeight;
-    private final double gravity;
     private final double dt;
     private final double dt2;
     private final double tf;
@@ -27,11 +26,13 @@ public class BaseArgumentsWithPhase {
     private final double vy;
     private final Long seed;
     private final double r0;
+    private final double vd;
+    private final double tau;
 
     public BaseArgumentsWithPhase(File staticFile, File dynamicFile, String outResultsFile, String outExitTimeFile,
                                   String delimiter, int L, int W, int D, double frequency, double kn, double kt, double A,
-                                  double exitDistance, double reenterMinHeight, double reenterMaxHeight, double gravity,
-                                  double dt, double dt2, double tf, double vx, double vy, Long seed, double r0) {
+                                  double exitDistance, double reenterMinHeight, double reenterMaxHeight,
+                                  double dt, double dt2, double tf, double vx, double vy, Long seed, double r0, double vd, double tau) {
         this.staticFile = staticFile;
         this.dynamicFile = dynamicFile;
         this.outResultsFile = outResultsFile;
@@ -47,7 +48,6 @@ public class BaseArgumentsWithPhase {
         this.exitDistance = exitDistance;
         this.reenterMinHeight = reenterMinHeight;
         this.reenterMaxHeight = reenterMaxHeight;
-        this.gravity = gravity;
         this.dt = dt;
         this.dt2 = dt2;
         this.tf = tf;
@@ -55,6 +55,8 @@ public class BaseArgumentsWithPhase {
         this.vy = vy;
         this.seed = seed;
         this.r0 = r0;
+        this.vd = vd;
+        this.tau = tau;
     }
 
     public File getStaticFile() {
@@ -117,10 +119,6 @@ public class BaseArgumentsWithPhase {
         return reenterMaxHeight;
     }
 
-    public double getGravity() {
-        return gravity;
-    }
-
     public double getDt() {
         return dt;
     }
@@ -147,6 +145,14 @@ public class BaseArgumentsWithPhase {
 
     public double getR0() {
         return r0;
+    }
+
+    public double getVd() {
+        return vd;
+    }
+
+    public double getTau() {
+        return tau;
     }
 
 

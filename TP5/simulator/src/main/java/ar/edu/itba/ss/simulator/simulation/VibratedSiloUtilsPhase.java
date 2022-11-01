@@ -20,11 +20,16 @@ class VibratedSiloUtilsPhase {
 
     private static final double OPENING_PARTICLE_RADIUS = 0.0;
 
-    static void calculateInitialAccelerations(final Map<Particle, Pair<Double, R>> initialStates, final double gravity) {
-        initialStates.forEach((p, r) -> r.getValue().set(R2.ordinal(), 0.0, -gravity));
+    static void calculateInitialAccelerations(final Map<Particle, Pair<Double, R>> initialStates, final double vd, final double tau) {
+        initialStates.forEach((p, r) -> {
+            final Pair<Double, Double> propulsionForce = calculatePropulsionForce(p.getMass(), r.getValue().get(R1.ordinal()), vd, tau);
+            r.getValue().set(R2.ordinal(), propulsionForce.getKey(), propulsionForce.getValue());
+        });
     }
 
-    static Map<Particle, Pair<Double, R>> euler(final Map<Particle, Pair<Double, R>> Rs, final double dt, final double t, final double gravity,
+    static Map<Particle, Pair<Double, R>> euler(final Map<Particle, Pair<Double, R>> Rs, final double dt,
+                                                final double t,
+                                                final double vd, final double tau,
                                                 final double A, final double w, final double radiusR0) {
 
         final Map<Particle, Pair<Double, R>> rStates = new HashMap<>();
@@ -45,7 +50,9 @@ class VibratedSiloUtilsPhase {
             double r1y = r1.getValue() + (dt / p.getMass()) * r2.getValue() * p.getMass();
             eulerR.set(R1.ordinal(), r1x, r1y);
 
-            eulerR.set(R2.ordinal(), 0.0, -gravity);
+            // Propulsion Force
+            final Pair<Double, Double> propulsionForce = calculatePropulsionForce(p.getMass(), eulerR.get(R1.ordinal()), vd, tau);
+            eulerR.set(R2.ordinal(), propulsionForce.getKey(), propulsionForce.getValue());
 
             rStates.put(p, new Pair<>(calculateNewRadius(p, A, w, t, radiusR0), eulerR));
         });
@@ -59,7 +66,9 @@ class VibratedSiloUtilsPhase {
                                                           final double t, final double dt,
                                                           final int W, final double D,
                                                           final double kn, final double kt,
-                                                          final double w, final double A, final double gravity, final double radiusR0) {
+                                                          final double w, final double A,
+                                                          final double vd, final double tau,
+                                                          final double radiusR0) {
 
         final Map<Particle, Pair<Double, R>> nextRs = new HashMap<>();
 
@@ -114,7 +123,7 @@ class VibratedSiloUtilsPhase {
 
             final Set<Particle> particleNeighbors = neighbors.get(particle);
 
-            final Pair<Double, Double> r2P = calculateAcceleration(particle, particleNeighbors, nextRs, W, D, kn, kt, gravity);
+            final Pair<Double, Double> r2P = calculateAcceleration(particle, particleNeighbors, nextRs, W, D, kn, kt, vd, tau);
 
             //Velocity correction
             final double r1Cx = currentR.get(R1.ordinal()).getKey() +
@@ -132,7 +141,7 @@ class VibratedSiloUtilsPhase {
 
             final Set<Particle> particleNeighbors = neighbors.get(particle);
 
-            final Pair<Double, Double> r2C = calculateAcceleration(particle, particleNeighbors, nextRs, W, D, kn, kt, gravity);
+            final Pair<Double, Double> r2C = calculateAcceleration(particle, particleNeighbors, nextRs, W, D, kn, kt, vd, tau);
             nextRRadius.getValue().set(R2.ordinal(), r2C.getKey(), r2C.getValue());
 
             nextRs.put(particle, nextRRadius);
@@ -141,10 +150,12 @@ class VibratedSiloUtilsPhase {
         return nextRs;
     }
 
-    private static Pair<Double, Double> calculateAcceleration(final Particle particleI, final Set<Particle> neighbors,
+    private static Pair<Double, Double> calculateAcceleration(final Particle particleI,
+                                                              final Set<Particle> neighbors,
                                                               final Map<Particle, Pair<Double, R>> currentRs,
                                                               final int W, final double D,
-                                                              final double kn, final double kt, final double gravity) {
+                                                              final double kn, final double kt,
+                                                              final double vd, final double tau) {
 
         final Pair<Double, R> particleIRRadius = currentRs.get(particleI);
         final Pair<Double, Double> particleIR0 = particleIRRadius.getValue().get(R0.ordinal());
@@ -182,7 +193,7 @@ class VibratedSiloUtilsPhase {
         // Right Wall
         if (particleIR0.getKey() + particleIRRadius.getKey() >= W) {
             final R rightWall = new R();
-            rightWall.set(R0.ordinal(), W+particleIRRadius.getKey(), particleIR0.getValue());
+            rightWall.set(R0.ordinal(), W + particleIRRadius.getKey(), particleIR0.getValue());
             rightWall.set(R1.ordinal(), 0, 0);
             rightWallForce = collisionForce(particleIRRadius.getKey(), particleIR0, particleIR1, particleIRRadius.getKey(), rightWall, kn, kt);
         }
@@ -215,14 +226,16 @@ class VibratedSiloUtilsPhase {
         fx += leftWallForce.getKey() + rightWallForce.getKey() + bottomWallForce.getKey() + leftOpeningParticleForce.getKey() + rightOpeningParticleForce.getKey();
         fy += leftWallForce.getValue() + rightWallForce.getValue() + bottomWallForce.getValue() + leftOpeningParticleForce.getValue() + rightOpeningParticleForce.getValue();
 
-        // Gravity Force
-        fy -= particleI.getMass() * gravity;
+        // Propulsion Force
+        Pair<Double, Double> propulsionForce = calculatePropulsionForce(particleI.getMass(), particleIR1, vd, tau);
+        fx += propulsionForce.getKey();
+        fy += propulsionForce.getValue();
 
         return new Pair<>(fx / particleI.getMass(), fy / particleI.getMass());
     }
 
-
-    private static Pair<Double, Double> collisionForce(final double particleIRadius, final Pair<Double, Double> particleIR0,
+    private static Pair<Double, Double> collisionForce(final double particleIRadius,
+                                                       final Pair<Double, Double> particleIR0,
                                                        final Pair<Double, Double> particleIR1,
                                                        final double particleJRadius, final R particleJRs,
                                                        final double kn, final double kt) {
@@ -261,12 +274,13 @@ class VibratedSiloUtilsPhase {
         return new Pair<>(fx, fy);
     }
 
-    static Map<Particle, Pair<Double, R>> respawnParticlesOutsideOpening(final Map<Particle, Pair<Double, R>> currentRs,
-                                                                         final Set<Particle> particlesJustOutside,
-                                                                         final Set<Particle> particlesAlreadyOutside,
-                                                                         final double reenterMinHeight, final double reenterMaxHeight,
-                                                                         final double exitDistance, final int W,
-                                                                         final double initialVx, final double initialVy) {
+    static Map<Particle, Pair<Double, R>> respawnParticlesOutsideOpening(
+        final Map<Particle, Pair<Double, R>> currentRs,
+        final Set<Particle> particlesJustOutside,
+        final Set<Particle> particlesAlreadyOutside,
+        final double reenterMinHeight, final double reenterMaxHeight,
+        final double exitDistance, final int W,
+        final double initialVx, final double initialVy) {
 
         final Map<Particle, Pair<Double, R>> particlesOutsideOpeningRs = new HashMap<>();
         final Map<Particle, R> currentRPos = new HashMap<>();
@@ -297,8 +311,14 @@ class VibratedSiloUtilsPhase {
         return particlesOutsideOpeningRs;
     }
 
+    private static Pair<Double, Double> calculatePropulsionForce(final double mass, final Pair<Double, Double> vi,
+                                                                 final double vd, final double tau) {
+        final double fy = mass * (vd * (-1) - vi.getValue()) / tau;
+        return new Pair<>(0.0, fy);
+    }
 
-    private static double calculateNewRadius(final Particle particle, final double A, final double w, final double t, final double radiusR0) {
+    private static double calculateNewRadius(final Particle particle, final double A, final double w,
+                                             final double t, final double radiusR0) {
         ParticleWithPhase p = (ParticleWithPhase) particle;
         return radiusR0 * (1 + A * sin(w * t + p.getPhase()));
     }
