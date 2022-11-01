@@ -58,12 +58,13 @@ def main(config_file: str):
            f'-DexitDistance={config.simulator_config.exit_distance} '
            f'-DreenterMinHeight={config.simulator_config.reenter_min_height} '
            f'-DreenterMaxHeight={config.simulator_config.reenter_max_height} '
-           f'-Dgravity={config.simulator_config.gravity} '
            f'-Ddt={config.simulator_config.dt} '
            f'-Ddt2={config.simulator_config.dt2} '
            f'-Dtf={config.simulator_config.tf} '
            f'-Dvx={config.simulator_config.vx} '
            f'-Dvy={config.simulator_config.vy} '
+           f'-Dvd={config.simulator_config.vd} '
+           f'-Dtau={config.simulator_config.tau} '
            f'{"-Dseed=" + str(config.generator_config.seed) + " " if config.generator_config.seed is not None else ""}'
            f'-cp jars/classes.jar ar.edu.itba.ss.simulator.SimulatorPhase ')
     os.system(cmd)

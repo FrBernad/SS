@@ -20,6 +20,7 @@ class GeneratorConfig:
         self.vy = config.get('vy')
 
 
+
 class SimulatorConfig:
     def __init__(self, **config):
         self.seed = config.get('seed')
@@ -43,7 +44,8 @@ class SimulatorConfig:
         self.reenter_min_height = config.get('reenter_min_height')
         self.reenter_max_height = config.get('reenter_max_height')
         self.exit_distance = config.get('exit_distance')
-        self.gravity = config.get('gravity')
+        self.vd = config.get('vd')
+        self.tau = config.get('tau')
 
 
 class Config:
@@ -289,14 +291,6 @@ class Config:
             raise ConfigGeneratorException("Invalid or missing kt")
 
         try:
-            gravity = simulator['gravity']
-            if gravity <= 0:
-                raise ConfigGeneratorException("Invalid or missing gravity")
-
-        except KeyError:
-            raise ConfigGeneratorException("Invalid or missing gravity")
-
-        try:
             reenter_min_height = simulator['reenter_min_height']
             if reenter_min_height <= 0:
                 raise ConfigGeneratorException("Invalid or missing reenter_min_height")
@@ -330,6 +324,16 @@ class Config:
         except KeyError:
             raise ConfigGeneratorException("Invalid or missing vy")
 
+        try:
+            vd = simulator['vd']
+        except KeyError:
+            raise ConfigGeneratorException("Invalid or missing vd")
+
+        try:
+            tau = simulator['tau']
+        except KeyError:
+            raise ConfigGeneratorException("Invalid or missing vd")
+
         return SimulatorConfig(seed=seed,
                                static_file=static_file,
                                dynamic_file=dynamic_file,
@@ -346,12 +350,13 @@ class Config:
                                r0=r0,
                                kn=kn,
                                kt=kt,
-                               gravity=gravity,
                                reenter_min_height=reenter_min_height,
                                reenter_max_height=reenter_max_height,
                                exit_distance=exit_distance,
                                vx=vx,
                                vy=vy,
+                               vd=vd,
+                               tau=tau
                                )
 
 
