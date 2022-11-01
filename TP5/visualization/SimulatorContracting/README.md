@@ -85,6 +85,8 @@ Variables:
 * ***W:*** int --> ancho del silo
 * ***vx:*** float --> velocidad inicial al ser reinsertadas en x de las partículas
 * ***vy:*** float --> velocidad inicial al ser reinsertadas en y de las partícula
+* ***vd:*** float --> constante para fuerza de propulsión
+* ***tau:*** float --> constante para fuerza de propulsión
 * ***dt:*** float --> Paso temporal de la simulación
 * ***dt2:*** float --> Cada cuanto se imprime el resultado de la simulación
 * ***tf:*** float --> tiempo de simulación
@@ -100,7 +102,6 @@ Variables:
   reinsertadas
 * ***exit_distance:***  int --> valor positivo que indica la altura a la cual las partículas deben ser reinyectadas al
   salir del silo
-* ***gravity:*** float --> gravedad del sistema
 
 ### Ejemplo
 
@@ -135,6 +136,8 @@ config:
     W: 20
     vx: 0
     vy: 0
+    vd: 5
+    tau: 1
     dt: 0.001
     dt2: 0.1
     tf: 1000
@@ -147,7 +150,6 @@ config:
     reenter_min_height: 40
     reenter_max_height: 70
     exit_distance: 7
-    gravity: 5
 
 
 
