@@ -70,7 +70,7 @@ def plot_discharge_curves(position_per_date_folder: str):
                 title=dict(text=f'ECM = {ECM} - Q = {regression.slope} - w = {w}', x=0.5),
                 xaxis=dict(title=r'$\Large{\text{Tiempo (s)}}$',
                            linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
-                yaxis=dict(title=r'$\Large{\text{ECM}}$',
+                yaxis=dict(title=r'$\Large{\text{Número de partículas}}$',
                            linecolor="#000000", ticks="outside", tickwidth=2, tickcolor='black', ticklen=10),
                 plot_bgcolor='rgba(0,0,0,0)',
                 font=dict(
