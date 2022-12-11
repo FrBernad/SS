@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.Properties;
 
 import static ar.edu.itba.ss.simulator.utils.ArgumentsUtils.getPropertyOrDefault;
@@ -102,8 +103,9 @@ public class SimulatorPhase {
         resultsWriter.close();
         exitTimeWriter.close();
 
-        LOGGER.info(String.format("Finished Simulation In %d Iterations / %s",
-            methodResults.getIterations(), methodResults.getExecutionTimestamps().getAlgorithmTotalTime().toString()));
+        final Duration duration = methodResults.getExecutionTimestamps().getAlgorithmTotalTime();
+        LOGGER.info(String.format("Finished Simulation In %d Iterations / %d days %d hrs %d mins %d secs ",
+            methodResults.getIterations(), duration.toDaysPart(), duration.toHoursPart(), duration.toMinutesPart(), duration.toSecondsPart()));
 
         LOGGER.info("Done!");
     }

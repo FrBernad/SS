@@ -39,7 +39,7 @@ public class VibratedSilo {
         executionTimestamps.setAlgorithmStart(LocalDateTime.now());
 
         calculateInitialAccelerations(initialRs, gravity);
-        printToFile(0.0, initialRs, resultsWriter);
+        printToResultsFile(0.0, initialRs, resultsWriter);
 
         Map<Particle, R> prevRs = euler(initialRs, -dt, gravity);
         Map<Particle, R> currentRs = initialRs;
@@ -49,10 +49,10 @@ public class VibratedSilo {
         int loggingStep = (int) Math.floor(100 / dt);
 
         final double maxRadius = initialRs
-                .keySet()
-                .stream()
-                .map(Particle::getRadius)
-                .max(Double::compare).orElseThrow();
+            .keySet()
+            .stream()
+            .map(Particle::getRadius)
+            .max(Double::compare).orElseThrow();
 
         int optimalM = getOptimalGridCondition(L - GRID_HEIGHT_RESTRICTION, maxRadius);
         int optimalN = getOptimalGridCondition(W, maxRadius);
@@ -70,8 +70,8 @@ public class VibratedSilo {
 
             final Set<Particle> particlesJustOutside = new HashSet<>();
             final Map<Particle, R> particlesOutsideOpeningRs = respawnParticlesOutsideOpening(currentRs,
-                    particlesJustOutside, particlesAlreadyOutside, reenterMinHeight, reenterMaxHeight, exitDistance,
-                    W, initialVx, initialVy);
+                particlesJustOutside, particlesAlreadyOutside, reenterMinHeight, reenterMaxHeight, exitDistance,
+                W, initialVx, initialVy);
 
             calculateInitialAccelerations(particlesOutsideOpeningRs, gravity);
 
@@ -79,14 +79,14 @@ public class VibratedSilo {
 
             if (particlesJustOutside.size() > 0) {
                 final Map<Particle, R> particlesJustOutsideRs = nextRs.entrySet()
-                        .stream().filter((entry) -> particlesJustOutside.contains(entry.getKey()))
-                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                    .stream().filter((entry) -> particlesJustOutside.contains(entry.getKey()))
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-                printToFile(t, particlesJustOutsideRs, exitTimeWriter);
+                printToExitFile(t, particlesJustOutsideRs, exitTimeWriter);
             }
 
             if ((iterations + 1) % printStep == 0) {
-                printToFile(t, nextRs, resultsWriter);
+                printToResultsFile(t, nextRs, resultsWriter);
             }
 
             prevRs = currentRs;
@@ -109,17 +109,21 @@ public class VibratedSilo {
         return optimal;
     }
 
-    private static void printToFile(final Double time, final Map<Particle, R> particlesStates, final PrintWriter pw) {
+    private static void printToResultsFile(final Double time, final Map<Particle, R> particlesStates, final PrintWriter pw) {
         pw.append(String.format("%f\n", time));
 
         particlesStates.entrySet()
-                .stream()
-                .sorted(Map.Entry.comparingByKey())
-                .forEach((entry) ->
-                        pw.printf("%d %.16f %.16f %.16f %.16f\n",
-                                entry.getKey().getId(),
-                                entry.getValue().get(R0.ordinal()).getKey(), entry.getValue().get(R0.ordinal()).getValue(),
-                                entry.getValue().get(R1.ordinal()).getKey(), entry.getValue().get(R1.ordinal()).getValue()));
+            .stream()
+            .sorted(Map.Entry.comparingByKey())
+            .forEach((entry) ->
+                pw.printf("%.16f %.16f %.16f %.16f\n",
+                    entry.getValue().get(R0.ordinal()).getKey(), entry.getValue().get(R0.ordinal()).getValue(),
+                    entry.getValue().get(R1.ordinal()).getKey(), entry.getValue().get(R1.ordinal()).getValue()));
+    }
+
+
+    private static void printToExitFile(final Double time, final Map<Particle, R> particlesStates, final PrintWriter pw) {
+        pw.append(String.format("%f\n", time));
     }
 
 }

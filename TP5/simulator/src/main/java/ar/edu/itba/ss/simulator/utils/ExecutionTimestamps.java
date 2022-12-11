@@ -1,25 +1,15 @@
 package ar.edu.itba.ss.simulator.utils;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 public class ExecutionTimestamps {
 
     private LocalDateTime algorithmStart;
     private LocalDateTime algorithmEnd;
 
-    public LocalDateTime getAlgorithmStart() {
-        return algorithmStart;
-    }
-
-    public LocalDateTime getAlgorithmEnd() {
-        return algorithmEnd;
-    }
-
-    public LocalTime getAlgorithmTotalTime() {
-        return LocalTime.ofNanoOfDay(
-                getAlgorithmEnd().toLocalTime().toNanoOfDay() - getAlgorithmStart().toLocalTime().toNanoOfDay()
-        );
+    public Duration getAlgorithmTotalTime() {
+        return Duration.between(algorithmStart, algorithmEnd);
     }
 
     public void setAlgorithmStart(LocalDateTime algorithmStart) {

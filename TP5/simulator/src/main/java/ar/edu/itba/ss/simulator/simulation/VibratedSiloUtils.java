@@ -204,7 +204,7 @@ class VibratedSiloUtils {
         if (particleIR0.getKey() <= particleI.getRadius()) {
             final R leftWall = new R();
             leftWall.set(R0.ordinal(), -particleI.getRadius(), particleIR0.getValue());
-            leftWall.set(R1.ordinal(), 0, wallR1Y);
+            leftWall.set(R1.ordinal(), 0, 0);
             leftWallForce = collisionForce(particleI.getRadius(), particleIR0, particleIR1, particleI.getRadius(), leftWall, kn, kt);
         }
 
@@ -212,7 +212,7 @@ class VibratedSiloUtils {
         if (particleIR0.getKey() + particleI.getRadius() >= W) {
             final R rightWall = new R();
             rightWall.set(R0.ordinal(), W + particleI.getRadius(), particleIR0.getValue());
-            rightWall.set(R1.ordinal(), 0, wallR1Y);
+            rightWall.set(R1.ordinal(), 0, 0);
             rightWallForce = collisionForce(particleI.getRadius(), particleIR0, particleIR1, particleI.getRadius(), rightWall, kn, kt);
         }
 

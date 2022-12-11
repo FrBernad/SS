@@ -42,7 +42,7 @@ public class VibratedSiloPhase {
         initialRs.forEach((p, r) -> initialRWithPhases.put(p, new Pair<>(p.getRadius(), r)));
 
         calculateInitialAccelerations(initialRWithPhases, vd, tau);
-        printToFile(0.0, initialRWithPhases, resultsWriter);
+        printToResultsFile(0.0, initialRWithPhases, resultsWriter);
 
         Map<Particle, Pair<Double, R>> prevRs = euler(initialRWithPhases, -dt, -dt, vd, tau, A, frequency, radiusR0);
         Map<Particle, Pair<Double, R>> currentRs = initialRWithPhases;
@@ -81,11 +81,11 @@ public class VibratedSiloPhase {
                     .stream().filter((entry) -> particlesJustOutside.contains(entry.getKey()))
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-                printToFile(t, particlesJustOutsideRs, exitTimeWriter);
+                printToExitFile(t, particlesJustOutsideRs, exitTimeWriter);
             }
 
             if ((iterations + 1) % printStep == 0) {
-                printToFile(t, nextRs, resultsWriter);
+                printToResultsFile(t, nextRs, resultsWriter);
             }
 
             prevRs = currentRs;
@@ -108,18 +108,22 @@ public class VibratedSiloPhase {
         return optimal;
     }
 
-    private static void printToFile(final Double time, final Map<Particle, Pair<Double, R>> particlesStates, final PrintWriter pw) {
+
+    private static void printToResultsFile(final Double time, final Map<Particle, Pair<Double, R>> particlesStates, final PrintWriter pw) {
         pw.append(String.format("%f\n", time));
 
         particlesStates.entrySet()
             .stream()
             .sorted(Map.Entry.comparingByKey())
             .forEach((entry) ->
-                pw.printf("%d %.16f %.16f %.16f %.16f %.16f\n",
-                    entry.getKey().getId(),
+                pw.printf("%.16f %.16f %.16f %.16f %.16f\n",
                     entry.getValue().getValue().get(R0.ordinal()).getKey(), entry.getValue().getValue().get(R0.ordinal()).getValue(),
                     entry.getValue().getValue().get(R1.ordinal()).getKey(), entry.getValue().getValue().get(R1.ordinal()).getValue(),
                     entry.getValue().getKey()));
+    }
+
+    private static void printToExitFile(final Double time, final Map<Particle, Pair<Double, R>> particlesStates, final PrintWriter pw) {
+        pw.append(String.format("%f\n", time));
     }
 
 }
