@@ -7,6 +7,13 @@ public class Particle implements Comparable<Particle> {
     private double radius;
     private final double mass;
 
+    public static final Particle LEFT_WALL = new Particle(-1, 0, 0);
+    public static final Particle RIGHT_WALL = new Particle(-2, 0, 0);
+    public static final Particle BOTTOM_WALL = new Particle(-3, 0, 0);
+    public static final Particle BOTTOM_WALL_RIGHT_OPENING = new Particle(-4, 0, 0);
+    public static final Particle BOTTOM_WALL_LEFT_OPENING = new Particle(-5, 0, 0);
+
+
     public Particle(int id, double radius, double mass) {
         this.id = id;
         this.radius = radius;

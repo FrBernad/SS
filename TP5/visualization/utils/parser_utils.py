@@ -21,9 +21,9 @@ def get_frame_particles(frame_data: EventData):
     D = 3
 
     silo_points = _generate_silo(L, W, w, D, time)
-
     particles.create_property('Particle Identifier',
-                              data=np.concatenate((df.id, np.full(len(silo_points), max(df.id) + 1))))
+                              data=np.concatenate((df.id, np.full(len(silo_points), max(df.id) + 1)))
+                              )
     particles.create_property('Position',
                               data=np.concatenate((np.array((df.x, df.y, np.zeros(len(df.x)))).T, silo_points)))
     particles.create_property('Radius', data=np.concatenate((df.radius, np.full(len(silo_points), 0.2))))
@@ -60,12 +60,14 @@ def get_particles_data(static_file: str, results_file: str) -> List[EventData]:
             if len(float_vals) > 1:
                 current_frame.append(float_vals)
             elif len(float_vals) == 1:
-                df = pd.DataFrame(np.array(current_frame), columns=["id", "x", "y", "vx", "vy"])
-                dfs.append(EventData(current_frame_time, pd.concat([df, static_df], axis=1)))
+                df = pd.DataFrame(np.array(current_frame), columns=["x", "y", "vx", "vy"])
+                ids = pd.DataFrame(np.arange(0, len(df.x), 1), columns=["id"])
+                dfs.append(EventData(current_frame_time, pd.concat([ids, df, static_df], axis=1)))
                 current_frame = []
                 current_frame_time = float_vals[0]
-        df = pd.DataFrame(np.array(current_frame), columns=["id", "x", "y", "vx", "vy"])
-        dfs.append(EventData(current_frame_time, pd.concat([df, static_df], axis=1)))
+        df = pd.DataFrame(np.array(current_frame), columns=["x", "y", "vx", "vy"])
+        ids = pd.DataFrame(np.arange(0, len(df.x), 1), columns=["id"])
+        dfs.append(EventData(current_frame_time, pd.concat([df, static_df, ids], axis=1)))
 
     return dfs
 

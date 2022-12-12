@@ -39,6 +39,8 @@ public class Simulator {
     private static final String D_P = "D";
     private static final String KN_P = "kn";
     private static final String KT_P = "kt";
+    private static final String GAMMA_P = "gamma";
+    private static final String MU_P = "mu";
     private static final String A_P = "A";
     private static final String EXIT_DISTANCE_P = "exitDistance";
     private static final String REENTER_MIN_HEIGHT_P = "reenterMinHeight";
@@ -91,8 +93,8 @@ public class Simulator {
             particlesParserResult.getParticlesPerTime().get(0),
             baseArguments.getL(), baseArguments.getW(), baseArguments.getD(),
             baseArguments.getExitDistance(), baseArguments.getReenterMinHeight(),
-            baseArguments.getReenterMaxHeight(), baseArguments.getKn(), baseArguments.getKt(),
-            baseArguments.getFrequency(), baseArguments.getA(), baseArguments.getGravity(),
+            baseArguments.getReenterMaxHeight(), baseArguments.getKn(), baseArguments.getKt(), baseArguments.getGamma(),
+            baseArguments.getFrequency(), baseArguments.getA(), baseArguments.getGravity(), baseArguments.getMu(),
             baseArguments.getDt(), baseArguments.getMaxTime(),
             baseArguments.getVx(), baseArguments.getVy(),
             printStep, resultsWriter, exitTimeWriter
@@ -122,11 +124,13 @@ public class Simulator {
         final double w = parseDouble(getPropertyOrFail(properties, w_P));
         final double kn = parseDouble(getPropertyOrFail(properties, KN_P));
         final double kt = parseDouble(getPropertyOrFail(properties, KT_P));
+        final double gamma = parseDouble(getPropertyOrFail(properties, GAMMA_P));
         final double A = parseDouble(getPropertyOrFail(properties, A_P));
         final double exitDistance = parseDouble(getPropertyOrFail(properties, EXIT_DISTANCE_P));
         final double reenterMinHeight = parseDouble(getPropertyOrFail(properties, REENTER_MIN_HEIGHT_P));
         final double reenterMaxHeight = parseDouble(getPropertyOrFail(properties, REENTER_MAX_HEIGHT_P));
         final double gravity = parseDouble(getPropertyOrFail(properties, GRAVITY_P));
+        final double mu = parseDouble(getPropertyOrFail(properties, MU_P));
         final double dt = parseDouble(getPropertyOrFail(properties, DT_P));
         final double dt2 = parseDouble(getPropertyOrFail(properties, DT2_P));
         final double tf = parseDouble(getPropertyOrFail(properties, TF_P));
@@ -144,7 +148,7 @@ public class Simulator {
         final File dynamicFile = Paths.get(dynamicFilePath).toFile();
 
         return new BaseArguments(staticFile, dynamicFile, outResultsFile, outExitTimeFile, delimiter, L, W, D, w, kn,
-            kt, A, exitDistance, reenterMinHeight, reenterMaxHeight, gravity, dt, dt2, tf, vx, vy, seed);
+            kt, gamma, A, exitDistance, reenterMinHeight, reenterMaxHeight, gravity, mu, dt, dt2, tf, vx, vy, seed);
     }
 
     private static void printClientUsage() {

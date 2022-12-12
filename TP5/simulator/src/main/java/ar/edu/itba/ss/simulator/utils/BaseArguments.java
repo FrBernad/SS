@@ -15,11 +15,13 @@ public class BaseArguments {
     private final double frequency;
     private final double kn;
     private final double kt;
+    private final double gamma;
     private final double A;
     private final double exitDistance;
     private final double reenterMinHeight;
     private final double reenterMaxHeight;
     private final double gravity;
+    private final double mu;
     private final double dt;
     private final double dt2;
     private final double tf;
@@ -28,8 +30,8 @@ public class BaseArguments {
     private final Long seed;
 
     public BaseArguments(File staticFile, File dynamicFile, String outResultsFile, String outExitTimeFile,
-                         String delimiter, int L, int W, int D, double frequency, double kn, double kt, double A,
-                         double exitDistance, double reenterMinHeight, double reenterMaxHeight, double gravity,
+                         String delimiter, int L, int W, int D, double frequency, double kn, double kt, double gamma, double A,
+                         double exitDistance, double reenterMinHeight, double reenterMaxHeight, double gravity, double mu,
                          double dt, double dt2, double tf, double vx, double vy, Long seed) {
         this.staticFile = staticFile;
         this.dynamicFile = dynamicFile;
@@ -42,11 +44,13 @@ public class BaseArguments {
         this.frequency = frequency;
         this.kn = kn;
         this.kt = kt;
+        this.gamma = gamma;
         this.A = A;
         this.exitDistance = exitDistance;
         this.reenterMinHeight = reenterMinHeight;
         this.reenterMaxHeight = reenterMaxHeight;
         this.gravity = gravity;
+        this.mu = mu;
         this.dt = dt;
         this.dt2 = dt2;
         this.tf = tf;
@@ -99,6 +103,10 @@ public class BaseArguments {
         return kt;
     }
 
+    public double getGamma() {
+        return gamma;
+    }
+
     public double getA() {
         return A;
     }
@@ -117,6 +125,10 @@ public class BaseArguments {
 
     public double getGravity() {
         return gravity;
+    }
+
+    public double getMu() {
+        return mu;
     }
 
     public double getDt() {

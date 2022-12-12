@@ -1,15 +1,13 @@
 package ar.edu.itba.ss.simulator.simulation;
 
 import ar.edu.itba.ss.simulator.Algorithms.CellIndex.Grid;
-import ar.edu.itba.ss.simulator.utils.AlgorithmResults;
-import ar.edu.itba.ss.simulator.utils.ExecutionTimestamps;
-import ar.edu.itba.ss.simulator.utils.Particle;
-import ar.edu.itba.ss.simulator.utils.R;
+import ar.edu.itba.ss.simulator.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -29,8 +27,8 @@ public class VibratedSilo {
     public static AlgorithmResults execute(final Map<Particle, R> initialRs,
                                            final int L, final int W, final int D,
                                            final double exitDistance, final double reenterMinHeight,
-                                           final double reenterMaxHeight, final double kn, final double kt,
-                                           final double frequency, final double A, final double gravity,
+                                           final double reenterMaxHeight, final double kn, final double kt, final double gamma,
+                                           final double frequency, final double A, final double gravity, final double mu,
                                            final double dt, final double tf,
                                            final double initialVx, final double initialVy,
                                            final double printStep, final PrintWriter resultsWriter, final PrintWriter exitTimeWriter) {
@@ -59,6 +57,9 @@ public class VibratedSilo {
 
         final Grid grid = new Grid(L - GRID_HEIGHT_RESTRICTION, W, optimalM, optimalN);
         final Set<Particle> particlesAlreadyOutside = new HashSet<>();
+        final Map<Pair<Particle, Particle>, Double> accumRelVelPred = new HashMap<>();
+        final Map<Pair<Particle, Particle>, Double> accumRelVelCorr = new HashMap<>();
+
 
         for (double t = dt; iterations < totalIterations; t += dt, iterations += 1) {
 
@@ -66,7 +67,7 @@ public class VibratedSilo {
                 LOGGER.info(String.format("Current Time: %.1f s", t));
             }
 
-            final Map<Particle, R> nextRs = calculateNextRs(prevRs, currentRs, grid, t, dt, W, D, kn, kt, frequency, A, gravity);
+            final Map<Particle, R> nextRs = calculateNextRs(prevRs, currentRs, grid, t, dt, W, D, kn, kt, frequency, A, gravity, gamma, mu, accumRelVelPred, accumRelVelCorr);
 
             final Set<Particle> particlesJustOutside = new HashSet<>();
             final Map<Particle, R> particlesOutsideOpeningRs = respawnParticlesOutsideOpening(currentRs,

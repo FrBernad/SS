@@ -1,9 +1,9 @@
 ---
 # --- Visualization plotly config ---
 config:
-      results_file: "/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP5/results/resultsPhase.txt"
-      dynamic_file: "/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP5/results/dynamicPhase.txt"
-      static_file: "/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP5/results/staticPhase.txt"
+  results_file: "/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP5/results/results2.txt"
+  dynamic_file: "/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP5/results/dynamic.txt"
+  static_file: "/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP5/results/static.txt"
 #  results_file: "/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP5/results/frequenciesPhase/results20"
 #  dynamic_file: "/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP5/results/dynamicPhase.txt"
 #  static_file: "/Users/frbernad/PROGRAMMING/ITBA/SS/TPs/TP5/results/staticPhase.txt"
